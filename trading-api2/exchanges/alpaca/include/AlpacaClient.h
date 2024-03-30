@@ -9,9 +9,6 @@
 using namespace restclient;
 using namespace streamer;
 
-// AKAHR3N818LOWBATOT6Q key
-// VlLbb6D5V7ebuFKWxu1g3ciU0XC0t secret
-
 class IAlpacaClient
 {
 public:

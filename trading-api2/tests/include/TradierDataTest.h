@@ -39,7 +39,7 @@ TEST_F(TradierDataTest, getAccessTokenTest)
     // clang-format off
     std::string retVal = 
     R"({
-    "access_token": "oG8RUzo33zKy3gghjkGh2au2LEWA8",
+    "access_token": "accesstoken",
     "expires_in": 86399,
     "issued_at": "2014-05-28T09:33:35-04:00",
     "scope": "read write trade market stream",
@@ -48,7 +48,7 @@ TEST_F(TradierDataTest, getAccessTokenTest)
     // clang=format on
     EXPECT_CALL(*(restClientMock.get()), postResponse(path, headers())).WillOnce(Return(retVal));
     AccessToken token = tdata.getAccessToken();
-    EXPECT_EQ(token.access_token, "oG8RUzo33zKy3gghjkGh2au2LEWA8");
+    EXPECT_EQ(token.access_token, "accesstoken");
     EXPECT_EQ(token.expires_in, 86399);
     EXPECT_EQ(token.issued_at, "2014-05-28T09:33:35-04:00");
 }
