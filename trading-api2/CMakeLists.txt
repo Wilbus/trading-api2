@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.10)
+project(trading-api2)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
+
+
+add_subdirectory(exchanges)
+add_subdirectory(charting)
+add_subdirectory(mytwsapi)
+add_subdirectory(mytwsapi-imp)
+add_subdirectory(restclient)
+add_subdirectory(streaming)
+add_subdirectory(utils)
+add_subdirectory(tests)
+add_subdirectory(mytwsapi-service)
+add_subdirectory(executables)
