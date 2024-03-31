@@ -9,6 +9,7 @@ add_library(${PROJECT_NAME} SHARED
     ${CMAKE_CURRENT_LIST_DIR}/tradier/src/CandleSampler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/alpaca/src/AlpacaClient.cpp
     ${CMAKE_CURRENT_LIST_DIR}/schwab/src/SchwabClient.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/schwab/src/SchwabConfigs.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

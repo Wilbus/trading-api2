@@ -6,9 +6,10 @@
 
 #include <gtest/gtest.h>
 
-using namespace utils;
+//using namespace utils;
 using namespace schwabMarketData;
 using namespace schwabAccountData;
+using namespace testing;
 
 class SchwabClientTest : public ::testing::Test
 {

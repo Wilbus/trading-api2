@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace utils;
+//using namespace utils;
 using namespace schwabMarketData;
 
 class SchwabMarketDataParserTest : public ::testing::Test
