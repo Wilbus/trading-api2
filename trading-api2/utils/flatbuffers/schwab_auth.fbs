@@ -1,9 +1,0 @@
-namespace schwabAuthentication;
-
-table Auths
-{
-    appkey: string;
-    appsecret: string;
-}
-
-root_type Auths;

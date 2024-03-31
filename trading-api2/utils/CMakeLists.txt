@@ -10,7 +10,6 @@ add_library(${PROJECT_NAME} SHARED
 
 target_include_directories(trading-api2-utils PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
-    #${CMAKE_CURRENT_LIST_DIR}/flatbuffers
 )
 
 include(FetchContent)
@@ -24,9 +23,6 @@ FetchContent_MakeAvailable(googletest)
 find_package(RapidJSON)
 find_package(ZLIB)
 find_package(InfluxDB)
-#find_package(gtest)
-
-#add_library(FlatbuffersTarget INTERFACE)
 
 
 set(OPENSSL_USE_STATIC_LIBS TRUE)
@@ -39,4 +35,3 @@ target_link_libraries(${PROJECT_NAME} ZLIB::ZLIB)
 target_link_libraries(${PROJECT_NAME} uWS)
 target_link_libraries(${PROJECT_NAME} InfluxData::InfluxDB)
 target_link_libraries(${PROJECT_NAME} gmock)
-#target_link_libraries(${PROJECT_NAME} flatbuffers)
