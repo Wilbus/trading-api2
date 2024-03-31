@@ -7,6 +7,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 add_library(${PROJECT_NAME} SHARED
     ${CMAKE_CURRENT_LIST_DIR}/src/TradierStreamHandler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/AlpacaStreamHandler.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/SchwabStreamHandler.cpp
 )
 
 target_include_directories(trading-api2-streaming PUBLIC
