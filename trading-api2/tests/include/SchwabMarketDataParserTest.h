@@ -1,3 +1,5 @@
+#pragma once
+
 #include "SchwabMarketDataParser.h"
 #include "schwabOptionsTestValues.h"
 #include "schwabtestvalues.h"

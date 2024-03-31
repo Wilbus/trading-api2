@@ -2,11 +2,13 @@
 #include "SchwabClient.h"
 #include "schwabtestvalues.h"
 #include "schwabOptionsTestValues.h"
+#include "schwabtestauthvalues.h"
 
 #include <gtest/gtest.h>
 
 using namespace utils;
 using namespace schwabMarketData;
+using namespace schwabAccountData;
 
 class SchwabClientTest : public ::testing::Test
 {
@@ -23,6 +25,7 @@ public:
         auths.appkey = "appkey123";
         auths.appsecret = "appsecret123";
         auths.token = "authtoken123";
+        auths.callbackUrl = "https://127.0.0.1:8080";
         return auths;
     }
 
@@ -141,4 +144,41 @@ TEST_F(SchwabClientTest, getOptionChain)
     auto optionChain = client->getOptionChain("AAPL", 5);
     EXPECT_GT(optionChain.callExpDateMap.size(), 0);
     EXPECT_GT(optionChain.putExpDateMap.size(), 0);
+}
+
+TEST_F(SchwabClientTest, createAccessToken)
+{
+    std::string authorization_code = "authcode123";
+    std::string expectedPath = "/oauth/token";
+    std::string content_type = "application/x-www-form-urlencoded";
+    std::string authHeader = "Basic appsecret123";
+    httplib::Headers expectedHeaders =
+    {
+        {"Authorization: ", authHeader},
+        {"Content-Type: ", content_type}
+    };
+    std::string expectedBody = "grant_type=authorization_code&code=" + authorization_code
+        + "&redirect_uri=https://127.0.0.1:8080";
+    EXPECT_CALL(*restClientMock.get(), postResponse(expectedPath, expectedHeaders,
+        expectedBody, content_type)).WillOnce(Return(createAccessTokenRespExample));
+    auto tokens = client->createAccessToken(authorization_code, false);
+    EXPECT_EQ(tokens.refresh_token, "REFRESH_TOKEN_HERE");
+}
+
+TEST_F(SchwabClientTest, refreshAccessTokenRequest)
+{
+    std::string refreshToken = "refreshtoken123";
+    std::string expectedPath = "/oauth/token";
+    std::string content_type = "application/x-www-form-urlencoded";
+    std::string authHeader = "Basic appsecret123";
+    httplib::Headers expectedHeaders =
+    {
+        {"Authorization: ", authHeader},
+        {"Content-Type: ", content_type}
+    };
+    std::string expectedBody = "grant_type=refresh_token&refresh_token=" + refreshToken;
+    EXPECT_CALL(*restClientMock.get(), postResponse(expectedPath, expectedHeaders,
+        expectedBody, content_type)).WillOnce(Return(createAccessTokenRespExample));
+    auto tokens = client->createAccessToken(refreshToken, true);
+    EXPECT_EQ(tokens.refresh_token, "REFRESH_TOKEN_HERE");
 }

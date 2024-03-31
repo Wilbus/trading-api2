@@ -4,6 +4,7 @@
 // #include "FlatBufferTest.h"
 #include "SchwabClientTest.h"
 #include "SchwabMarketDataParserTest.h"
+#include "SchwabAccountDataParserTest.h"
 
 #include <gtest/gtest.h>
 

@@ -1,6 +1,7 @@
 #include "SchwabClient.h"
 
 #include "SchwabMarketDataParser.h"
+#include "SchwabAccountDataParser.h"
 #include "UriEncodeDecode.h"
 #include "timefuncs.h"
 
@@ -16,6 +17,42 @@ httplib::Headers SchwabClient::headers() const
     std::string bearer = "Bearer IO." + auths.token;
     return {{"Accept", "application/json"}, {"Authorization", bearer.c_str()}};
     //clang-format on
+}
+
+/*
+curl -X POST \https://api.schwabapi.com/v1/oauth/token 
+\-H 'Authorization: Basic {BASE64_ENCODED_Client_ID:Client_Secret} 
+\-H 'Content-Type: application/x-www-form-urlencoded' 
+\-d 'grant_type=authorization_code&code={AUTHORIZATION_CODE_VALUE}&redirect_uri=https://example_url.com/callback_example'
+*/
+AuthTokens SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken)
+{
+    std::string path = "/oauth/token";
+    std::string content_type = "application/x-www-form-urlencoded";
+
+    std::string authorization_code_header = "Basic " + auths.appsecret;
+    httplib::Headers headers =
+    {
+        {"Authorization: ", authorization_code_header},
+        {"Content-Type: ", content_type}
+    };
+
+    std::string body;
+    if(!isRefreshToken)
+        body = "grant_type=authorization_code&code=" + authCodeOrRefreshToken + "&redirect_uri=" + auths.callbackUrl;
+    else
+        body = "grant_type=refresh_token&refresh_token=" + authCodeOrRefreshToken;
+
+    try
+    {
+        auto resp = restClient->postResponse(path, headers, body, "application/x-www-form-urlencoded");
+        return parseAuthTokens(resp);
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << e.what() << "\n";
+    }
+    return {};
 }
 
 //'https://api.schwabapi.com/marketdata/v1/quotes?symbols=SPY%2C%20AAPL&fields=quote%2Creference&indicative=true'

@@ -58,6 +58,8 @@ class SchwabClient : public ISchwabClient
 public:
     SchwabClient(SchwabAuth auths, std::shared_ptr<IRestClient> restClient);
 
+    AuthTokens createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken);
+    
     std::map<std::string, QuoteEquityResponse> getEquityQuotes(std::set<std::string> symbols);
 
     OptionChain getOptionChain(std::string symbol, unsigned strikesCount);
