@@ -4,6 +4,7 @@
 #include "IRestClient.h"
 #include "SchwabAccountDataTypes.h"
 #include "SchwabMarketDataTypes.h"
+#include "SchwabConfigs.h"
 
 using namespace restclient;
 using namespace schwabMarketData;
@@ -56,7 +57,7 @@ class ISchwabClient
 class SchwabClient : public ISchwabClient
 {
 public:
-    SchwabClient(SchwabAuth auths, std::shared_ptr<IRestClient> restClient);
+    SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClient> restClient);
 
     AuthTokens createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken);
     
@@ -74,5 +75,6 @@ public:
 private:
     httplib::Headers headers() const;
     SchwabAuth auths;
+    std::shared_ptr<ISchwabConfigs> config;
     std::shared_ptr<IRestClient> restClient;
 };

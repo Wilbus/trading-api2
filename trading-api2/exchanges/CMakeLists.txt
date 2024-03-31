@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME} SHARED
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/alpaca/include
     ${CMAKE_CURRENT_LIST_DIR}/schwab/include
+    ${CMAKE_CURRENT_LIST_DIR}/schwab/mocks
     ${CMAKE_CURRENT_LIST_DIR}/tradier/include
 )
 

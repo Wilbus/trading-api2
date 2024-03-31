@@ -1,4 +1,5 @@
 #include "RestClientMock.h"
+#include "SchwabConfigsMock.h"
 #include "SchwabClient.h"
 #include "schwabtestvalues.h"
 #include "schwabOptionsTestValues.h"
@@ -16,28 +17,45 @@ class SchwabClientTest : public ::testing::Test
 public:
     SchwabClientTest()
     {
+        configMock = std::make_shared<SchwabConfigsMock>();
         restClientMock = std::make_shared<RestClientMock>();
-        client = std::make_shared<SchwabClient>(createSchwabAuthStub(), restClientMock);
+        client = std::make_shared<SchwabClient>(configMock, restClientMock);
     }
 
-    SchwabAuth createSchwabAuthStub()
+    void SetUp() override
     {
-        SchwabAuth auths;
-        auths.appkey = "appkey123";
-        auths.appsecret = "appsecret123";
-        auths.token = "authtoken123";
-        auths.callbackUrl = "https://127.0.0.1:8080";
-        return auths;
+        stubAuthConfig.app_key = "app_key123";
+        stubAuthConfig.app_secret = "app_secret123";
+        stubAuthConfig.redirect_uri = "https://127.0.0.1";
+
+        authCode.code = "authcode1234";
+        authCode.granted_at_time = 1711778400000;
+        refreshToken.token = "refresh1234";
+        refreshToken.granted_at_time = 2711778400000;
+        refreshToken.expires_at_time = 3711778400000;
+        accessToken.token = "access1234";
+        accessToken.granted_at_time = 4711778400000;
+        accessToken.expires_at_time = 5711778400000;
+
+        stubAuthConfig.authorization_code = authCode;
+        stubAuthConfig.refresh_token = refreshToken;
+        stubAuthConfig.access_token = accessToken;
     }
 
     httplib::Headers expectedHeaders()
     {
-        return {{"Accept", "application/json"}, {"Authorization", "Bearer IO.authtoken123"}};
+        return {{"Accept", "application/json"}, {"Authorization", "Bearer IO.authcode1234"}};
     }
 
 protected:
+    std::shared_ptr<SchwabConfigsMock> configMock;
     std::shared_ptr<RestClientMock> restClientMock;
     std::shared_ptr<SchwabClient> client;
+
+    AuthConfig stubAuthConfig;
+    AuthorizationCode authCode;
+    Token refreshToken;
+    Token accessToken;
 };
 
 TEST_F(SchwabClientTest, getQuotesCaughtException)
@@ -45,6 +63,7 @@ TEST_F(SchwabClientTest, getQuotesCaughtException)
     std::set<std::string> symbols = {"SPY", "AAPL"};
     std::string path = R"(/quotes?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
 
+    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
     EXPECT_CALL(*restClientMock.get(), getResponse(path, expectedHeaders())).WillOnce(Throw(std::runtime_error("")));
     auto quotesmap = client->getEquityQuotes(symbols);
     EXPECT_EQ(quotesmap.size(), 0);
@@ -55,6 +74,7 @@ TEST_F(SchwabClientTest, getQuotes)
     std::set<std::string> symbols = {"SPY", "AAPL"};
     std::string path = R"(/quotes?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
 
+    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
     EXPECT_CALL(*restClientMock.get(), getResponse(path, expectedHeaders())).WillOnce(Return(multiEquityQuotesExample));
     auto quotesmap = client->getEquityQuotes(symbols);
 }
@@ -62,6 +82,7 @@ TEST_F(SchwabClientTest, getQuotes)
 TEST_F(SchwabClientTest, getOptionExpirationsCaughtException)
 {
     std::string expectedPath = "?symbol=AAPL";
+    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Throw(std::runtime_error("")));
     auto expirations = client->getOptionExpirations("AAPL");
@@ -71,6 +92,7 @@ TEST_F(SchwabClientTest, getOptionExpirationsCaughtException)
 TEST_F(SchwabClientTest, getOptionExpirations)
 {
     std::string expectedPath = "?symbol=AAPL";
+    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(expirationListExample));
     auto expirations = client->getOptionExpirations("AAPL");
@@ -83,6 +105,7 @@ TEST_F(SchwabClientTest, getPriceHistoryCaughtException)
     std::string expectedPath = "/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
                                "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
 
+    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Throw(std::runtime_error("")));
     auto priceHistory = client->getPriceHistory(
@@ -96,6 +119,7 @@ TEST_F(SchwabClientTest, getPriceHistoryNoEndDate)
     std::string expectedPath = "/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
                                "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
 
+    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(mockGetPriceHistoryResp));
     auto priceHistory = client->getPriceHistory(
@@ -108,6 +132,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDates)
     std::string expectedPath = "/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
                                "1710914400000&endDate=1711778400000&needExtendedHoursData=true&needPreviousClose=true";
 
+    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(mockGetPriceHistoryResp));
     auto priceHistory = client->getPriceHistory(
@@ -120,6 +145,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDatesMinutes)
     std::string expectedPath = "/pricehistory?symbol=AAPL&periodType=day&period=10&frequencyType=minute&frequency=30&startDate="
                                "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
 
+    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(mockGetPriceHistoryResp));
     auto priceHistory = client->getPriceHistory(
@@ -130,6 +156,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDatesMinutes)
 TEST_F(SchwabClientTest, getOptionChainCaughtException)
 {
     std::string expectedPath = "/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
+    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Throw(std::runtime_error("")));
     auto optionChain = client->getOptionChain("AAPL", 5);
@@ -140,6 +167,7 @@ TEST_F(SchwabClientTest, getOptionChainCaughtException)
 TEST_F(SchwabClientTest, getOptionChain)
 {
     std::string expectedPath = "/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
+    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(schwabOptionsExample_ALL_5Strikes));
     auto optionChain = client->getOptionChain("AAPL", 5);
@@ -149,20 +177,23 @@ TEST_F(SchwabClientTest, getOptionChain)
 
 TEST_F(SchwabClientTest, createAccessToken)
 {
-    std::string authorization_code = "authcode123";
     std::string expectedPath = "/oauth/token";
     std::string content_type = "application/x-www-form-urlencoded";
-    std::string authHeader = "Basic appsecret123";
+    std::string authHeader = "Basic " + stubAuthConfig.app_secret;
     httplib::Headers expectedHeaders =
     {
         {"Authorization: ", authHeader},
         {"Content-Type: ", content_type}
     };
-    std::string expectedBody = "grant_type=authorization_code&code=" + authorization_code
-        + "&redirect_uri=https://127.0.0.1:8080";
+    std::string expectedBody = "grant_type=authorization_code&code=" + authCode.code
+        + "&redirect_uri=https://127.0.0.1";
+
+    EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));
+    EXPECT_CALL(*configMock.get(), getRedirectUri()).WillOnce(Return(stubAuthConfig.redirect_uri));
     EXPECT_CALL(*restClientMock.get(), postResponse(expectedPath, expectedHeaders,
         expectedBody, content_type)).WillOnce(Return(createAccessTokenRespExample));
-    auto tokens = client->createAccessToken(authorization_code, false);
+
+    auto tokens = client->createAccessToken(authCode.code, false);
     EXPECT_EQ(tokens.refresh_token, "REFRESH_TOKEN_HERE");
 }
 
@@ -171,15 +202,18 @@ TEST_F(SchwabClientTest, refreshAccessTokenRequest)
     std::string refreshToken = "refreshtoken123";
     std::string expectedPath = "/oauth/token";
     std::string content_type = "application/x-www-form-urlencoded";
-    std::string authHeader = "Basic appsecret123";
+    std::string authHeader = "Basic " + stubAuthConfig.app_secret;
     httplib::Headers expectedHeaders =
     {
         {"Authorization: ", authHeader},
         {"Content-Type: ", content_type}
     };
     std::string expectedBody = "grant_type=refresh_token&refresh_token=" + refreshToken;
+
+    EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));
     EXPECT_CALL(*restClientMock.get(), postResponse(expectedPath, expectedHeaders,
         expectedBody, content_type)).WillOnce(Return(createAccessTokenRespExample));
+
     auto tokens = client->createAccessToken(refreshToken, true);
     EXPECT_EQ(tokens.refresh_token, "REFRESH_TOKEN_HERE");
 }

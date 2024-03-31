@@ -7,10 +7,27 @@ using namespace schwabAccountData;
 class ISchwabConfigs
 {
 public:
+    virtual AuthConfig getAuthConfig() const = 0;
+    virtual std::string getFolderPath() const = 0;
 
+    virtual std::string getAppKey() const = 0;
+    virtual std::string getAppSecret() const = 0;
+    virtual std::string getRedirectUri() const = 0;
+
+    virtual AuthorizationCode getAuthorizationCode() const = 0;
+    virtual bool saveAuthorizationCode(const AuthorizationCode code) = 0;
+
+    virtual Token getRefreshToken() const = 0;
+    virtual bool saveRefreshToken(const Token refreshToken) = 0;
+
+    virtual Token getAccessToken() const = 0;
+    virtual bool saveAccessToken(const Token accessToken) = 0;
+
+    virtual void parseAuthConfig() = 0;
+    virtual void saveAuthConfig() = 0;
 };
 
-class SchwabConfigs
+class SchwabConfigs : public ISchwabConfigs
 {
 public:
     SchwabConfigs(std::string folderPath);
@@ -33,24 +50,24 @@ public:
         return *this;
     }
 #endif
-    AuthConfig getAuthConfig() const;
-    std::string getFolderPath() const;
+    virtual AuthConfig getAuthConfig() const override;
+    virtual std::string getFolderPath() const override;
 
-    std::string getAppKey() const;
-    std::string getAppSecret() const;
-    std::string getRedirectUri() const;
+    virtual std::string getAppKey() const override;
+    virtual std::string getAppSecret() const override;
+    virtual std::string getRedirectUri() const override;
 
-    AuthorizationCode getAuthorizationCode() const;
-    bool saveAuthorizationCode(const AuthorizationCode code);
+    virtual AuthorizationCode getAuthorizationCode() const override;
+    virtual bool saveAuthorizationCode(const AuthorizationCode code) override;
 
-    Token getRefreshToken() const;
-    bool saveRefreshToken(const Token refreshToken);
+    virtual Token getRefreshToken() const override ;
+    virtual bool saveRefreshToken(const Token refreshToken) override;
 
-    Token getAccessToken() const;
-    bool saveAccessToken(const Token accessToken);
+    virtual Token getAccessToken() const override;
+    virtual bool saveAccessToken(const Token accessToken) override;
 
-    void parseAuthConfig();
-    void saveAuthConfig();
+    virtual void parseAuthConfig() override;
+    virtual void saveAuthConfig() override;
 
 private:
     std::string folderPath;

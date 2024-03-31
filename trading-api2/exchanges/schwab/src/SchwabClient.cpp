@@ -5,16 +5,17 @@
 #include "UriEncodeDecode.h"
 #include "timefuncs.h"
 
-SchwabClient::SchwabClient(SchwabAuth auths, std::shared_ptr<IRestClient> restClient)
-    : auths(auths)
+SchwabClient::SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClient> restClient)
+    : config(config)
     , restClient(restClient)
 {
+
 }
 
 httplib::Headers SchwabClient::headers() const
 {
     //clang-format off
-    std::string bearer = "Bearer IO." + auths.token;
+    std::string bearer = "Bearer IO." + config->getAuthorizationCode().code;
     return {{"Accept", "application/json"}, {"Authorization", bearer.c_str()}};
     //clang-format on
 }
@@ -30,7 +31,7 @@ AuthTokens SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, b
     std::string path = "/oauth/token";
     std::string content_type = "application/x-www-form-urlencoded";
 
-    std::string authorization_code_header = "Basic " + auths.appsecret;
+    std::string authorization_code_header = "Basic " + config->getAppSecret();
     httplib::Headers headers =
     {
         {"Authorization: ", authorization_code_header},
@@ -39,7 +40,7 @@ AuthTokens SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, b
 
     std::string body;
     if(!isRefreshToken)
-        body = "grant_type=authorization_code&code=" + authCodeOrRefreshToken + "&redirect_uri=" + auths.callbackUrl;
+        body = "grant_type=authorization_code&code=" + authCodeOrRefreshToken + "&redirect_uri=" + config->getRedirectUri();
     else
         body = "grant_type=refresh_token&refresh_token=" + authCodeOrRefreshToken;
 
