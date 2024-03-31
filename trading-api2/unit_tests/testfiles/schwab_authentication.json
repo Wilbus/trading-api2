@@ -1,22 +1,19 @@
 {
-	"app_key" : "app_key123",
-	"app_secret" : "app_secret123",
-	"redirect_uri" : "https://127.0.0.1",
-	"authorization_code" : 
-	{
-		"code" : "authcode1234",
-		"granted_at_time" : 1711778400000
-	},
-	"refresh_token" :
-	{
-		"token" : "refresh1234",
-		"granted_at_time" : 2711778400000,
-		"expires_at_time" : 3711778400000
-	},
-	"access_token" :
-	{
-		"token" : "access1234",
-		"granted_at_time" : 4711778400000,
-		"expires_at_time" : 5711778400000
-	}
+    "app_key": "app_key123",
+    "app_secret": "app_secret123",
+    "redirect_uri": "https://127.0.0.1",
+    "authorization_code": {
+        "code": "authcode1234",
+        "granted_at_time": 1711778400000
+    },
+    "refresh_token": {
+        "token": "refresh1234",
+        "granted_at_time": 2711778400000,
+        "expires_at_time": 3711778400000
+    },
+    "access_token": {
+        "token": "access1234",
+        "granted_at_time": 4711778400000,
+        "expires_at_time": 5711778400000
+    }
 }

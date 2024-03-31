@@ -2,12 +2,19 @@
 
 #include "json.h"
 #include "rapidjson/document.h"
-#include <rapidjson/writer.h>
+#include <rapidjson/prettywriter.h>
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
 #include <iostream>
 #include <cstdio>
+
+using rapidjson::Document;
+using rapidjson::Value;
+using rapidjson::StringRef;
+using rapidjson::kObjectType;
+using rapidjson::FileWriteStream;
+using rapidjson::PrettyWriter;
 
 SchwabConfigs::SchwabConfigs(std::string folderPath)
     : folderPath(folderPath)
@@ -19,6 +26,10 @@ void SchwabConfigs::parseAuthConfig()
 {
     std::string authConfigPath = folderPath + "schwab_authentication.json";
     FILE* fp = fopen(authConfigPath.c_str(), "rb");
+    if(fp == nullptr)
+    {
+        throw std::runtime_error("error opening schwab_authentication.json");
+    }
     char readBuffer[65536];
     rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
     rapidjson::Document d;
@@ -76,15 +87,39 @@ void SchwabConfigs::parseAuthConfig()
 
 void SchwabConfigs::saveAuthConfig()
 {
-    rapidjson::Document d;
+    Document d;
     d.SetObject();
-    d.AddMember("app_key", cachedAuthConfig.app_key[0], d.GetAllocator());
-    
+    d.AddMember("app_key", StringRef(cachedAuthConfig.app_key.c_str()), d.GetAllocator());
+    d.AddMember("app_secret", StringRef(cachedAuthConfig.app_secret.c_str()), d.GetAllocator());
+    d.AddMember("redirect_uri", StringRef(cachedAuthConfig.redirect_uri.c_str()), d.GetAllocator());
+
+    Value authCodeVal(kObjectType);
+    authCodeVal.AddMember("code", StringRef(cachedAuthConfig.authorization_code.code.c_str()), d.GetAllocator());
+    authCodeVal.AddMember("granted_at_time", cachedAuthConfig.authorization_code.granted_at_time, d.GetAllocator());
+
+    Value refreshTokenVal(kObjectType);
+    refreshTokenVal.AddMember("token", StringRef(cachedAuthConfig.refresh_token.token.c_str()), d.GetAllocator());
+    refreshTokenVal.AddMember("granted_at_time", cachedAuthConfig.refresh_token.granted_at_time, d.GetAllocator());
+    refreshTokenVal.AddMember("expires_at_time", cachedAuthConfig.refresh_token.expires_at_time, d.GetAllocator());
+
+    Value accessTokenVal(kObjectType);
+    accessTokenVal.AddMember("token", StringRef(cachedAuthConfig.access_token.token.c_str()), d.GetAllocator());
+    accessTokenVal.AddMember("granted_at_time", cachedAuthConfig.access_token.granted_at_time, d.GetAllocator());
+    accessTokenVal.AddMember("expires_at_time", cachedAuthConfig.access_token.expires_at_time, d.GetAllocator());
+
+    d.AddMember("authorization_code", authCodeVal, d.GetAllocator());
+    d.AddMember("refresh_token", refreshTokenVal, d.GetAllocator());
+    d.AddMember("access_token", accessTokenVal, d.GetAllocator());
+
     std::string authConfigPath = folderPath + "schwab_authentication.json";
     FILE* fp = fopen(authConfigPath.c_str(), "wb");
+    if(fp == nullptr)
+    {
+        throw std::runtime_error("error opening schwab_authentication.json");
+    }
     char writeBuffer[65536];
-    rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
-    rapidjson::Writer<rapidjson::FileWriteStream> writer(os);
+    FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
+    PrettyWriter<FileWriteStream> writer(os);
     d.Accept(writer);
 
     fclose(fp);
@@ -122,6 +157,7 @@ AuthorizationCode SchwabConfigs::getAuthorizationCode() const
 bool SchwabConfigs::saveAuthorizationCode(const AuthorizationCode code)
 {
     cachedAuthConfig.authorization_code = code;
+    saveAuthConfig();
 }
 
 Token SchwabConfigs::getRefreshToken() const
@@ -131,6 +167,7 @@ Token SchwabConfigs::getRefreshToken() const
 bool SchwabConfigs::saveRefreshToken(const Token refreshToken)
 {
     cachedAuthConfig.refresh_token = refreshToken;
+    saveAuthConfig();
 }
 
 Token SchwabConfigs::getAccessToken() const
@@ -140,4 +177,5 @@ Token SchwabConfigs::getAccessToken() const
 bool SchwabConfigs::saveAccessToken(const Token accessToken)
 {
     cachedAuthConfig.access_token = accessToken;
+    saveAuthConfig();
 }
