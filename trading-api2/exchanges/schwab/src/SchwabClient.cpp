@@ -22,7 +22,7 @@ httplib::Headers SchwabClient::headers() const
 std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::set<std::string> symbols)
 {
     // TODO: add ways to handle other fields such as fundamental, extended
-    std::string path = "?symbols=";
+    std::string path = "/quotes?symbols=";
     std::string quotelist;
     for (const auto& symbol : symbols)
     {
@@ -53,7 +53,7 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
 OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCount)
 {
     std::string path =
-        "?symbol=" + symbol + "&contractType=ALL&strikeCount=" + std::to_string(strikesCount) + "&strategy=SINGLE";
+        "/chains?symbol=" + symbol + "&contractType=ALL&strikeCount=" + std::to_string(strikesCount) + "&strategy=SINGLE";
     try
     {
         auto resp = restClient->getResponse(path, headers());
@@ -96,7 +96,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
             unixEndDate = static_cast<int64_t>(timefuncs::stringTimeToUnix(endDate, "%Y-%m-%d")) * 1000;
         }
 
-        std::string path = "?symbol=" + symbol + "&periodType=" + priceHistoryPeriodMap.at(periodType) +
+        std::string path = "/pricehistory?symbol=" + symbol + "&periodType=" + priceHistoryPeriodMap.at(periodType) +
                            "&period=" + std::to_string(periodAmount) +
                            "&frequencyType=" + priceHistoryTimeFreqMap.at(timeFreq) +
                            "&frequency=" + std::to_string(freqAmount) + "&startDate=" + std::to_string(unixStartDate);

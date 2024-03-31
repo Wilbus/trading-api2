@@ -39,7 +39,7 @@ protected:
 TEST_F(SchwabClientTest, getQuotesCaughtException)
 {
     std::set<std::string> symbols = {"SPY", "AAPL"};
-    std::string path = R"(?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
+    std::string path = R"(/quotes?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
 
     EXPECT_CALL(*restClientMock.get(), getResponse(path, expectedHeaders())).WillOnce(Throw(std::runtime_error("")));
     auto quotesmap = client->getEquityQuotes(symbols);
@@ -49,7 +49,7 @@ TEST_F(SchwabClientTest, getQuotesCaughtException)
 TEST_F(SchwabClientTest, getQuotes)
 {
     std::set<std::string> symbols = {"SPY", "AAPL"};
-    std::string path = R"(?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
+    std::string path = R"(/quotes?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
 
     EXPECT_CALL(*restClientMock.get(), getResponse(path, expectedHeaders())).WillOnce(Return(multiEquityQuotesExample));
     auto quotesmap = client->getEquityQuotes(symbols);
@@ -76,7 +76,7 @@ TEST_F(SchwabClientTest, getOptionExpirations)
 TEST_F(SchwabClientTest, getPriceHistoryCaughtException)
 {
     /*'https://api.schwabapi.com/marketdata/v1/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate=1710954774000&needExtendedHoursData=true&needPreviousClose=true'*/
-    std::string expectedPath = "?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
+    std::string expectedPath = "/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
                                "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
 
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
@@ -89,7 +89,7 @@ TEST_F(SchwabClientTest, getPriceHistoryCaughtException)
 TEST_F(SchwabClientTest, getPriceHistoryNoEndDate)
 {
     /*'https://api.schwabapi.com/marketdata/v1/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate=1710954774000&needExtendedHoursData=true&needPreviousClose=true'*/
-    std::string expectedPath = "?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
+    std::string expectedPath = "/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
                                "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
 
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
@@ -101,7 +101,7 @@ TEST_F(SchwabClientTest, getPriceHistoryNoEndDate)
 
 TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDates)
 {
-    std::string expectedPath = "?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
+    std::string expectedPath = "/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
                                "1710914400000&endDate=1711778400000&needExtendedHoursData=true&needPreviousClose=true";
 
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
@@ -113,7 +113,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDates)
 
 TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDatesMinutes)
 {
-    std::string expectedPath = "?symbol=AAPL&periodType=day&period=10&frequencyType=minute&frequency=30&startDate="
+    std::string expectedPath = "/pricehistory?symbol=AAPL&periodType=day&period=10&frequencyType=minute&frequency=30&startDate="
                                "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
 
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
@@ -125,7 +125,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDatesMinutes)
 
 TEST_F(SchwabClientTest, getOptionChainCaughtException)
 {
-    std::string expectedPath = "?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
+    std::string expectedPath = "/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Throw(std::runtime_error("")));
     auto optionChain = client->getOptionChain("AAPL", 5);
@@ -135,7 +135,7 @@ TEST_F(SchwabClientTest, getOptionChainCaughtException)
 
 TEST_F(SchwabClientTest, getOptionChain)
 {
-    std::string expectedPath = "?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
+    std::string expectedPath = "/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(schwabOptionsExample_ALL_5Strikes));
     auto optionChain = client->getOptionChain("AAPL", 5);
