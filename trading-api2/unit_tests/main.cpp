@@ -1,5 +1,5 @@
-//#include "CandleSamplerTest.h"
-//#include "TradierDataTest.h"
+#include "CandleSamplerTest.h"
+#include "TradierDataTest.h"
 //#include "TwsLiveMarketServiceTest.h"
 #include "SchwabConfigsTest.h"
 #include "SchwabClientTest.h"

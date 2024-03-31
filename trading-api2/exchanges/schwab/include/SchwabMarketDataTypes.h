@@ -11,9 +11,9 @@ namespace schwabMarketData {
 
 //TODO: initialize all variables to MAX of value type
 
-const double MAXDOUBLE = std::numeric_limits<double>::max();
-const unsigned MAXUNSIGNED = std::numeric_limits<unsigned>::max();
-const unsigned long MAXULONG = std::numeric_limits<unsigned long>::max();
+static const double MAXDOUBLE = std::numeric_limits<double>::max();
+static const unsigned MAXUNSIGNED = std::numeric_limits<unsigned>::max();
+static const unsigned long MAXULONG = std::numeric_limits<unsigned long>::max();
 
 enum AssetMainType : uint8_t
 {
@@ -28,7 +28,7 @@ enum AssetMainType : uint8_t
 };
 
 // clang-format off
-const std::map<std::string, AssetMainType> stringToAssetMainType = 
+static const std::map<std::string, AssetMainType> stringToAssetMainType = 
 {
     {"BOND", AssetMainType::BOND},
     {"EQUITY", AssetMainType::EQUITY},
@@ -56,7 +56,7 @@ enum AssetSubType : uint8_t
 };
 
 // clang-format off
-const std::map<std::string, AssetSubType> stringToAssetSubType = 
+static const std::map<std::string, AssetSubType> stringToAssetSubType = 
 {
     {"COE", AssetSubType::COE},
     {"PRF", AssetSubType::PRF},
@@ -343,7 +343,7 @@ enum OptionStrategy : uint8_t
 };
 
 //clang-format off
-std::map<std::string, OptionStrategy> optionStrategyMap =
+static const std::map<std::string, OptionStrategy> optionStrategyMap =
 {
     {"SINGLE", OptionStrategy::SINGLE},
     {"ANALYTICAL", OptionStrategy::ANALYTICAL},
