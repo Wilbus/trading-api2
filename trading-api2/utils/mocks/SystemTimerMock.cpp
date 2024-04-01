@@ -10,6 +10,11 @@ system_clock::time_point now()
     return utils::mocks::SystemTimerMock::inst().now();
 }
 
+time_t nowMs()
+{
+    return utils::mocks::SystemTimerMock::inst().nowMs();
+}
+
 namespace mocks
 {
 

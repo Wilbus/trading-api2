@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <functional>
 
 namespace schwabAccountData {
 
@@ -34,7 +35,18 @@ struct Token
     std::string token;
     uint64_t granted_at_time;
     uint64_t expires_at_time;
+
+    bool operator==(const Token& other)
+    {
+        return other.token == token && other.granted_at_time == granted_at_time && other.expires_at_time == expires_at_time;
+    }
 };
+
+//needed for SchwabClientTest
+static bool operator==(const Token& lhs, const Token& rhs)
+{
+    return lhs.token == rhs.token && lhs.granted_at_time == rhs.granted_at_time && lhs.expires_at_time == rhs.expires_at_time;
+}
 
 struct AuthConfig
 {

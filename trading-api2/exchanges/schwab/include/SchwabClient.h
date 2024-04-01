@@ -59,7 +59,7 @@ class SchwabClient : public ISchwabClient
 public:
     SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClient> restClient);
 
-    AuthTokens createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken);
+    void createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken);
     
     std::map<std::string, QuoteEquityResponse> getEquityQuotes(std::set<std::string> symbols);
 
@@ -72,7 +72,7 @@ public:
         PriceHistoryTimeFreq timeFreq, unsigned freqAmount, std::string startDate, std::string endDate,
         bool extendedHours = false, bool needPreviousClose = false);
 
-    void timertest();
+    bool checkAccessToken();
 
 private:
     httplib::Headers headers() const;

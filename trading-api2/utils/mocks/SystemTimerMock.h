@@ -14,6 +14,7 @@ public:
     SystemTimerMock();
     ~SystemTimerMock();
     MOCK_METHOD0(now, system_clock::time_point());
+    MOCK_METHOD0(nowMs, time_t());
 
     static SystemTimerMock& inst();
 };

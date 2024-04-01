@@ -157,7 +157,16 @@ AuthorizationCode SchwabConfigs::getAuthorizationCode() const
 bool SchwabConfigs::saveAuthorizationCode(const AuthorizationCode code)
 {
     cachedAuthConfig.authorization_code = code;
-    saveAuthConfig();
+    try
+    {
+        saveAuthConfig();
+        return true;
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << e.what() << '\n';
+        return false;
+    }
 }
 
 Token SchwabConfigs::getRefreshToken() const
@@ -167,7 +176,16 @@ Token SchwabConfigs::getRefreshToken() const
 bool SchwabConfigs::saveRefreshToken(const Token refreshToken)
 {
     cachedAuthConfig.refresh_token = refreshToken;
-    saveAuthConfig();
+    try
+    {
+        saveAuthConfig();
+        return true;
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << e.what() << '\n';
+        return false;
+    }
 }
 
 Token SchwabConfigs::getAccessToken() const
@@ -177,5 +195,14 @@ Token SchwabConfigs::getAccessToken() const
 bool SchwabConfigs::saveAccessToken(const Token accessToken)
 {
     cachedAuthConfig.access_token = accessToken;
-    saveAuthConfig();
+    try
+    {
+        saveAuthConfig();
+        return true;
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << e.what() << '\n';
+        return false;
+    }
 }

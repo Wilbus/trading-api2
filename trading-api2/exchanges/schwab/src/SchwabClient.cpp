@@ -6,6 +6,8 @@
 #include "timefuncs.h"
 #include "SystemTimer.h"
 
+using namespace std::chrono;
+
 SchwabClient::SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClient> restClient)
     : config(config)
     , restClient(restClient)
@@ -21,11 +23,11 @@ httplib::Headers SchwabClient::headers() const
     //clang-format on
 }
 
-void SchwabClient::timertest()
+bool SchwabClient::checkAccessToken()
 {
-    auto test = utils::now();
-    std::cout << "timertest\n";
-    //(void)test;
+    auto nowMs = utils::nowMs();
+    auto accessToken = config->getAccessToken();
+    return nowMs < accessToken.expires_at_time;
 }
 
 /*
@@ -34,7 +36,7 @@ curl -X POST \https://api.schwabapi.com/v1/oauth/token
 \-H 'Content-Type: application/x-www-form-urlencoded' 
 \-d 'grant_type=authorization_code&code={AUTHORIZATION_CODE_VALUE}&redirect_uri=https://example_url.com/callback_example'
 */
-AuthTokens SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken)
+void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken)
 {
     std::string path = "/oauth/token";
     std::string content_type = "application/x-www-form-urlencoded";
@@ -55,13 +57,21 @@ AuthTokens SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, b
     try
     {
         auto resp = restClient->postResponse(path, headers, body, "application/x-www-form-urlencoded");
-        return parseAuthTokens(resp);
+        auto authTokens = parseAuthTokens(resp);
+
+        if(!isRefreshToken)
+        {
+            Token accessToken;
+            accessToken.token = authTokens.access_token;
+            accessToken.granted_at_time = utils::nowMs();
+            accessToken.expires_at_time = accessToken.granted_at_time + authTokens.expires_in;
+            config->saveAccessToken(accessToken);
+        }
     }
     catch(const std::exception& e)
     {
         std::cout << e.what() << "\n";
     }
-    return {};
 }
 
 //'https://api.schwabapi.com/marketdata/v1/quotes?symbols=SPY%2C%20AAPL&fields=quote%2Creference&indicative=true'

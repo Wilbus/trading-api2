@@ -190,13 +190,20 @@ TEST_F(SchwabClientTest, createAccessToken)
     std::string expectedBody = "grant_type=authorization_code&code=" + authCode.code
         + "&redirect_uri=https://127.0.0.1";
 
+    Token expectedSaveAccessToken;
+    expectedSaveAccessToken.token = "ACCESS_TOKEN_HERE";
+    expectedSaveAccessToken.granted_at_time = 1711937315000;
+    expectedSaveAccessToken.expires_at_time = 1711937315000 + 1800;
+
     EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));
     EXPECT_CALL(*configMock.get(), getRedirectUri()).WillOnce(Return(stubAuthConfig.redirect_uri));
     EXPECT_CALL(*restClientMock.get(), postResponse(expectedPath, expectedHeaders,
         expectedBody, content_type)).WillOnce(Return(createAccessTokenRespExample));
+    EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs()).WillOnce(Return(1711937315000));
 
-    auto tokens = client->createAccessToken(authCode.code, false);
-    EXPECT_EQ(tokens.refresh_token, "REFRESH_TOKEN_HERE");
+    EXPECT_CALL(*configMock.get(), saveAccessToken(expectedSaveAccessToken));
+
+    client->createAccessToken(authCode.code, false);
 }
 
 TEST_F(SchwabClientTest, refreshAccessTokenRequest)
@@ -216,13 +223,16 @@ TEST_F(SchwabClientTest, refreshAccessTokenRequest)
     EXPECT_CALL(*restClientMock.get(), postResponse(expectedPath, expectedHeaders,
         expectedBody, content_type)).WillOnce(Return(createAccessTokenRespExample));
 
-    auto tokens = client->createAccessToken(refreshToken, true);
-    EXPECT_EQ(tokens.refresh_token, "REFRESH_TOKEN_HERE");
+    client->createAccessToken(refreshToken, true);
 }
 
-TEST_F(SchwabClientTest, timertest)
+TEST_F(SchwabClientTest, checkAccessTokenTest)
 {
-    using namespace std::chrono;
-    EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), now()).WillOnce(Return(system_clock::time_point{}));
-    client->timertest();
+    EXPECT_CALL(*configMock.get(), getAccessToken()).WillRepeatedly(Return(stubAuthConfig.access_token));
+
+    EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs()).WillOnce(Return(stubAuthConfig.access_token.expires_at_time + 1));
+    EXPECT_FALSE(client->checkAccessToken());
+
+    EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs()).WillOnce(Return(stubAuthConfig.access_token.expires_at_time - 1));
+    EXPECT_TRUE(client->checkAccessToken());
 }
