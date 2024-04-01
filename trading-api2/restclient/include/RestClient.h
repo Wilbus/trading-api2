@@ -8,8 +8,9 @@ namespace restclient {
 class RestClient : public IRestClient
 {
 public:
-    RestClient(std::string baseEnd);
+    RestClient();
 
+    virtual void setBaseEndpoint(std::string endpoint) override;
     virtual std::string getResponse(std::string path, httplib::Headers headers) const override;
     virtual std::string postResponse(std::string path, httplib::Headers params) const override;
     virtual std::string postResponse(

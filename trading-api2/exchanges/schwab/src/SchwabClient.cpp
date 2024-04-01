@@ -22,6 +22,21 @@ httplib::Headers SchwabClient::headers() const
     //clang-format on
 }
 
+void SchwabClient::setMarketDataEndpoint()
+{
+    restClient->setBaseEndpoint("https://api.schwabapi.com/marketdata/v1");
+}
+
+void SchwabClient::setAuthenticationEndpoint()
+{
+    restClient->setBaseEndpoint("https://api.schwabapi.com/v1");
+}
+
+void SchwabClient::setAccountsEndpoint()
+{
+    restClient->setBaseEndpoint("https://api.schwabapi.com/trader/v1");
+}
+
 bool SchwabClient::checkAccessToken()
 {
     auto nowMs = utils::nowMs();
@@ -53,6 +68,7 @@ void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
 
     try
     {
+        setAuthenticationEndpoint();
         auto resp = restClient->postResponse(path, headers, body, "application/x-www-form-urlencoded");
         auto authTokens = parseAuthTokens(resp);
 
@@ -91,6 +107,7 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
 
     try
     {
+        setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
         auto quotesmap = parseEquityQuotes(symbols, resp);
         return quotesmap;
@@ -109,6 +126,7 @@ OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCou
                        "&strategy=SINGLE";
     try
     {
+        setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
         return parseOptionChain(resp);
     }
@@ -124,6 +142,7 @@ std::vector<OptionExpiration> SchwabClient::getOptionExpirations(std::string sym
 {
     try
     {
+        setMarketDataEndpoint();
         std::string path = "?symbol=" + symbol;
         auto resp = restClient->getResponse(path, headers());
         return parseOptionExpirations(resp);
@@ -162,6 +181,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
         path += "&needExtendedHoursData=" + booleanString.at(extendedHours) +
                 "&needPreviousClose=" + booleanString.at(needPreviousClose);
 
+        setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
         return parsePriceHistory(resp);
     }

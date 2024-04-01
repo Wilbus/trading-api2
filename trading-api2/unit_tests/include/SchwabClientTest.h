@@ -58,6 +58,9 @@ protected:
     AuthorizationCode authCode;
     Token refreshToken;
     Token accessToken;
+
+    std::string marketEndpoint{"https://api.schwabapi.com/marketdata/v1"};
+    std::string authenticationEndpoint{"https://api.schwabapi.com/v1"};
 };
 
 TEST_F(SchwabClientTest, getQuotesCaughtException)
@@ -66,6 +69,7 @@ TEST_F(SchwabClientTest, getQuotesCaughtException)
     std::string path = R"(/quotes?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
 
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*restClientMock.get(), getResponse(path, expectedHeaders())).WillOnce(Throw(std::runtime_error("")));
     auto quotesmap = client->getEquityQuotes(symbols);
     EXPECT_EQ(quotesmap.size(), 0);
@@ -77,6 +81,7 @@ TEST_F(SchwabClientTest, getQuotes)
     std::string path = R"(/quotes?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
 
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*restClientMock.get(), getResponse(path, expectedHeaders())).WillOnce(Return(multiEquityQuotesExample));
     auto quotesmap = client->getEquityQuotes(symbols);
 }
@@ -85,6 +90,7 @@ TEST_F(SchwabClientTest, getOptionExpirationsCaughtException)
 {
     std::string expectedPath = "?symbol=AAPL";
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Throw(std::runtime_error("")));
     auto expirations = client->getOptionExpirations("AAPL");
@@ -95,6 +101,7 @@ TEST_F(SchwabClientTest, getOptionExpirations)
 {
     std::string expectedPath = "?symbol=AAPL";
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(expirationListExample));
     auto expirations = client->getOptionExpirations("AAPL");
@@ -109,6 +116,7 @@ TEST_F(SchwabClientTest, getPriceHistoryCaughtException)
         "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
 
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Throw(std::runtime_error("")));
     auto priceHistory = client->getPriceHistory(
@@ -124,6 +132,7 @@ TEST_F(SchwabClientTest, getPriceHistoryNoEndDate)
         "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
 
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(mockGetPriceHistoryResp));
     auto priceHistory = client->getPriceHistory(
@@ -138,6 +147,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDates)
         "1710914400000&endDate=1711778400000&needExtendedHoursData=true&needPreviousClose=true";
 
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(mockGetPriceHistoryResp));
     auto priceHistory = client->getPriceHistory(
@@ -152,6 +162,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDatesMinutes)
         "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
 
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(mockGetPriceHistoryResp));
     auto priceHistory = client->getPriceHistory(
@@ -163,6 +174,7 @@ TEST_F(SchwabClientTest, getOptionChainCaughtException)
 {
     std::string expectedPath = "/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Throw(std::runtime_error("")));
     auto optionChain = client->getOptionChain("AAPL", 5);
@@ -174,6 +186,7 @@ TEST_F(SchwabClientTest, getOptionChain)
 {
     std::string expectedPath = "/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*restClientMock.get(), getResponse(expectedPath, expectedHeaders()))
         .WillOnce(Return(schwabOptionsExample_ALL_5Strikes));
     auto optionChain = client->getOptionChain("AAPL", 5);
@@ -197,6 +210,7 @@ TEST_F(SchwabClientTest, createAccessToken)
 
     EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));
     EXPECT_CALL(*configMock.get(), getRedirectUri()).WillOnce(Return(stubAuthConfig.redirect_uri));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(authenticationEndpoint));
     EXPECT_CALL(*restClientMock.get(), postResponse(expectedPath, expectedHeaders, expectedBody, content_type))
         .WillOnce(Return(createAccessTokenRespExample));
     EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs()).WillOnce(Return(1711937315000));
@@ -216,6 +230,7 @@ TEST_F(SchwabClientTest, refreshAccessTokenRequest)
     std::string expectedBody = "grant_type=refresh_token&refresh_token=" + refreshToken;
 
     EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));
+    EXPECT_CALL(*restClientMock.get(), setBaseEndpoint(authenticationEndpoint));
     EXPECT_CALL(*restClientMock.get(), postResponse(expectedPath, expectedHeaders, expectedBody, content_type))
         .WillOnce(Return(createAccessTokenRespExample));
 

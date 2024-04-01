@@ -3,6 +3,7 @@ project(trading-api2-exchange)
 
 add_library(${PROJECT_NAME} SHARED
     ${CMAKE_CURRENT_LIST_DIR}/schwab/src/SchwabClient.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/schwab/src/SchwabConnection.cpp
     ${CMAKE_CURRENT_LIST_DIR}/schwab/src/SchwabConfigs.cpp
 )
 

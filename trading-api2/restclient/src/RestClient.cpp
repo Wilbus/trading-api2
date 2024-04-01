@@ -6,9 +6,13 @@
 
 namespace restclient {
 
-RestClient::RestClient(std::string baseEnd)
+RestClient::RestClient()
 {
-    baseEndpoint = baseEnd;
+}
+
+void RestClient::setBaseEndpoint(std::string endpoint)
+{
+    baseEndpoint = endpoint;
 }
 
 std::string RestClient::getResponse(std::string path, httplib::Headers headers) const

@@ -52,6 +52,19 @@ const std::map<bool, std::string> booleanString =
 
 class ISchwabClient
 {
+    virtual void createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken) = 0;
+
+    virtual std::map<std::string, QuoteEquityResponse> getEquityQuotes(std::set<std::string> symbols) = 0;
+
+    virtual OptionChain getOptionChain(std::string symbol, unsigned strikesCount) = 0;
+
+    virtual std::vector<OptionExpiration> getOptionExpirations(std::string symbol) = 0;
+
+    virtual PriceHistory getPriceHistory(std::string symbol, PriceHistoryPeriodType periodType, unsigned periodAmount,
+        PriceHistoryTimeFreq timeFreq, unsigned freqAmount, std::string startDate, std::string endDate,
+        bool extendedHours = false, bool needPreviousClose = false) = 0;
+
+    virtual bool checkAccessToken() = 0;
 };
 
 class SchwabClient : public ISchwabClient
@@ -59,23 +72,30 @@ class SchwabClient : public ISchwabClient
 public:
     SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClient> restClient);
 
-    void createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken);
+    /*
+        If isRefreshToken == true, passs the refresh token to update the current access token,
+        otherwise pass the authorization code to retrieve a new refresh token
+    */
+    virtual void createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken) override;
 
-    std::map<std::string, QuoteEquityResponse> getEquityQuotes(std::set<std::string> symbols);
+    virtual std::map<std::string, QuoteEquityResponse> getEquityQuotes(std::set<std::string> symbols) override;
 
-    OptionChain getOptionChain(std::string symbol, unsigned strikesCount);
-    std::vector<OptionExpiration> getOptionExpirations(std::string symbol);
+    virtual OptionChain getOptionChain(std::string symbol, unsigned strikesCount) override;
+    std::vector<OptionExpiration> getOptionExpirations(std::string symbol) override;
 
     /*startDate format yyyy-MM-dd
       endDate format yyyy-MM-dd */
-    PriceHistory getPriceHistory(std::string symbol, PriceHistoryPeriodType periodType, unsigned periodAmount,
+    virtual PriceHistory getPriceHistory(std::string symbol, PriceHistoryPeriodType periodType, unsigned periodAmount,
         PriceHistoryTimeFreq timeFreq, unsigned freqAmount, std::string startDate, std::string endDate,
-        bool extendedHours = false, bool needPreviousClose = false);
+        bool extendedHours = false, bool needPreviousClose = false) override;
 
-    bool checkAccessToken();
+    virtual bool checkAccessToken() override;
 
 private:
     httplib::Headers headers() const;
+    void setMarketDataEndpoint();
+    void setAuthenticationEndpoint();
+    void setAccountsEndpoint();
     SchwabAuth auths;
     std::shared_ptr<ISchwabConfigs> config;
     std::shared_ptr<IRestClient> restClient;
