@@ -1,12 +1,13 @@
 #!/bin/bash
 
 REBUILD=$1
+BUILD_TESTS=$2
 
 if [[ $REBUILD -gt 0 ]]
 then
     #./clangformatter.sh
 
-    flatc --cpp --strict-json --scoped-enums --gen-name-strings --gen-object-api --gen-compare --cpp-std c++17 --gen-mutable --force-empty -o utils/flatbuffers utils/flatbuffers/*.fbs
+    #flatc --cpp --strict-json --scoped-enums --gen-name-strings --gen-object-api --gen-compare --cpp-std c++17 --gen-mutable --force-empty -o utils/flatbuffers utils/flatbuffers/*.fbs
 
     #flatc --binary --strict-json -o schemas schemas/cbauths.fbs ../cbauths.json
     #flatc --binary --strict-json -o schemas schemas/cbauths.fbs ../cbadvauths.json
@@ -17,7 +18,7 @@ then
     #flatc --binary --strict-json -o schemas schemas/masterconfig.fbs ../masterconfig-pro.json
     rm -rf output/
     mkdir output/
-    cmake -S . -B output/
+    cmake -DBUILD_TESTS=$BUILD_TESTS -S . -B output/
     cmake --build output/ -j 6
 
     #cp -rf ./output ../trading-api-executables

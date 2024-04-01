@@ -1,0 +1,22 @@
+#pragma once
+
+#include "SystemTimer.h"
+#include <gmock/gmock.h>
+
+namespace utils
+{
+namespace mocks
+{
+
+class SystemTimerMock
+{
+public:
+    SystemTimerMock();
+    ~SystemTimerMock();
+    MOCK_METHOD0(now, system_clock::time_point());
+
+    static SystemTimerMock& inst();
+};
+
+}
+}

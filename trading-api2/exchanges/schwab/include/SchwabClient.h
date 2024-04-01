@@ -72,6 +72,8 @@ public:
         PriceHistoryTimeFreq timeFreq, unsigned freqAmount, std::string startDate, std::string endDate,
         bool extendedHours = false, bool needPreviousClose = false);
 
+    void timertest();
+
 private:
     httplib::Headers headers() const;
     SchwabAuth auths;

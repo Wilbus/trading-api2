@@ -4,6 +4,7 @@
 #include "schwabtestvalues.h"
 #include "schwabOptionsTestValues.h"
 #include "schwabtestauthvalues.h"
+#include "SystemTimerMock.h"
 
 #include <gtest/gtest.h>
 
@@ -17,6 +18,7 @@ class SchwabClientTest : public ::testing::Test
 public:
     SchwabClientTest()
     {
+        //utils::mocks::SystemTimerMock.inst();
         configMock = std::make_shared<SchwabConfigsMock>();
         restClientMock = std::make_shared<RestClientMock>();
         client = std::make_shared<SchwabClient>(configMock, restClientMock);
@@ -216,4 +218,11 @@ TEST_F(SchwabClientTest, refreshAccessTokenRequest)
 
     auto tokens = client->createAccessToken(refreshToken, true);
     EXPECT_EQ(tokens.refresh_token, "REFRESH_TOKEN_HERE");
+}
+
+TEST_F(SchwabClientTest, timertest)
+{
+    using namespace std::chrono;
+    EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), now()).WillOnce(Return(system_clock::time_point{}));
+    client->timertest();
 }

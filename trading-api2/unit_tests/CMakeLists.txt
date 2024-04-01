@@ -5,13 +5,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 add_executable(${PROJECT_NAME})
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wfatal-errors -DLOG_FORMAT_VERIFICATION)
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  # Specify the commit you depend on and update it regularly.
+  URL https://github.com/google/googletest/archive/eb80f759d595874a5e905a3342bd8e2af4c0a12d.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+#target_link_libraries(${PROJECT_NAME} gmock)
 target_link_libraries(${PROJECT_NAME} PUBLIC
     trading-api2-exchange
+    trading-api2-exchange-mocks
     trading-api2-restclient
+    trading-api2-restclient-mocks
     trading-api2-streaming
-    trading-api2-service
+    trading-api2-streaming-mocks
+    trading-api2-utils
+    trading-api2-utils-mocks
     gtest_main
+    gmock
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

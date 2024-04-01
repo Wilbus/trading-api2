@@ -4,6 +4,7 @@
 #include "SchwabAccountDataParser.h"
 #include "UriEncodeDecode.h"
 #include "timefuncs.h"
+#include "SystemTimer.h"
 
 SchwabClient::SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClient> restClient)
     : config(config)
@@ -18,6 +19,13 @@ httplib::Headers SchwabClient::headers() const
     std::string bearer = "Bearer IO." + config->getAuthorizationCode().code;
     return {{"Accept", "application/json"}, {"Authorization", bearer.c_str()}};
     //clang-format on
+}
+
+void SchwabClient::timertest()
+{
+    auto test = utils::now();
+    std::cout << "timertest\n";
+    //(void)test;
 }
 
 /*
