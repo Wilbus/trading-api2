@@ -1,9 +1,10 @@
 #include "SystemTimerMock.h"
+
 #include "SystemTimer.h"
+
 #include <memory>
 
-namespace utils
-{
+namespace utils {
 
 system_clock::time_point now()
 {
@@ -15,17 +16,14 @@ time_t nowMs()
     return utils::mocks::SystemTimerMock::inst().nowMs();
 }
 
-namespace mocks
-{
+namespace mocks {
 
 SystemTimerMock::SystemTimerMock()
 {
-
 }
 
 SystemTimerMock::~SystemTimerMock()
 {
-
 }
 
 SystemTimerMock& SystemTimerMock::inst()
@@ -34,5 +32,5 @@ SystemTimerMock& SystemTimerMock::inst()
     return *(mockPtr).get();
 }
 
-}
-}
+} // namespace mocks
+} // namespace utils

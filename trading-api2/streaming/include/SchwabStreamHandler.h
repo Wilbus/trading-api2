@@ -1,6 +1,9 @@
 #pragma once
 
+#include "DataQueue.h"
+
 #include <uWS/uWS.h>
+
 #include <functional>
 #include <map>
 #include <memory>
@@ -9,10 +12,8 @@
 #include <string>
 #include <utility>
 #include <variant>
-#include "DataQueue.h"
 
-namespace streamer
-{
+namespace streamer {
 
 using utils::DataQueue;
 
@@ -60,4 +61,4 @@ private:
     uint64_t msgcount{0};
 };
 
-}
+} // namespace streamer

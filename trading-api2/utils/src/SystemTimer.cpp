@@ -1,7 +1,6 @@
 #include "SystemTimer.h"
 
-namespace utils
-{
+namespace utils {
 system_clock::time_point now()
 {
     return std::chrono::system_clock::now();
@@ -15,4 +14,4 @@ time_t nowMs()
     return epoch.count();
 }
 
-}
+} // namespace utils

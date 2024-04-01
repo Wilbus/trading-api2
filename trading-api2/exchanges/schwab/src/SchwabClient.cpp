@@ -1,10 +1,10 @@
 #include "SchwabClient.h"
 
-#include "SchwabMarketDataParser.h"
 #include "SchwabAccountDataParser.h"
+#include "SchwabMarketDataParser.h"
+#include "SystemTimer.h"
 #include "UriEncodeDecode.h"
 #include "timefuncs.h"
-#include "SystemTimer.h"
 
 using namespace std::chrono;
 
@@ -12,7 +12,6 @@ SchwabClient::SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_p
     : config(config)
     , restClient(restClient)
 {
-
 }
 
 httplib::Headers SchwabClient::headers() const
@@ -31,10 +30,11 @@ bool SchwabClient::checkAccessToken()
 }
 
 /*
-curl -X POST \https://api.schwabapi.com/v1/oauth/token 
-\-H 'Authorization: Basic {BASE64_ENCODED_Client_ID:Client_Secret} 
-\-H 'Content-Type: application/x-www-form-urlencoded' 
-\-d 'grant_type=authorization_code&code={AUTHORIZATION_CODE_VALUE}&redirect_uri=https://example_url.com/callback_example'
+curl -X POST \https://api.schwabapi.com/v1/oauth/token
+\-H 'Authorization: Basic {BASE64_ENCODED_Client_ID:Client_Secret}
+\-H 'Content-Type: application/x-www-form-urlencoded'
+\-d
+'grant_type=authorization_code&code={AUTHORIZATION_CODE_VALUE}&redirect_uri=https://example_url.com/callback_example'
 */
 void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken)
 {
@@ -42,15 +42,12 @@ void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
     std::string content_type = "application/x-www-form-urlencoded";
 
     std::string authorization_code_header = "Basic " + config->getAppSecret();
-    httplib::Headers headers =
-    {
-        {"Authorization: ", authorization_code_header},
-        {"Content-Type: ", content_type}
-    };
+    httplib::Headers headers = {{"Authorization: ", authorization_code_header}, {"Content-Type: ", content_type}};
 
     std::string body;
-    if(!isRefreshToken)
-        body = "grant_type=authorization_code&code=" + authCodeOrRefreshToken + "&redirect_uri=" + config->getRedirectUri();
+    if (!isRefreshToken)
+        body = "grant_type=authorization_code&code=" + authCodeOrRefreshToken +
+               "&redirect_uri=" + config->getRedirectUri();
     else
         body = "grant_type=refresh_token&refresh_token=" + authCodeOrRefreshToken;
 
@@ -59,7 +56,7 @@ void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
         auto resp = restClient->postResponse(path, headers, body, "application/x-www-form-urlencoded");
         auto authTokens = parseAuthTokens(resp);
 
-        if(!isRefreshToken)
+        if (!isRefreshToken)
         {
             Token accessToken;
             accessToken.token = authTokens.access_token;
@@ -68,7 +65,7 @@ void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
             config->saveAccessToken(accessToken);
         }
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cout << e.what() << "\n";
     }
@@ -108,8 +105,8 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
 //'https://api.schwabapi.com/marketdata/v1/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE'
 OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCount)
 {
-    std::string path =
-        "/chains?symbol=" + symbol + "&contractType=ALL&strikeCount=" + std::to_string(strikesCount) + "&strategy=SINGLE";
+    std::string path = "/chains?symbol=" + symbol + "&contractType=ALL&strikeCount=" + std::to_string(strikesCount) +
+                       "&strategy=SINGLE";
     try
     {
         auto resp = restClient->getResponse(path, headers());

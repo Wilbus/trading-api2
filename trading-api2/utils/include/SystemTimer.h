@@ -3,12 +3,10 @@
 #include <chrono>
 #include <ctime>
 
-namespace utils
-{
+namespace utils {
 
 using namespace std::chrono;
 
-
 system_clock::time_point now();
 time_t nowMs();
-}
+} // namespace utils

@@ -49,7 +49,8 @@ std::string RestClient::postResponse(std::string path, httplib::Headers params) 
     return resp->body;
 }
 
-std::string RestClient::postResponse(std::string path, httplib::Headers params, std::string body, std::string content_type) const
+std::string RestClient::postResponse(
+    std::string path, httplib::Headers params, std::string body, std::string content_type) const
 {
     httplib::SSLClient client(baseEndpoint.c_str());
     auto resp = client.Post(path.c_str(), params, body, content_type);

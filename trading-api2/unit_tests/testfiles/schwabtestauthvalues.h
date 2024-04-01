@@ -3,7 +3,7 @@
 #include <string>
 
 std::string createAccessTokenRespExample =
-R"({ 
+    R"({ 
 	"expires_in": 1800,
 	"token_type": "Bearer",
 	"scope": "api",

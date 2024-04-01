@@ -60,7 +60,7 @@ public:
     virtual AuthorizationCode getAuthorizationCode() const override;
     virtual bool saveAuthorizationCode(const AuthorizationCode code) override;
 
-    virtual Token getRefreshToken() const override ;
+    virtual Token getRefreshToken() const override;
     virtual bool saveRefreshToken(const Token refreshToken) override;
 
     virtual Token getAccessToken() const override;

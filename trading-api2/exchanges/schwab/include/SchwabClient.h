@@ -3,8 +3,8 @@
 
 #include "IRestClient.h"
 #include "SchwabAccountDataTypes.h"
-#include "SchwabMarketDataTypes.h"
 #include "SchwabConfigs.h"
+#include "SchwabMarketDataTypes.h"
 
 using namespace restclient;
 using namespace schwabMarketData;
@@ -60,7 +60,7 @@ public:
     SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClient> restClient);
 
     void createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken);
-    
+
     std::map<std::string, QuoteEquityResponse> getEquityQuotes(std::set<std::string> symbols);
 
     OptionChain getOptionChain(std::string symbol, unsigned strikesCount);

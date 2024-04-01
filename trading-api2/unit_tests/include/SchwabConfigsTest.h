@@ -4,7 +4,6 @@
 
 #include <gtest/gtest.h>
 
-
 class SchwabConfigsTest : public ::testing::Test
 {
 public:
@@ -61,8 +60,8 @@ public:
 
     void checkRestoredAuthConfig()
     {
-        std::shared_ptr<SchwabConfigs> conf =
-            std::make_shared<SchwabConfigs>("/datadisk0/sambashare0/coding/trading-api2/trading-api2/unit_tests/testfiles/");
+        std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
+            "/datadisk0/sambashare0/coding/trading-api2/trading-api2/unit_tests/testfiles/");
         EXPECT_EQ(conf->getAppKey(), expectedAuthConfig.app_key);
         EXPECT_EQ(conf->getAppSecret(), expectedAuthConfig.app_secret);
         EXPECT_EQ(conf->getRedirectUri(), expectedAuthConfig.redirect_uri);
@@ -95,8 +94,8 @@ protected:
 
 TEST_F(SchwabConfigsTest, readAuthConfig)
 {
-    std::shared_ptr<SchwabConfigs> conf =
-        std::make_shared<SchwabConfigs>("/datadisk0/sambashare0/coding/trading-api2/trading-api2/unit_tests/testfiles/");
+    std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
+        "/datadisk0/sambashare0/coding/trading-api2/trading-api2/unit_tests/testfiles/");
     auto authconf = conf->getAuthConfig();
 
     EXPECT_EQ(authconf.app_key, expectedAuthConfig.app_key);
@@ -117,8 +116,8 @@ TEST_F(SchwabConfigsTest, readAuthConfig)
 
 TEST_F(SchwabConfigsTest, getAuthConfigValues)
 {
-    std::shared_ptr<SchwabConfigs> conf =
-        std::make_shared<SchwabConfigs>("/datadisk0/sambashare0/coding/trading-api2/trading-api2/unit_tests/testfiles/");
+    std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
+        "/datadisk0/sambashare0/coding/trading-api2/trading-api2/unit_tests/testfiles/");
 
     EXPECT_EQ(conf->getAppKey(), expectedAuthConfig.app_key);
     EXPECT_EQ(conf->getAppSecret(), expectedAuthConfig.app_secret);
@@ -141,16 +140,16 @@ TEST_F(SchwabConfigsTest, getAuthConfigValues)
 
 TEST_F(SchwabConfigsTest, saveAuthConfig)
 {
-    std::shared_ptr<SchwabConfigs> conf =
-        std::make_shared<SchwabConfigs>("/datadisk0/sambashare0/coding/trading-api2/trading-api2/unit_tests/testfiles/");
+    std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
+        "/datadisk0/sambashare0/coding/trading-api2/trading-api2/unit_tests/testfiles/");
     EXPECT_NO_THROW(conf->saveAuthConfig());
 }
 
 TEST_F(SchwabConfigsTest, modifyAuthConfig)
 {
     modifyAuthConfig();
-    std::shared_ptr<SchwabConfigs> conf =
-        std::make_shared<SchwabConfigs>("/datadisk0/sambashare0/coding/trading-api2/trading-api2/unit_tests/testfiles/");
+    std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
+        "/datadisk0/sambashare0/coding/trading-api2/trading-api2/unit_tests/testfiles/");
 
     EXPECT_EQ(conf->getAppKey(), expectedAuthConfig.app_key);
     EXPECT_EQ(conf->getAppSecret(), expectedAuthConfig.app_secret);

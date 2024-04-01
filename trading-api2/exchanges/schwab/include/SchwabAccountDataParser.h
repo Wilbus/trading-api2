@@ -6,8 +6,7 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"
 
-namespace schwabAccountData
-{
+namespace schwabAccountData {
 
 AuthTokens parseAuthTokens(std::string jsonstring)
 {
@@ -26,4 +25,4 @@ AuthTokens parseAuthTokens(std::string jsonstring)
     return auth;
 }
 
-}
+} // namespace schwabAccountData

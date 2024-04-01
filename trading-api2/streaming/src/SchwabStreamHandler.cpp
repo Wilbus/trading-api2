@@ -1,7 +1,6 @@
 #include "SchwabStreamHandler.h"
 
-namespace streamer
-{
+namespace streamer {
 
 SchwabStreamHandler::SchwabStreamHandler(std::string url)
     : group(hub.createGroup<uWS::CLIENT>())
@@ -13,47 +12,38 @@ SchwabStreamHandler::SchwabStreamHandler(std::string url)
 
 void SchwabStreamHandler::run()
 {
-
 }
 
 void SchwabStreamHandler::setupCallbacks()
 {
-
 }
 
 void SchwabStreamHandler::onConnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req)
 {
-
 }
 
 void SchwabStreamHandler::onMessageCallback(char* message, size_t length)
 {
-
 }
 
 void SchwabStreamHandler::onDisconnectionCallback(int code, char* message, size_t length)
 {
-
 }
 
 void SchwabStreamHandler::onErrorCallback(void* e)
 {
-
 }
 
 void SchwabStreamHandler::reconnectingStream()
 {
-
 }
 
 void SchwabStreamHandler::connectStream()
 {
-
 }
 
 std::shared_ptr<DataQueue<std::string>> SchwabStreamHandler::repliesQueue()
 {
-
 }
 
-}
+} // namespace streamer

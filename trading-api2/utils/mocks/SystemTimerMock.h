@@ -1,12 +1,11 @@
 #pragma once
 
 #include "SystemTimer.h"
+
 #include <gmock/gmock.h>
 
-namespace utils
-{
-namespace mocks
-{
+namespace utils {
+namespace mocks {
 
 class SystemTimerMock
 {
@@ -19,5 +18,5 @@ public:
     static SystemTimerMock& inst();
 };
 
-}
-}
+} // namespace mocks
+} // namespace utils

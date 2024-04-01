@@ -12,7 +12,8 @@ public:
 
     virtual std::string getResponse(std::string path, httplib::Headers headers) const override;
     virtual std::string postResponse(std::string path, httplib::Headers params) const override;
-    virtual std::string postResponse(std::string path, httplib::Headers params, std::string body, std::string content_type) const override;
+    virtual std::string postResponse(
+        std::string path, httplib::Headers params, std::string body, std::string content_type) const override;
 
 private:
     std::string baseEndpoint;

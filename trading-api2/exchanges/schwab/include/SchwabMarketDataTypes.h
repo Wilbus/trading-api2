@@ -1,15 +1,15 @@
 #pragma once
 
+#include <cmath>
+#include <limits>
 #include <map>
 #include <set>
 #include <string>
 #include <vector>
-#include <limits>
-#include <cmath>
 
 namespace schwabMarketData {
 
-//TODO: initialize all variables to MAX of value type
+// TODO: initialize all variables to MAX of value type
 
 static const double MAXDOUBLE = std::numeric_limits<double>::max();
 static const unsigned MAXUNSIGNED = std::numeric_limits<unsigned>::max();

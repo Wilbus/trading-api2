@@ -2,19 +2,21 @@
 
 #include "json.h"
 #include "rapidjson/document.h"
-#include <rapidjson/prettywriter.h>
-#include "rapidjson/stringbuffer.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
-#include <iostream>
+#include "rapidjson/stringbuffer.h"
+
+#include <rapidjson/prettywriter.h>
+
 #include <cstdio>
+#include <iostream>
 
 using rapidjson::Document;
-using rapidjson::Value;
-using rapidjson::StringRef;
-using rapidjson::kObjectType;
 using rapidjson::FileWriteStream;
+using rapidjson::kObjectType;
 using rapidjson::PrettyWriter;
+using rapidjson::StringRef;
+using rapidjson::Value;
 
 SchwabConfigs::SchwabConfigs(std::string folderPath)
     : folderPath(folderPath)
@@ -26,7 +28,7 @@ void SchwabConfigs::parseAuthConfig()
 {
     std::string authConfigPath = folderPath + "schwab_authentication.json";
     FILE* fp = fopen(authConfigPath.c_str(), "rb");
-    if(fp == nullptr)
+    if (fp == nullptr)
     {
         throw std::runtime_error("error opening schwab_authentication.json");
     }
@@ -39,7 +41,7 @@ void SchwabConfigs::parseAuthConfig()
     PARSE_STRING(cachedAuthConfig.app_secret, "app_secret", d);
     PARSE_STRING(cachedAuthConfig.redirect_uri, "redirect_uri", d);
 
-    if(d.HasMember("authorization_code") && d["authorization_code"].IsObject())
+    if (d.HasMember("authorization_code") && d["authorization_code"].IsObject())
     {
         auto authorizationCodeObj = d["authorization_code"].GetObject();
         PARSE_STRING(cachedAuthConfig.authorization_code.code, "code", authorizationCodeObj);
@@ -51,7 +53,7 @@ void SchwabConfigs::parseAuthConfig()
         throw std::runtime_error("failed to parse authorization code from schwab_authentication.json");
     }
 
-    if(d.HasMember("refresh_token") && d["refresh_token"].IsObject())
+    if (d.HasMember("refresh_token") && d["refresh_token"].IsObject())
     {
         auto refreshTokenObj = d["refresh_token"].GetObject();
         PARSE_STRING(cachedAuthConfig.refresh_token.token, "token", refreshTokenObj);
@@ -64,7 +66,7 @@ void SchwabConfigs::parseAuthConfig()
         throw std::runtime_error("failed to parse refresh token from schwab_authentication.json");
     }
 
-    if(d.HasMember("access_token") && d["access_token"].IsObject())
+    if (d.HasMember("access_token") && d["access_token"].IsObject())
     {
         auto accessTokenObj = d["access_token"].GetObject();
         PARSE_STRING(cachedAuthConfig.access_token.token, "token", accessTokenObj);
@@ -113,7 +115,7 @@ void SchwabConfigs::saveAuthConfig()
 
     std::string authConfigPath = folderPath + "schwab_authentication.json";
     FILE* fp = fopen(authConfigPath.c_str(), "wb");
-    if(fp == nullptr)
+    if (fp == nullptr)
     {
         throw std::runtime_error("error opening schwab_authentication.json");
     }
@@ -162,7 +164,7 @@ bool SchwabConfigs::saveAuthorizationCode(const AuthorizationCode code)
         saveAuthConfig();
         return true;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cout << e.what() << '\n';
         return false;
@@ -181,7 +183,7 @@ bool SchwabConfigs::saveRefreshToken(const Token refreshToken)
         saveAuthConfig();
         return true;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cout << e.what() << '\n';
         return false;
@@ -200,7 +202,7 @@ bool SchwabConfigs::saveAccessToken(const Token accessToken)
         saveAuthConfig();
         return true;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cout << e.what() << '\n';
         return false;

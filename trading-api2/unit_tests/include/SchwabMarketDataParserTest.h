@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-//using namespace utils;
+// using namespace utils;
 using namespace schwabMarketData;
 
 class SchwabMarketDataParserTest : public ::testing::Test
@@ -73,13 +73,13 @@ TEST_F(SchwabMarketDataParserTest, parseOptionChainCheckValues)
 
     unsigned expCounts = 0;
 
-    for(const auto& [expdate, callStrikes]: optionChain.callExpDateMap)
+    for (const auto& [expdate, callStrikes] : optionChain.callExpDateMap)
     {
         unsigned strikes0Count = 0;
         unsigned strikes1Count = 0;
-        for(const auto& option: callStrikes)
+        for (const auto& option : callStrikes)
         {
-            if(expCounts < 3)
+            if (expCounts < 3)
                 EXPECT_EQ(option.strikePrice, strikes0[strikes0Count++]);
             else
                 EXPECT_EQ(option.strikePrice, strikes1[strikes1Count++]);
@@ -127,13 +127,13 @@ TEST_F(SchwabMarketDataParserTest, parseOptionChainCheckValues)
     }
 
     expCounts = 0;
-    for(const auto& [expdate, putStrikes]: optionChain.putExpDateMap)
+    for (const auto& [expdate, putStrikes] : optionChain.putExpDateMap)
     {
         unsigned strikes0Count = 0;
         unsigned strikes1Count = 0;
-        for(const auto& option: putStrikes)
+        for (const auto& option : putStrikes)
         {
-            if(expCounts < 3)
+            if (expCounts < 3)
                 EXPECT_EQ(option.strikePrice, strikes0[strikes0Count++]);
             else
                 EXPECT_EQ(option.strikePrice, strikes1[strikes1Count++]);
