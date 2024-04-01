@@ -8,7 +8,6 @@
 
 #include <gtest/gtest.h>
 
-// using namespace utils;
 using namespace schwabMarketData;
 using namespace schwabAccountData;
 using namespace testing;
@@ -19,7 +18,6 @@ class SchwabClientTest : public ::testing::Test
 public:
     SchwabClientTest()
     {
-        // utils::mocks::SystemTimerMock.inst();
         configMock = std::make_shared<SchwabConfigsMock>();
         restClientMock = std::make_shared<RestClientMock>();
         client = std::make_shared<SchwabClient>(configMock, restClientMock);
@@ -52,7 +50,6 @@ public:
 
     void expectRefreshTokenRequest()
     {
-        //std::string refreshToken = "refreshtoken123";
         std::string expectedPath = "/oauth/token";
         std::string content_type = "application/x-www-form-urlencoded";
         std::string authHeader = "Basic " + stubAuthConfig.app_secret;

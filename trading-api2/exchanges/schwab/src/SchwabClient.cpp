@@ -51,8 +51,10 @@ curl -X POST \https://api.schwabapi.com/v1/oauth/token
 \-d
 'grant_type=authorization_code&code={AUTHORIZATION_CODE_VALUE}&redirect_uri=https://example_url.com/callback_example'
 */
-//if isRefreshToken is false, then we are getting a new access token
-//otherwise we are getting a new freshtoken using the authorization code
+/*
+    If isRefreshToken == true, passs the refresh token to update the current access token,
+    otherwise pass the authorization code to retrieve a new refresh token
+*/
 void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken)
 {
     std::string path = "/oauth/token";
