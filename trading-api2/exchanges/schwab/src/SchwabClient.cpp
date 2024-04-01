@@ -51,6 +51,8 @@ curl -X POST \https://api.schwabapi.com/v1/oauth/token
 \-d
 'grant_type=authorization_code&code={AUTHORIZATION_CODE_VALUE}&redirect_uri=https://example_url.com/callback_example'
 */
+//if isRefreshToken is false, then we are getting a new access token
+//otherwise we are getting a new freshtoken using the authorization code
 void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken)
 {
     std::string path = "/oauth/token";
@@ -107,6 +109,10 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
 
     try
     {
+        if(!checkAccessToken())
+        {
+            createAccessToken(config->getRefreshToken().token, false);
+        }
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
         auto quotesmap = parseEquityQuotes(symbols, resp);
@@ -126,6 +132,10 @@ OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCou
                        "&strategy=SINGLE";
     try
     {
+        if(!checkAccessToken())
+        {
+            createAccessToken(config->getRefreshToken().token, false);
+        }
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
         return parseOptionChain(resp);
@@ -142,6 +152,10 @@ std::vector<OptionExpiration> SchwabClient::getOptionExpirations(std::string sym
 {
     try
     {
+        if(!checkAccessToken())
+        {
+            createAccessToken(config->getRefreshToken().token, false);
+        }
         setMarketDataEndpoint();
         std::string path = "?symbol=" + symbol;
         auto resp = restClient->getResponse(path, headers());
@@ -181,6 +195,10 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
         path += "&needExtendedHoursData=" + booleanString.at(extendedHours) +
                 "&needPreviousClose=" + booleanString.at(needPreviousClose);
 
+        if(!checkAccessToken())
+        {
+            createAccessToken(config->getRefreshToken().token, false);
+        }
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
         return parsePriceHistory(resp);

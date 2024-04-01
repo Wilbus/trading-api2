@@ -14,3 +14,8 @@ SchwabConnection::SchwabConnection(std::string configfolder)
     configs = std::make_shared<SchwabConfigs>(configfolder);
     sclient = std::make_shared<SchwabClient>(configs, std::make_shared<RestClient>());
 }
+
+std::shared_ptr<ISchwabClient> SchwabConnection::getClient()
+{
+    return sclient;
+}
