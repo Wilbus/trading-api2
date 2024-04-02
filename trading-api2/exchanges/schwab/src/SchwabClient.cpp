@@ -111,7 +111,7 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
 
     try
     {
-        if(!checkAccessToken())
+        if (!checkAccessToken())
         {
             createAccessToken(config->getRefreshToken().token, false);
         }
@@ -134,7 +134,7 @@ OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCou
                        "&strategy=SINGLE";
     try
     {
-        if(!checkAccessToken())
+        if (!checkAccessToken())
         {
             createAccessToken(config->getRefreshToken().token, false);
         }
@@ -154,7 +154,7 @@ std::vector<OptionExpiration> SchwabClient::getOptionExpirations(std::string sym
 {
     try
     {
-        if(!checkAccessToken())
+        if (!checkAccessToken())
         {
             createAccessToken(config->getRefreshToken().token, false);
         }
@@ -197,7 +197,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
         path += "&needExtendedHoursData=" + booleanString.at(extendedHours) +
                 "&needPreviousClose=" + booleanString.at(needPreviousClose);
 
-        if(!checkAccessToken())
+        if (!checkAccessToken())
         {
             createAccessToken(config->getRefreshToken().token, false);
         }

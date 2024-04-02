@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 project(trading-api2-utils-mocks)
 
-add_library(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME})
+
+target_sources(${PROJECT_NAME}
+    PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/SystemTimerMock.cpp
 )
 
