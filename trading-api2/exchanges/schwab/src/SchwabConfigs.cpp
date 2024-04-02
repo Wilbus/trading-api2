@@ -18,6 +18,8 @@ using rapidjson::PrettyWriter;
 using rapidjson::StringRef;
 using rapidjson::Value;
 
+namespace restclient {
+
 SchwabConfigs::SchwabConfigs(std::string folderPath)
     : folderPath(folderPath)
 {
@@ -208,3 +210,5 @@ bool SchwabConfigs::saveAccessToken(const Token accessToken)
         return false;
     }
 }
+
+} // namespace restclient

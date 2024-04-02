@@ -1,14 +1,18 @@
 
 #pragma once
 
-#include "IRestClient.h"
+#include "IRestClientCurl.h"
 #include "SchwabAccountDataTypes.h"
 #include "SchwabConfigs.h"
 #include "SchwabMarketDataTypes.h"
 
+#include <memory>
+
 using namespace restclient;
 using namespace schwabMarketData;
 using namespace schwabAccountData;
+
+namespace restclient {
 
 enum PriceHistoryPeriodType : uint8_t
 {
@@ -70,7 +74,7 @@ class ISchwabClient
 class SchwabClient : public ISchwabClient
 {
 public:
-    SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClient> restClient);
+    SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClientCurl> restClient);
 
     /*
         If isRefreshToken == true, passs the refresh token to update the current access token,
@@ -92,11 +96,13 @@ public:
     virtual bool checkAccessToken() override;
 
 private:
-    httplib::Headers headers() const;
+    std::set<std::string> headers() const;
     void setMarketDataEndpoint();
     void setAuthenticationEndpoint();
     void setAccountsEndpoint();
     SchwabAuth auths;
     std::shared_ptr<ISchwabConfigs> config;
-    std::shared_ptr<IRestClient> restClient;
+    std::shared_ptr<IRestClientCurl> restClient;
 };
+
+} // namespace restclient

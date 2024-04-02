@@ -27,6 +27,7 @@ public:
         curl = (CURL*)0xDEADBEEF;
         EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_init()).WillOnce(Return(curl));
         client = std::make_shared<RestClientCurl>();
+        client->setBaseEndpoint("https://test.com");
     }
 
     void expectInvalidCurlOnInit()
@@ -77,7 +78,6 @@ TEST_F(RestClientCurlTest, getResponseSetOpt_Url_Failed)
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_url(curl, finalUrl))
         .WillOnce(Return(CURLcode::CURLE_URL_MALFORMAT));
 
-    client->setBaseEndpoint("https://test.com");
     EXPECT_THROW(client->getResponse(path, headers), std::runtime_error);
     freeSList();
 }
@@ -92,7 +92,6 @@ TEST_F(RestClientCurlTest, getResponseSetOpt_HttpVersion_Failed)
         CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_http_version(curl, CurlHttpVersions::MYCURL_HTTP_VERSION_1_0))
         .WillOnce(Return(CURLcode::CURLE_UNSUPPORTED_PROTOCOL));
 
-    client->setBaseEndpoint("https://test.com");
     EXPECT_THROW(client->getResponse(path, headers), std::runtime_error);
     freeSList();
 }
@@ -109,7 +108,6 @@ TEST_F(RestClientCurlTest, getResponseSetOpt_HttpGet_Failed)
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_httpget(curl, true))
         .WillOnce(Return(CURLcode::CURLE_UNSUPPORTED_PROTOCOL));
 
-    client->setBaseEndpoint("https://test.com");
     EXPECT_THROW(client->getResponse(path, headers), std::runtime_error);
     freeSList();
 }
@@ -128,7 +126,6 @@ TEST_F(RestClientCurlTest, getResponseSetOpt_HttpHeader_Failed)
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_httpheader(curl, listptr2))
         .WillOnce(Return(CURLcode::CURLE_UNSUPPORTED_PROTOCOL));
 
-    client->setBaseEndpoint("https://test.com");
     EXPECT_THROW(client->getResponse(path, headers), std::runtime_error);
     freeSList();
 }
@@ -149,7 +146,6 @@ TEST_F(RestClientCurlTest, getResponseSetOpt_WriteFunction_Failed)
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writefunction(curl, _))
         .WillOnce(Return(CURLcode::CURLE_WRITE_ERROR)); // TODO: maybe check if correct function is called?
 
-    client->setBaseEndpoint("https://test.com");
     EXPECT_THROW(client->getResponse(path, headers), std::runtime_error);
     freeSList();
 }
@@ -172,7 +168,6 @@ TEST_F(RestClientCurlTest, getResponseSetOpt_WriteData_Failed)
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, _))
         .WillOnce(Return(CURLcode::CURLE_WRITE_ERROR));
 
-    client->setBaseEndpoint("https://test.com");
     EXPECT_THROW(client->getResponse(path, headers), std::runtime_error);
     freeSList();
 }
@@ -197,7 +192,6 @@ TEST_F(RestClientCurlTest, getResponseEasyPerform_Failed)
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_perform(curl))
         .WillOnce(Return(CURLcode::CURLE_COULDNT_CONNECT));
 
-    client->setBaseEndpoint("https://test.com");
     EXPECT_THROW(client->getResponse(path, headers), std::runtime_error);
     freeSList();
 }
@@ -222,7 +216,7 @@ TEST_F(RestClientCurlTest, getResponseTest)
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_perform(curl)).WillOnce(Return(CURLcode::CURLE_OK));
 
-    client->setBaseEndpoint("https://test.com");
-    client->getResponse(path, headers);
+    std::string responsedata = client->getResponse(path, headers);
+    EXPECT_EQ(responsedata, "somejsondata");
     freeSList();
 }

@@ -94,7 +94,7 @@ std::string RestClientCurl::getResponse(const std::string path, const std::set<s
         throw std::runtime_error("invalid curlcode");
     }
 
-    return {};
+    return readbuffer;
 }
 
 std::string RestClientCurl::postResponse(const std::string path, const std::set<std::string> headersList)

@@ -6,19 +6,23 @@
 #include "UriEncodeDecode.h"
 #include "timefuncs.h"
 
+#include <iostream>
+
+namespace restclient {
 using namespace std::chrono;
 
-SchwabClient::SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClient> restClient)
+SchwabClient::SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClientCurl> restClient)
     : config(config)
     , restClient(restClient)
 {
 }
 
-httplib::Headers SchwabClient::headers() const
+std::set<std::string> SchwabClient::headers() const
 {
     //clang-format off
-    std::string bearer = "Bearer IO." + config->getAuthorizationCode().code;
-    return {{"Accept", "application/json"}, {"Authorization", bearer.c_str()}};
+    std::string bearer = "Authorization: Bearer IO." + config->getAuthorizationCode().code;
+    std::string content_type = "Accept: application/json";
+    return std::set<std::string>{content_type, bearer};
     //clang-format on
 }
 
@@ -58,10 +62,10 @@ curl -X POST \https://api.schwabapi.com/v1/oauth/token
 void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken)
 {
     std::string path = "/oauth/token";
-    std::string content_type = "application/x-www-form-urlencoded";
+    std::string content_type = "Content-Type: application/x-www-form-urlencoded";
 
-    std::string authorization_code_header = "Basic " + config->getAppSecret();
-    httplib::Headers headers = {{"Authorization: ", authorization_code_header}, {"Content-Type: ", content_type}};
+    std::string authorization_code_header = "Authorization: Basic " + config->getAppSecret();
+    std::set<std::string> headers{authorization_code_header, content_type};
 
     std::string body;
     if (!isRefreshToken)
@@ -73,7 +77,7 @@ void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
     try
     {
         setAuthenticationEndpoint();
-        auto resp = restClient->postResponse(path, headers, body, "application/x-www-form-urlencoded");
+        auto resp = restClient->postResponse(path, headers, body);
         auto authTokens = parseAuthTokens(resp);
 
         if (!isRefreshToken)
@@ -211,3 +215,4 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
         return {};
     }
 }
+} // namespace restclient

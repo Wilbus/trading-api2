@@ -58,6 +58,7 @@ CURLcode mycurl_easy_setopt_verbose(CURL* curl, bool flag)
 
 CURLcode mycurl_easy_setopt_writedata(CURL* curl, std::string& readbuffer)
 {
+    readbuffer = "somejsondata";
     return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_writedata(curl, readbuffer);
 }
 

@@ -4,6 +4,8 @@
 
 using namespace schwabAccountData;
 
+namespace restclient {
+
 class ISchwabConfigs
 {
 public:
@@ -73,3 +75,5 @@ private:
     std::string folderPath;
     AuthConfig cachedAuthConfig;
 };
+
+} // namespace restclient
