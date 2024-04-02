@@ -1,1 +1,0 @@
-find trading-api2 -iname *.h -o -iname *.cpp | xargs clang-format -i --verbose
