@@ -4,31 +4,11 @@
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"
+#include "SchwabErrorDataTypes.h"
+#include <iostream>
 
 namespace schwabErrors
 {
-    
-struct ErrorSource
-{
-    std::vector<std::string> pointer;
-    std::string parameter;
-    std::string header;
-};
-
-struct Error
-{
-    std::string id;
-    std::string status; //http status code
-    std::string title;
-    std::string detail;
-    std::string error_description;
-    ErrorSource source;
-};
-
-struct ErrorResponse
-{
-    std::vector<Error> errors;
-};
 
 ErrorSource parseErrorSource(const rapidjson::Value& errSourceObj)
 {
@@ -70,6 +50,7 @@ Error parseError(const rapidjson::Value& errorObj)
     return err;
 }
 
+/*return empty error vector if no errors parsed or issue parsing error*/
 ErrorResponse checkErrors(std::string jsonstring)
 {
     rapidjson::Document d;

@@ -2,6 +2,7 @@
 
 #include "SchwabAccountDataParser.h"
 #include "SchwabMarketDataParser.h"
+#include "SchwabErrorParser.h"
 #include "SystemTimer.h"
 #include "UriEncodeDecode.h"
 #include "timefuncs.h"
@@ -48,6 +49,11 @@ bool SchwabClient::checkAccessToken()
     return nowMs < accessToken.expires_at_time;
 }
 
+void SchwabClient::logErrorResponse(ErrorResponse errorResp)
+{
+    std::cout << errorResp.toString();
+}
+
 /*
 curl -X POST \https://api.schwabapi.com/v1/oauth/token
 \-H 'Authorization: Basic {BASE64_ENCODED_Client_ID:Client_Secret}
@@ -59,7 +65,7 @@ curl -X POST \https://api.schwabapi.com/v1/oauth/token
     If isRefreshToken == true, passs the refresh token to update the current access token,
     otherwise pass the authorization code to retrieve a new refresh token
 */
-void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken)
+bool SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken)
 {
     std::string path = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
@@ -78,6 +84,12 @@ void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
     {
         setAuthenticationEndpoint();
         auto resp = restClient->postResponse(path, headers, body);
+        auto errorResp = checkErrors(resp);
+        if(errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return false;
+        }
         auto authTokens = parseAuthTokens(resp);
 
         if (!isRefreshToken)
@@ -88,10 +100,12 @@ void SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
             accessToken.expires_at_time = accessToken.granted_at_time + authTokens.expires_in;
             config->saveAccessToken(accessToken);
         }
+        return true;
     }
     catch (const std::exception& e)
     {
         std::cout << e.what() << "\n";
+        return false;
     }
 }
 
@@ -121,6 +135,12 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
         }
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
+        auto errorResp = checkErrors(resp);
+        if(errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return {};
+        }
         auto quotesmap = parseEquityQuotes(symbols, resp);
         return quotesmap;
     }
@@ -144,6 +164,12 @@ OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCou
         }
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
+        auto errorResp = checkErrors(resp);
+        if(errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return {};
+        }
         return parseOptionChain(resp);
     }
     catch (const std::exception& e)
@@ -165,6 +191,12 @@ std::vector<OptionExpiration> SchwabClient::getOptionExpirations(std::string sym
         setMarketDataEndpoint();
         std::string path = "?symbol=" + symbol;
         auto resp = restClient->getResponse(path, headers());
+        auto errorResp = checkErrors(resp);
+        if(errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return {};
+        }
         return parseOptionExpirations(resp);
     }
     catch (const std::exception& e)
@@ -207,6 +239,12 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
         }
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
+        auto errorResp = checkErrors(resp);
+        if(errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return {};
+        }
         return parsePriceHistory(resp);
     }
     catch (std::exception& e)

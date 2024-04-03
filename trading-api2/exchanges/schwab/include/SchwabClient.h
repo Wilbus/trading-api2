@@ -5,12 +5,14 @@
 #include "SchwabAccountDataTypes.h"
 #include "SchwabConfigs.h"
 #include "SchwabMarketDataTypes.h"
+#include "SchwabErrorDataTypes.h"
 
 #include <memory>
 
 using namespace restclient;
 using namespace schwabMarketData;
 using namespace schwabAccountData;
+using namespace schwabErrors;
 
 namespace restclient {
 
@@ -56,7 +58,7 @@ const std::map<bool, std::string> booleanString =
 
 class ISchwabClient
 {
-    virtual void createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken) = 0;
+    virtual bool createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken) = 0;
 
     virtual std::map<std::string, QuoteEquityResponse> getEquityQuotes(std::set<std::string> symbols) = 0;
 
@@ -80,7 +82,7 @@ public:
         If isRefreshToken == true, passs the refresh token to update the current access token,
         otherwise pass the authorization code to retrieve a new refresh token
     */
-    virtual void createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken) override;
+    virtual bool createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken) override;
 
     virtual std::map<std::string, QuoteEquityResponse> getEquityQuotes(std::set<std::string> symbols) override;
 
@@ -100,6 +102,7 @@ private:
     void setMarketDataEndpoint();
     void setAuthenticationEndpoint();
     void setAccountsEndpoint();
+    void logErrorResponse(ErrorResponse resp);
     SchwabAuth auths;
     std::shared_ptr<ISchwabConfigs> config;
     std::shared_ptr<IRestClientCurl> restClient;
