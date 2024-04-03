@@ -1,5 +1,4 @@
 #include "CurlWrapperFuncsMock.h"
-
 #include "CurlWrapperFuncs.h"
 
 #include <memory>
@@ -46,7 +45,7 @@ CURLcode mycurl_easy_setopt_httpheader(CURL* curl, curl_slist* list)
     return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_httpheader(curl, list);
 }
 
-CURLcode mycurl_easy_setopt_writefunction(CURL* curl, std::function<size_t(void*, size_t, size_t, void*)> writefunction)
+CURLcode mycurl_easy_setopt_writefunction(CURL* curl, size_t (*writefunction)(void*, size_t, size_t, void*))
 {
     return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_writefunction(curl, writefunction);
 }
@@ -56,9 +55,10 @@ CURLcode mycurl_easy_setopt_verbose(CURL* curl, bool flag)
     return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_verbose(curl, flag);
 }
 
-CURLcode mycurl_easy_setopt_writedata(CURL* curl, std::string& readbuffer)
+CURLcode mycurl_easy_setopt_writedata(CURL* curl, void* readbuffer)
 {
-    readbuffer = "somejsondata";
+    //TODO: only way I know of to mock a successful curl_easy_perform filling the readbuffer at the moment
+    ((std::string*)readbuffer)->append("somejsondata");
     return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_writedata(curl, readbuffer);
 }
 

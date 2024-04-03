@@ -45,7 +45,7 @@ public:
 
     std::set<std::string> expectedHeaders()
     {
-        return std::set<std::string>{"Accept: application/json", "Authorization: Bearer IO.authcode1234"};
+        return std::set<std::string>{"accept: application/json", "Authorization: Bearer I0.authcode1234"};
     }
 
     void expectRefreshTokenRequest()
@@ -53,7 +53,7 @@ public:
         std::string expectedPath = "/oauth/token";
         std::string content_type = "Content-Type: application/x-www-form-urlencoded";
         std::string authHeader = "Authorization: Basic " + stubAuthConfig.app_secret;
-        std::set<std::string> expectedHeaders{authHeader, content_type};
+        std::set<std::string> expectedHeaders{content_type, authHeader};
         std::string expectedBody = "grant_type=refresh_token&refresh_token=" + refreshToken.token;
 
         EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));

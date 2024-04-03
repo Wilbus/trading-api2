@@ -10,6 +10,19 @@ using testing::Return;
 
 class RestClientCurlTest : public ::testing::Test
 {
+class RestClientCurlTestable : public RestClientCurl
+{
+public:
+    RestClientCurlTestable()
+    {
+    }
+
+    std::string* getReadBufferPtr()
+    {
+        return &readbuffer;
+    }
+};
+
 public:
     RestClientCurlTest()
     {
@@ -26,7 +39,7 @@ public:
         EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_global_init(CURL_GLOBAL_ALL));
         curl = (CURL*)0xDEADBEEF;
         EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_init()).WillOnce(Return(curl));
-        client = std::make_shared<RestClientCurl>();
+        client = std::make_shared<RestClientCurlTestable>();
         client->setBaseEndpoint("https://test.com");
     }
 
@@ -35,7 +48,7 @@ public:
         EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_global_init(CURL_GLOBAL_ALL));
         curl = nullptr;
         EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_init()).WillOnce(Return(curl));
-        client = std::make_shared<RestClientCurl>();
+        client = std::make_shared<RestClientCurlTestable>();
     }
 
     void expectSListHeaders()
@@ -54,7 +67,7 @@ public:
     }
 
 protected:
-    std::shared_ptr<RestClientCurl> client;
+    std::shared_ptr<RestClientCurlTestable> client;
     CURL* curl;
     std::set<std::string> headers{"header1", "header2"};
     std::string path{"/somepath"};
@@ -165,6 +178,7 @@ TEST_F(RestClientCurlTest, getResponseSetOpt_WriteData_Failed)
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writefunction(curl, _))
         .WillOnce(Return(CURLcode::CURLE_OK)); // TODO: maybe check if correct function is called?
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, _))
         .WillOnce(Return(CURLcode::CURLE_WRITE_ERROR));
 
@@ -187,7 +201,8 @@ TEST_F(RestClientCurlTest, getResponseEasyPerform_Failed)
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writefunction(curl, _))
         .WillOnce(Return(CURLcode::CURLE_OK)); // TODO: maybe check if correct function is called?
-    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, _))
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, client->getReadBufferPtr()))
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_perform(curl))
         .WillOnce(Return(CURLcode::CURLE_COULDNT_CONNECT));
@@ -211,8 +226,9 @@ TEST_F(RestClientCurlTest, getResponseTest)
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_httpheader(curl, listptr2))
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writefunction(curl, _))
-        .WillOnce(Return(CURLcode::CURLE_OK)); // TODO: maybe check if correct function is called?
-    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, _))
+        .WillOnce(Return(CURLcode::CURLE_OK)); // TODO: maybe check if correct function is called somehow?
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, client->getReadBufferPtr()))
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_perform(curl)).WillOnce(Return(CURLcode::CURLE_OK));
 

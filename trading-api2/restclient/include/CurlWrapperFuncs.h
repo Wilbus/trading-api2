@@ -42,10 +42,9 @@ CURLcode mycurl_easy_setopt_url(CURL* curl, std::string url);
 CURLcode mycurl_easy_setopt_http_version(CURL* curl, CurlHttpVersions httpversion);
 CURLcode mycurl_easy_setopt_httpget(CURL* curl, bool flag);
 CURLcode mycurl_easy_setopt_httpheader(CURL* curl, curl_slist* list);
-CURLcode mycurl_easy_setopt_writefunction(
-    CURL* curl, std::function<size_t(void*, size_t, size_t, void*)> writefunction);
+CURLcode mycurl_easy_setopt_writefunction(CURL* curl, size_t (*writefunction)(void*, size_t, size_t, void*));
 CURLcode mycurl_easy_setopt_verbose(CURL* curl, bool flag);
-CURLcode mycurl_easy_setopt_writedata(CURL* curl, std::string& readbuffer);
+CURLcode mycurl_easy_setopt_writedata(CURL* curl, void* readbuffer);
 CURLcode mycurl_easy_perform(CURL* curl);
 void mycurl_easy_cleanup(CURL* curl);
 void mycurl_global_cleanup();

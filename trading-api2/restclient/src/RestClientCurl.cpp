@@ -1,7 +1,5 @@
 #include "RestClientCurl.h"
 
-#include "CurlWrapperFuncs.h"
-
 #include <iostream>
 
 namespace restclient {
@@ -41,7 +39,7 @@ std::string RestClientCurl::getResponse(const std::string path, const std::set<s
         throw std::runtime_error("CURL* curl is nullptr");
     }
     std::string finalUrl = baseEndpoint + path;
-    std::string readbuffer;
+    readbuffer.clear();
 
     CURLcode code;
 
@@ -75,14 +73,15 @@ std::string RestClientCurl::getResponse(const std::string path, const std::set<s
         throw std::runtime_error("invalid curlcode");
     }
 
-    code = mycurl_easy_setopt_writefunction(curl, WriteCallback);
+    code = mycurl_easy_setopt_writefunction(curl, restclient::WriteCallback);
     if (!checkCURLcode(code))
     {
         throw std::runtime_error("invalid curlcode");
     }
 
-    // mycurl_easy_setopt_verbose(curl, true);
-    code = mycurl_easy_setopt_writedata(curl, readbuffer);
+    mycurl_easy_setopt_verbose(curl, true); //TODO: make this configurable
+
+    code = mycurl_easy_setopt_writedata(curl, &readbuffer);
     if (!checkCURLcode(code))
     {
         throw std::runtime_error("invalid curlcode");

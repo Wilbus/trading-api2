@@ -1,6 +1,6 @@
 #include "SchwabMarketDataParser.h"
 #include "UriEncodeDecode.h"
-
+#include <functional>
 #include <curl/curl.h>
 
 #include <iostream>
@@ -12,6 +12,11 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
 {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
+}
+
+CURLcode mycurl_easy_setopt_writefunction(CURL* curl, size_t (*writefunction)(void*, size_t, size_t, void*))
+{
+    return curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunction);
 }
 
 int main(int argc, char** argv)
@@ -34,7 +39,7 @@ int main(int argc, char** argv)
         struct curl_slist* list = nullptr;
         list = curl_slist_append(list, "accept: application/json");
         list = curl_slist_append(
-            list, "Authorization: Bearer I0.b2F1dGgyLmJkYy5zY2h3YWIuY29t.x0xizIGSHbdYxYLIajZlTFaGrcB1t2zScRu5ZqutHb4@");
+            list, "Authorization: Bearer I0.b2F1dGgyLmJkYy5zY2h3YWIuY29t.ABFpcMvSb_ZTYtgUlpXpd5ynajSMFPI4IxF493Vzb5c@");
 
         curl_easy_setopt(curl, CURLOPT_URL, finalUrl.c_str()); // should be URLencoded
         curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
@@ -46,7 +51,8 @@ int main(int argc, char** argv)
         // curl_easy_setopt(curl, CURLOPT_COPYPOSTFIELDS, local_buffer);
         // curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        //curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        mycurl_easy_setopt_writefunction(curl, WriteCallback);
 
         /*we can use CURLOPT_VERBOSE for debugging purposes. It displays information about the curl operations.
         Automatically sent to stderr, or a stream set with CURLOPT_STDERR

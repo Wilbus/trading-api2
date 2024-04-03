@@ -44,7 +44,7 @@ CURLcode mycurl_easy_setopt_httpheader(CURL* curl, curl_slist* list)
     return curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
 }
 
-CURLcode mycurl_easy_setopt_writefunction(CURL* curl, std::function<size_t(void*, size_t, size_t, void*)> writefunction)
+CURLcode mycurl_easy_setopt_writefunction(CURL* curl, size_t (*writefunction)(void*, size_t, size_t, void*))
 {
     return curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunction);
 }
@@ -54,7 +54,7 @@ CURLcode mycurl_easy_setopt_verbose(CURL* curl, bool flag)
     return curl_easy_setopt(curl, CURLOPT_VERBOSE, flag);
 }
 
-CURLcode mycurl_easy_setopt_writedata(CURL* curl, std::string& readbuffer)
+CURLcode mycurl_easy_setopt_writedata(CURL* curl, void* readbuffer)
 {
     return curl_easy_setopt(curl, CURLOPT_WRITEDATA, readbuffer);
 }

@@ -20,8 +20,8 @@ SchwabClient::SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_p
 std::set<std::string> SchwabClient::headers() const
 {
     //clang-format off
-    std::string bearer = "Authorization: Bearer IO." + config->getAuthorizationCode().code;
-    std::string content_type = "Accept: application/json";
+    std::string bearer = "Authorization: Bearer I0." + config->getAuthorizationCode().code;
+    std::string content_type = "accept: application/json";
     return std::set<std::string>{content_type, bearer};
     //clang-format on
 }
