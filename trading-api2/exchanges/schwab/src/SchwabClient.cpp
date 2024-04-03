@@ -49,7 +49,7 @@ void SchwabClient::setAccountsEndpoint()
 {
     restClient->setBaseEndpoint("https://api.schwabapi.com/trader/v1");
 }
-
+//TODO: fixme. this doesn't work as expected
 bool SchwabClient::checkAccessToken()
 {
     time_t nowMs = utils::nowMs();
