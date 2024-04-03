@@ -39,6 +39,16 @@ CURLcode mycurl_easy_setopt_httpget(CURL* curl, bool flag)
     return curl_easy_setopt(curl, CURLOPT_HTTPGET, flag);
 }
 
+CURLcode mycurl_easy_setopt_httppost(CURL* curl, bool flag)
+{
+    return curl_easy_setopt(curl, CURLOPT_HTTPPOST, flag);
+}
+
+CURLcode mycurl_easy_setopt_copypostfields(CURL* curl, std::string data)
+{
+    return curl_easy_setopt(curl, CURLOPT_COPYPOSTFIELDS, data.c_str());
+}
+
 CURLcode mycurl_easy_setopt_httpheader(CURL* curl, curl_slist* list)
 {
     return curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);

@@ -20,6 +20,8 @@ public:
     MOCK_METHOD2(mycurl_easy_setopt_url, CURLcode(CURL*, std::string));
     MOCK_METHOD2(mycurl_easy_setopt_http_version, CURLcode(CURL*, CurlHttpVersions));
     MOCK_METHOD2(mycurl_easy_setopt_httpget, CURLcode(CURL*, bool));
+    MOCK_METHOD2(mycurl_easy_setopt_httppost, CURLcode(CURL*, bool));
+    MOCK_METHOD2(mycurl_easy_setopt_copypostfields, CURLcode(CURL*, std::string));
     MOCK_METHOD2(mycurl_easy_setopt_httpheader, CURLcode(CURL*, curl_slist*));
     MOCK_METHOD2(
         mycurl_easy_setopt_writefunction, CURLcode(CURL*, size_t (*writefunction)(void*, size_t, size_t, void*)));

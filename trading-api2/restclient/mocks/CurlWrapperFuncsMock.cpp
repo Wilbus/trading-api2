@@ -40,6 +40,16 @@ CURLcode mycurl_easy_setopt_httpget(CURL* curl, bool flag)
     return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_httpget(curl, flag);
 }
 
+CURLcode mycurl_easy_setopt_httppost(CURL* curl, bool flag)
+{
+    return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_httppost(curl, flag);
+}
+
+CURLcode mycurl_easy_setopt_copypostfields(CURL* curl, std::string data)
+{
+    return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_copypostfields(curl, data);
+}
+
 CURLcode mycurl_easy_setopt_httpheader(CURL* curl, curl_slist* list)
 {
     return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_httpheader(curl, list);

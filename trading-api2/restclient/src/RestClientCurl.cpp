@@ -103,6 +103,77 @@ std::string RestClientCurl::postResponse(const std::string path, const std::set<
 std::string RestClientCurl::postResponse(
     const std::string path, const std::set<std::string>& headersList, const std::string body)
 {
+    if (curl == nullptr)
+    {
+        throw std::runtime_error("CURL* curl is nullptr");
+    }
+    std::string finalUrl = baseEndpoint + path;
+    readbuffer.clear();
+
+    CURLcode code;
+
+    curl_slist* list = nullptr;
+    for (const auto& header : headersList)
+    {
+        list = mycurl_slist_append(list, header);
+    }
+
+    code = mycurl_easy_setopt_url(curl, finalUrl);
+    if (!checkCURLcode(code))
+    {
+        throw std::runtime_error("invalid curlcode");
+    }
+
+    code = mycurl_easy_setopt_http_version(curl, CurlHttpVersions::MYCURL_HTTP_VERSION_1_0);
+    if (!checkCURLcode(code))
+    {
+        throw std::runtime_error("invalid curlcode");
+    }
+
+    //consider using MIMEPOST because httppost is deprecated
+    code = mycurl_easy_setopt_httppost(curl, true);
+    if (!checkCURLcode(code))
+    {
+        throw std::runtime_error("invalid curlcode");
+    }
+
+    // data pointed to is NOT COPIED. Unless we set CURLOPT_COPYPOSTFIELDS
+        // char local_buffer[1024]="data to send";
+    //may need to url encode??
+    code = mycurl_easy_setopt_copypostfields(curl, body);
+    if (!checkCURLcode(code))
+    {
+        throw std::runtime_error("invalid curlcode");
+    }
+    //curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
+
+    code = mycurl_easy_setopt_httpheader(curl, list);
+    if (!checkCURLcode(code))
+    {
+        throw std::runtime_error("invalid curlcode");
+    }
+
+    code = mycurl_easy_setopt_writefunction(curl, restclient::WriteCallback);
+    if (!checkCURLcode(code))
+    {
+        throw std::runtime_error("invalid curlcode");
+    }
+
+    mycurl_easy_setopt_verbose(curl, true); //TODO: make this configurable
+
+    code = mycurl_easy_setopt_writedata(curl, &readbuffer);
+    if (!checkCURLcode(code))
+    {
+        throw std::runtime_error("invalid curlcode");
+    }
+
+    code = mycurl_easy_perform(curl);
+    if (!checkCURLcode(code))
+    {
+        throw std::runtime_error("invalid curlcode");
+    }
+
+    return readbuffer;
 }
 
 } // namespace restclient

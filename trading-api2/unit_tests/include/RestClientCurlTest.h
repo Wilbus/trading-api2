@@ -236,3 +236,38 @@ TEST_F(RestClientCurlTest, getResponseTest)
     EXPECT_EQ(responsedata, "somejsondata");
     freeSList();
 }
+
+TEST_F(RestClientCurlTest, postResponseNullptrCurlTest)
+{
+    expectInvalidCurlOnInit();
+    EXPECT_THROW(client->postResponse(path, headers, "bodydata"), std::runtime_error);
+}
+
+TEST_F(RestClientCurlTest, postResponseTest)
+{
+    expectValidCurlOnInit();
+    expectSListHeaders();
+    std::string body{"grant_type=refresh_token&refresh_token=token1234"};
+
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_url(curl, finalUrl))
+        .WillOnce(Return(CURLcode::CURLE_OK));
+    EXPECT_CALL(
+        CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_http_version(curl, CurlHttpVersions::MYCURL_HTTP_VERSION_1_0))
+        .WillOnce(Return(CURLcode::CURLE_OK));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_httppost(curl, true))
+        .WillOnce(Return(CURLcode::CURLE_OK));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_copypostfields(curl, body))
+        .WillOnce(Return(CURLcode::CURLE_OK));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_httpheader(curl, listptr2))
+        .WillOnce(Return(CURLcode::CURLE_OK));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writefunction(curl, _))
+        .WillOnce(Return(CURLcode::CURLE_OK)); // TODO: maybe check if correct function is called somehow?
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, client->getReadBufferPtr()))
+        .WillOnce(Return(CURLcode::CURLE_OK));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_perform(curl)).WillOnce(Return(CURLcode::CURLE_OK));
+
+    std::string responsedata = client->postResponse(path, headers, body);
+    EXPECT_EQ(responsedata, "somejsondata");
+    freeSList();
+}
