@@ -4,8 +4,8 @@
 #include "IRestClientCurl.h"
 #include "SchwabAccountDataTypes.h"
 #include "SchwabConfigs.h"
-#include "SchwabMarketDataTypes.h"
 #include "SchwabErrorDataTypes.h"
+#include "SchwabMarketDataTypes.h"
 
 #include <memory>
 

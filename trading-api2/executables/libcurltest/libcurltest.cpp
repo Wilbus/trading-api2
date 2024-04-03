@@ -1,8 +1,9 @@
 #include "SchwabMarketDataParser.h"
 #include "UriEncodeDecode.h"
-#include <functional>
+
 #include <curl/curl.h>
 
+#include <functional>
 #include <iostream>
 #include <string>
 
@@ -51,7 +52,7 @@ int main(int argc, char** argv)
         // curl_easy_setopt(curl, CURLOPT_COPYPOSTFIELDS, local_buffer);
         // curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
-        //curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         mycurl_easy_setopt_writefunction(curl, WriteCallback);
 
         /*we can use CURLOPT_VERBOSE for debugging purposes. It displays information about the curl operations.

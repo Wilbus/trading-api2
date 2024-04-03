@@ -2,10 +2,10 @@
 #include "SchwabClient.h"
 #include "SchwabConfigsMock.h"
 #include "SystemTimerMock.h"
+#include "schwabErrorTestValues.h"
 #include "schwabOptionsTestValues.h"
 #include "schwabtestauthvalues.h"
 #include "schwabtestvalues.h"
-#include "schwabErrorTestValues.h"
 
 #include <gtest/gtest.h>
 
@@ -239,8 +239,7 @@ TEST_F(SchwabClientTest, getQuotesErrorResponse)
     expectValidAccessToken();
     EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
     EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(path, expectedHeaders()))
-        .WillOnce(Return(genericError400));
+    EXPECT_CALL(*restClientCurlMock.get(), getResponse(path, expectedHeaders())).WillOnce(Return(genericError400));
     auto quotesmap = client->getEquityQuotes(symbols);
     EXPECT_EQ(quotesmap.size(), 0);
 }
@@ -295,16 +294,16 @@ TEST_F(SchwabClientTest, getOptionExpirationsErrorResponse)
 {
     expectValidAccessToken();
     std::string expectedPath = "?symbol=AAPL";
-        {
-            InSequence getOptionExpirationSeq;
+    {
+        InSequence getOptionExpirationSeq;
 
-            EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-            EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-            EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-                .WillOnce(Return(genericError400));
-            auto expirations = client->getOptionExpirations("AAPL");
-            EXPECT_EQ(expirations.size(), 0);
-        }
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(genericError400));
+        auto expirations = client->getOptionExpirations("AAPL");
+        EXPECT_EQ(expirations.size(), 0);
+    }
 }
 
 TEST_F(SchwabClientTest, getOptionExpirations)

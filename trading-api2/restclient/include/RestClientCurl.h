@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IRestClientCurl.h"
 #include "CurlWrapperFuncs.h"
+#include "IRestClientCurl.h"
 
 namespace restclient {
 
@@ -17,12 +17,14 @@ public:
     virtual std::string postResponse(const std::string path, const std::set<std::string> headersList) override;
     virtual std::string postResponse(
         const std::string path, const std::set<std::string>& headersList, const std::string body) override;
+
 protected:
     std::string readbuffer;
+
 private:
     bool checkCURLcode(const CURLcode code);
     std::string baseEndpoint;
     CURL* curl;
-    //std::string readbuffer;
+    // std::string readbuffer;
 };
 } // namespace restclient

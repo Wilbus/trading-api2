@@ -18,7 +18,7 @@ static std::time_t stringTimeToUnix(std::string str, std::string format)
 
     return mktime(&t);
 }
-
+#if 0 // re-enable when needed to reduce WUnused-function warnings
 static std::string unixTimeToString(std::time_t& t, std::string format)
 {
     std::tm tmtime = *std::localtime(&t);
@@ -26,5 +26,5 @@ static std::string unixTimeToString(std::time_t& t, std::string format)
     buff << std::put_time(&tmtime, format.c_str());
     return buff.str();
 }
-
+#endif
 }; // namespace timefuncs

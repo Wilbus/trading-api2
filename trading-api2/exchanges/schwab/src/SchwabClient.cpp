@@ -1,8 +1,8 @@
 #include "SchwabClient.h"
 
 #include "SchwabAccountDataParser.h"
-#include "SchwabMarketDataParser.h"
 #include "SchwabErrorParser.h"
+#include "SchwabMarketDataParser.h"
 #include "SystemTimer.h"
 #include "UriEncodeDecode.h"
 #include "timefuncs.h"
@@ -46,7 +46,7 @@ bool SchwabClient::checkAccessToken()
 {
     auto nowMs = utils::nowMs();
     auto accessToken = config->getAccessToken();
-    return nowMs < accessToken.expires_at_time;
+    return static_cast<uint64_t>(nowMs) < accessToken.expires_at_time;
 }
 
 void SchwabClient::logErrorResponse(ErrorResponse errorResp)
@@ -85,7 +85,7 @@ bool SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
         setAuthenticationEndpoint();
         auto resp = restClient->postResponse(path, headers, body);
         auto errorResp = checkErrors(resp);
-        if(errorResp.errors.size() > 0)
+        if (errorResp.errors.size() > 0)
         {
             logErrorResponse(errorResp);
             return false;
@@ -136,7 +136,7 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
         auto errorResp = checkErrors(resp);
-        if(errorResp.errors.size() > 0)
+        if (errorResp.errors.size() > 0)
         {
             logErrorResponse(errorResp);
             return {};
@@ -165,7 +165,7 @@ OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCou
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
         auto errorResp = checkErrors(resp);
-        if(errorResp.errors.size() > 0)
+        if (errorResp.errors.size() > 0)
         {
             logErrorResponse(errorResp);
             return {};
@@ -192,7 +192,7 @@ std::vector<OptionExpiration> SchwabClient::getOptionExpirations(std::string sym
         std::string path = "?symbol=" + symbol;
         auto resp = restClient->getResponse(path, headers());
         auto errorResp = checkErrors(resp);
-        if(errorResp.errors.size() > 0)
+        if (errorResp.errors.size() > 0)
         {
             logErrorResponse(errorResp);
             return {};
@@ -240,7 +240,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
         auto errorResp = checkErrors(resp);
-        if(errorResp.errors.size() > 0)
+        if (errorResp.errors.size() > 0)
         {
             logErrorResponse(errorResp);
             return {};

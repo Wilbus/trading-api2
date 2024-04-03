@@ -79,7 +79,7 @@ std::string RestClientCurl::getResponse(const std::string path, const std::set<s
         throw std::runtime_error("invalid curlcode");
     }
 
-    mycurl_easy_setopt_verbose(curl, true); //TODO: make this configurable
+    mycurl_easy_setopt_verbose(curl, true); // TODO: make this configurable
 
     code = mycurl_easy_setopt_writedata(curl, &readbuffer);
     if (!checkCURLcode(code))
@@ -98,6 +98,7 @@ std::string RestClientCurl::getResponse(const std::string path, const std::set<s
 
 std::string RestClientCurl::postResponse(const std::string path, const std::set<std::string> headersList)
 {
+    return {};
 }
 
 std::string RestClientCurl::postResponse(
@@ -130,7 +131,7 @@ std::string RestClientCurl::postResponse(
         throw std::runtime_error("invalid curlcode");
     }
 
-    //consider using MIMEPOST because httppost is deprecated
+    // consider using MIMEPOST because httppost is deprecated
     code = mycurl_easy_setopt_httppost(curl, true);
     if (!checkCURLcode(code))
     {
@@ -138,14 +139,14 @@ std::string RestClientCurl::postResponse(
     }
 
     // data pointed to is NOT COPIED. Unless we set CURLOPT_COPYPOSTFIELDS
-        // char local_buffer[1024]="data to send";
-    //may need to url encode??
+    // char local_buffer[1024]="data to send";
+    // may need to url encode??
     code = mycurl_easy_setopt_copypostfields(curl, body);
     if (!checkCURLcode(code))
     {
         throw std::runtime_error("invalid curlcode");
     }
-    //curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
+    // curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
 
     code = mycurl_easy_setopt_httpheader(curl, list);
     if (!checkCURLcode(code))
@@ -159,7 +160,7 @@ std::string RestClientCurl::postResponse(
         throw std::runtime_error("invalid curlcode");
     }
 
-    mycurl_easy_setopt_verbose(curl, true); //TODO: make this configurable
+    mycurl_easy_setopt_verbose(curl, true); // TODO: make this configurable
 
     code = mycurl_easy_setopt_writedata(curl, &readbuffer);
     if (!checkCURLcode(code))

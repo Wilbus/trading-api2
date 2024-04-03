@@ -3,7 +3,7 @@
 #include <string>
 
 std::string genericError400 =
-R"({
+    R"({
   "errors": [
     {
       "id": "6808262e-52bb-4421-9d31-6c0e762e7dd5",
@@ -40,7 +40,7 @@ R"({
 })";
 
 std::string genericError401 =
-R"({
+    R"({
   "errors": [
     {
       "status": "401",
@@ -51,7 +51,7 @@ R"({
 })";
 
 std::string genericError404 =
-R"({
+    R"({
   "errors": [
     {
       "status": "404",
@@ -62,7 +62,7 @@ R"({
 })";
 
 std::string genericError500 =
-R"({
+    R"({
   "errors": [
     {
       "id": "0be22ae7-efdf-44d9-99f4-f138049d76ca",
@@ -73,7 +73,7 @@ R"({
 })";
 
 std::string postErrorInvalidClient =
-R"({
+    R"({
     "error": "invalid_client",
     "error_description": "Unauthorized"
 })";

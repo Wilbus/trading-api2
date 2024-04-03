@@ -1,8 +1,9 @@
 #include "SchwabMarketDataParser.h"
 #include "UriEncodeDecode.h"
-#include <functional>
+
 #include <curl/curl.h>
 
+#include <functional>
 #include <iostream>
 #include <string>
 
@@ -31,15 +32,14 @@ int main(int argc, char** argv)
     if (curl)
     {
         std::string baseUrl = "https://api.schwabapi.com/v1/oauth/token";
-        //std::string path = "/quotes?symbols=SPY&fields=quote&indicative=false";
-        //std::string path2 = "/expirationchain?symbol=AAPL";
+        // std::string path = "/quotes?symbols=SPY&fields=quote&indicative=false";
+        // std::string path2 = "/expirationchain?symbol=AAPL";
         std::string finalUrl = baseUrl;
         // std::string encodedFinalUrl = utils::url_encode(finalUrl);
 
         struct curl_slist* list = nullptr;
         list = curl_slist_append(list, "Content-Type: application/x-www-form-urlencoded");
-        list = curl_slist_append(
-            list, "Authorization: Basic appsecret123"); //appsecret
+        list = curl_slist_append(list, "Authorization: Basic appsecret123"); // appsecret
 
         /*mimepost is the curl -F option*/
         /*
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
         curl_easy_setopt(curl, CURLOPT_COPYPOSTFIELDS, data.c_str());
         // curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
-        //curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         mycurl_easy_setopt_writefunction(curl, WriteCallback);
 
         /*we can use CURLOPT_VERBOSE for debugging purposes. It displays information about the curl operations.
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
         res = curl_easy_perform(curl);
-        //curl_mime_free(multipart);
+        // curl_mime_free(multipart);
         curl_easy_cleanup(curl);
 
         std::cout << readBuffer << std::endl;

@@ -44,6 +44,7 @@ void SchwabStreamHandler::connectStream()
 
 std::shared_ptr<DataQueue<std::string>> SchwabStreamHandler::repliesQueue()
 {
+    return repliesQue;
 }
 
 } // namespace streamer

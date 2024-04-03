@@ -21,7 +21,7 @@ protected:
 TEST_F(SchwabErrorParserTest, parseGenericError400)
 {
     auto errorResp = checkErrors(genericError400);
-    //just check some fields
+    // just check some fields
     Error err0 = errorResp.errors[0];
     Error err1 = errorResp.errors[1];
     Error err2 = errorResp.errors[2];

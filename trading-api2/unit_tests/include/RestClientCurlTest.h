@@ -10,18 +10,18 @@ using testing::Return;
 
 class RestClientCurlTest : public ::testing::Test
 {
-class RestClientCurlTestable : public RestClientCurl
-{
-public:
-    RestClientCurlTestable()
+    class RestClientCurlTestable : public RestClientCurl
     {
-    }
+    public:
+        RestClientCurlTestable()
+        {
+        }
 
-    std::string* getReadBufferPtr()
-    {
-        return &readbuffer;
-    }
-};
+        std::string* getReadBufferPtr()
+        {
+            return &readbuffer;
+        }
+    };
 
 public:
     RestClientCurlTest()
