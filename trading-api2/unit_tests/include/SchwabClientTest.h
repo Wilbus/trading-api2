@@ -30,12 +30,12 @@ public:
         stubAuthConfig.app_secret = "app_secret123";
         stubAuthConfig.redirect_uri = "https://127.0.0.1";
 
-        authCode.code = "authcode1234";
+        authCode.code = "authcode1234%40";
         authCode.granted_at_time = 1711778400000;
         refreshToken.token = "refresh1234";
         refreshToken.granted_at_time = 2711778400000;
         refreshToken.expires_at_time = 3711778400000;
-        accessToken.token = "access1234";
+        accessToken.token = "access1234%40";
         accessToken.granted_at_time = 4711778400000;
         accessToken.expires_at_time = 5711778400000;
 
@@ -46,17 +46,18 @@ public:
 
     std::set<std::string> expectedHeaders()
     {
-        return std::set<std::string>{"accept: application/json", "Authorization: Bearer I0.authcode1234"};
+        return std::set<std::string>{"accept: application/json", "Authorization: Bearer access1234@"};
     }
 
     void expectRefreshTokenRequest()
     {
         std::string expectedPath = "/oauth/token";
         std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-        std::string authHeader = "Authorization: Basic " + stubAuthConfig.app_secret;
+        std::string authHeader = "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
         std::set<std::string> expectedHeaders{content_type, authHeader};
         std::string expectedBody = "grant_type=refresh_token&refresh_token=" + refreshToken.token;
 
+        EXPECT_CALL(*configMock.get(), getAppKey()).WillOnce(Return(stubAuthConfig.app_key));
         EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));
         EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(authenticationEndpoint));
         EXPECT_CALL(*restClientCurlMock.get(), postResponse(expectedPath, expectedHeaders, expectedBody))
@@ -67,7 +68,7 @@ public:
     {
         std::string expectedPath = "/oauth/token";
         std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-        std::string authHeader = "Authorization: Basic " + stubAuthConfig.app_secret;
+        std::string authHeader = "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
         std::set<std::string> expectedHeaders{authHeader, content_type};
         std::string expectedBody = "grant_type=authorization_code&code=" + stubAuthConfig.refresh_token.token +
                                    "&redirect_uri=" + stubAuthConfig.redirect_uri;
@@ -81,6 +82,7 @@ public:
             InSequence createAccessTokenSeq;
 
             EXPECT_CALL(*configMock.get(), getRefreshToken()).Times(1).WillOnce(Return(stubAuthConfig.refresh_token));
+            EXPECT_CALL(*configMock.get(), getAppKey()).WillOnce(Return(stubAuthConfig.app_key));
             EXPECT_CALL(*configMock.get(), getAppSecret()).Times(1).WillOnce(Return(stubAuthConfig.app_secret));
             EXPECT_CALL(*configMock.get(), getRedirectUri()).Times(1).WillOnce(Return(stubAuthConfig.redirect_uri));
             EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(authenticationEndpoint));
@@ -99,7 +101,7 @@ public:
             InSequence validAccessTokenSeq;
             EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs())
                 .WillOnce(Return(stubAuthConfig.access_token.expires_at_time - 1));
-            EXPECT_CALL(*configMock.get(), getAccessToken()).WillOnce(Return(stubAuthConfig.access_token));
+            EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
         }
     }
 
@@ -121,7 +123,7 @@ public:
             InSequence getOptionExpirationSeq;
 
             EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-            EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+            EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
             EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
                 .WillOnce(Return(expirationListExample));
             auto expirations = client->getOptionExpirations("AAPL");
@@ -143,14 +145,14 @@ protected:
     std::string authenticationEndpoint{"https://api.schwabapi.com/v1"};
 };
 
-TEST_F(SchwabClientTest, newRefreshTokenRequest)
+TEST_F(SchwabClientTest, updateAccessTokenRequest)
 {
     std::string expectedPath = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-    std::string authHeader = "Authorization: Basic " + stubAuthConfig.app_secret;
+    std::string authHeader = "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
     std::set<std::string> expectedHeaders{authHeader, content_type};
     std::string expectedBody =
-        "grant_type=authorization_code&code=" + authCode.code + "&redirect_uri=https://127.0.0.1";
+        "grant_type=authorization_code&code=" + utils::url_decode(authCode.code) + "&redirect_uri=https://127.0.0.1";
 
     Token fakeSaveAccessToken;
     fakeSaveAccessToken.token = "ACCESS_TOKEN_HERE";
@@ -160,6 +162,7 @@ TEST_F(SchwabClientTest, newRefreshTokenRequest)
     {
         InSequence createAccessTokenSeq;
 
+        EXPECT_CALL(*configMock.get(), getAppKey()).WillOnce(Return(stubAuthConfig.app_key));
         EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));
         EXPECT_CALL(*configMock.get(), getRedirectUri()).WillOnce(Return(stubAuthConfig.redirect_uri));
         EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(authenticationEndpoint));
@@ -172,14 +175,14 @@ TEST_F(SchwabClientTest, newRefreshTokenRequest)
     EXPECT_TRUE(client->createAccessToken(authCode.code, false));
 }
 
-TEST_F(SchwabClientTest, newRefreshTokenRequestReturnsErrorResponse)
+TEST_F(SchwabClientTest, updateAcessTokenResponseInvalid)
 {
     std::string expectedPath = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-    std::string authHeader = "Authorization: Basic " + stubAuthConfig.app_secret;
+    std::string authHeader = "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
     std::set<std::string> expectedHeaders{authHeader, content_type};
     std::string expectedBody =
-        "grant_type=authorization_code&code=" + authCode.code + "&redirect_uri=https://127.0.0.1";
+        "grant_type=authorization_code&code=" + utils::url_decode(authCode.code) + "&redirect_uri=https://127.0.0.1";
 
     Token fakeSaveAccessToken;
     fakeSaveAccessToken.token = "ACCESS_TOKEN_HERE";
@@ -189,6 +192,7 @@ TEST_F(SchwabClientTest, newRefreshTokenRequestReturnsErrorResponse)
     {
         InSequence createAccessTokenSeq;
 
+        EXPECT_CALL(*configMock.get(), getAppKey()).WillOnce(Return(stubAuthConfig.app_key));
         EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));
         EXPECT_CALL(*configMock.get(), getRedirectUri()).WillOnce(Return(stubAuthConfig.redirect_uri));
         EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(authenticationEndpoint));
@@ -223,10 +227,14 @@ TEST_F(SchwabClientTest, getQuotesCaughtException)
     std::string path = R"(/quotes?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
 
     expectValidAccessToken();
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(path, expectedHeaders()))
-        .WillOnce(Throw(std::runtime_error("")));
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(path, expectedHeaders()))
+            .WillOnce(Throw(std::runtime_error("")));
+    }
     auto quotesmap = client->getEquityQuotes(symbols);
     EXPECT_EQ(quotesmap.size(), 0);
 }
@@ -237,9 +245,13 @@ TEST_F(SchwabClientTest, getQuotesErrorResponse)
     std::string path = R"(/quotes?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
 
     expectValidAccessToken();
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(path, expectedHeaders())).WillOnce(Return(genericError400));
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(path, expectedHeaders())).WillOnce(Return(genericError400));
+    }
     auto quotesmap = client->getEquityQuotes(symbols);
     EXPECT_EQ(quotesmap.size(), 0);
 }
@@ -250,10 +262,13 @@ TEST_F(SchwabClientTest, getQuotes)
     std::string path = R"(/quotes?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
 
     expectValidAccessToken();
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(path, expectedHeaders()))
-        .WillOnce(Return(multiEquityQuotesExample));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(path, expectedHeaders()))
+            .WillOnce(Return(multiEquityQuotesExample));
+    }
     auto quotesmap = client->getEquityQuotes(symbols);
 }
 
@@ -269,7 +284,7 @@ TEST_F(SchwabClientTest, getQuotesWithRefreshingAccessToken)
         InSequence getQuotesSeq;
 
         EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-        EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
         EXPECT_CALL(*restClientCurlMock.get(), getResponse(path, expectedHeaders()))
             .WillOnce(Return(multiEquityQuotesExample));
     }
@@ -282,10 +297,13 @@ TEST_F(SchwabClientTest, getOptionExpirationsCaughtException)
 
     expectValidAccessToken();
 
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Throw(std::runtime_error("")));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Throw(std::runtime_error("")));
+    }
     auto expirations = client->getOptionExpirations("AAPL");
     EXPECT_EQ(expirations.size(), 0);
 }
@@ -298,7 +316,7 @@ TEST_F(SchwabClientTest, getOptionExpirationsErrorResponse)
         InSequence getOptionExpirationSeq;
 
         EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-        EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
         EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
             .WillOnce(Return(genericError400));
         auto expirations = client->getOptionExpirations("AAPL");
@@ -330,10 +348,13 @@ TEST_F(SchwabClientTest, getPriceHistoryCaughtException)
 
     expectValidAccessToken();
 
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Throw(std::runtime_error("")));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Throw(std::runtime_error("")));
+    }
     auto priceHistory = client->getPriceHistory(
         "SPY", PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY, 1, "2024-03-20", "", true, true);
     EXPECT_EQ(priceHistory.candles.size(), 0);
@@ -348,10 +369,13 @@ TEST_F(SchwabClientTest, getPriceHistoryNoEndDate)
 
     expectValidAccessToken();
 
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Return(mockGetPriceHistoryResp));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(mockGetPriceHistoryResp));
+    }
     auto priceHistory = client->getPriceHistory(
         "SPY", PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY, 1, "2024-03-20", "", true, true);
     EXPECT_EQ(priceHistory.candles.size(), 7);
@@ -366,10 +390,13 @@ TEST_F(SchwabClientTest, getPriceHistoryErrorResponse)
 
     expectValidAccessToken();
 
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Return(genericError400));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(genericError400));
+    }
     auto priceHistory = client->getPriceHistory(
         "SPY", PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY, 1, "2024-03-20", "", true, true);
     EXPECT_EQ(priceHistory.candles.size(), 0);
@@ -383,10 +410,13 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDates)
 
     expectValidAccessToken();
 
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Return(mockGetPriceHistoryResp));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(mockGetPriceHistoryResp));
+    }
     auto priceHistory = client->getPriceHistory(
         "SPY", PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY, 1, "2024-03-20", "2024-03-30", true, true);
     EXPECT_EQ(priceHistory.candles.size(), 7);
@@ -400,10 +430,13 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDatesMinutes)
 
     expectValidAccessToken();
 
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Return(mockGetPriceHistoryResp));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(mockGetPriceHistoryResp));
+    }
     auto priceHistory = client->getPriceHistory(
         "AAPL", PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::MINUTE, 30, "2024-03-20", "", true, true);
     EXPECT_GT(priceHistory.candles.size(), 0);
@@ -418,10 +451,13 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDatesMinutesWithUpdateAccessT
     expectExpiredAccessToken();
     expectUpdateAccessToken();
 
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Return(mockGetPriceHistoryResp));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(mockGetPriceHistoryResp));
+    }
     auto priceHistory = client->getPriceHistory(
         "AAPL", PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::MINUTE, 30, "2024-03-20", "", true, true);
     EXPECT_GT(priceHistory.candles.size(), 0);
@@ -433,10 +469,13 @@ TEST_F(SchwabClientTest, getOptionChainCaughtException)
 
     expectValidAccessToken();
 
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Throw(std::runtime_error("")));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Throw(std::runtime_error("")));
+    }
     auto optionChain = client->getOptionChain("AAPL", 5);
     EXPECT_EQ(optionChain.callExpDateMap.size(), 0);
     EXPECT_EQ(optionChain.putExpDateMap.size(), 0);
@@ -447,11 +486,14 @@ TEST_F(SchwabClientTest, getOptionChain)
     std::string expectedPath = "/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
 
     expectValidAccessToken();
-
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Return(schwabOptionsExample_ALL_5Strikes));
+    
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(schwabOptionsExample_ALL_5Strikes));
+    }
     auto optionChain = client->getOptionChain("AAPL", 5);
     EXPECT_GT(optionChain.callExpDateMap.size(), 0);
     EXPECT_GT(optionChain.putExpDateMap.size(), 0);
@@ -463,10 +505,13 @@ TEST_F(SchwabClientTest, getOptionChainErrorResponse)
 
     expectValidAccessToken();
 
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Return(genericError400));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(genericError400));
+    }
     auto optionChain = client->getOptionChain("AAPL", 5);
     EXPECT_EQ(optionChain.callExpDateMap.size(), 0);
     EXPECT_EQ(optionChain.putExpDateMap.size(), 0);
@@ -479,10 +524,13 @@ TEST_F(SchwabClientTest, getOptionChainWithUpdateAccessToken)
     expectExpiredAccessToken();
     expectUpdateAccessToken();
 
-    EXPECT_CALL(*configMock.get(), getAuthorizationCode()).WillOnce(Return(authCode));
-    EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
-    EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
-        .WillOnce(Return(schwabOptionsExample_ALL_5Strikes));
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(schwabOptionsExample_ALL_5Strikes));
+    }
     auto optionChain = client->getOptionChain("AAPL", 5);
     EXPECT_GT(optionChain.callExpDateMap.size(), 0);
     EXPECT_GT(optionChain.putExpDateMap.size(), 0);

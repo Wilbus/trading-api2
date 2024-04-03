@@ -5,6 +5,7 @@
 #include "SchwabMarketDataParser.h"
 #include "SystemTimer.h"
 #include "UriEncodeDecode.h"
+#include "base64.hpp"
 #include "timefuncs.h"
 
 #include <iostream>
@@ -18,10 +19,17 @@ SchwabClient::SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_p
 {
 }
 
+/*
+example header
+curl -X 'GET' \
+  'https://api.schwabapi.com/marketdata/v1/quotes?symbols=SPY&fields=quote%2Creference&indicative=false' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer I0.fsfsfsfsssome_access_token0@'
+*/
 std::set<std::string> SchwabClient::headers() const
 {
     //clang-format off
-    std::string bearer = "Authorization: Bearer I0." + config->getAuthorizationCode().code;
+    std::string bearer = "Authorization: Bearer " + utils::url_decode(config->getAccessToken().token);
     std::string content_type = "accept: application/json";
     return std::set<std::string>{content_type, bearer};
     //clang-format on
@@ -44,8 +52,12 @@ void SchwabClient::setAccountsEndpoint()
 
 bool SchwabClient::checkAccessToken()
 {
-    auto nowMs = utils::nowMs();
-    auto accessToken = config->getAccessToken();
+    time_t nowMs = utils::nowMs();
+    Token accessToken = config->getAccessToken();
+    time_t expires = static_cast<time_t>(accessToken.expires_at_time);
+    std::string nowTimeStr = timefuncs::unixTimeToString(nowMs, "%Y-%m-%dT%H:%M:%S");
+    std::string accessTokenExpiresAt = timefuncs::unixTimeToString(expires, "%Y-%m-%dT%H:%M:%S");
+    std::printf("%s: now is %s, accessTokenExpiresAt: %s\n", __func__, nowTimeStr.c_str(), accessTokenExpiresAt.c_str());
     return static_cast<uint64_t>(nowMs) < accessToken.expires_at_time;
 }
 
@@ -69,16 +81,24 @@ bool SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
 {
     std::string path = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-
-    std::string authorization_code_header = "Authorization: Basic " + config->getAppSecret();
+    
+    std::string appkey = config->getAppKey();
+    std::string appsecret = config->getAppSecret();
+    std::string authorizationBasicField = base64::to_base64(appkey + ":" + appsecret);
+    std::string authorization_code_header = "Authorization: Basic " + authorizationBasicField;
     std::set<std::string> headers{authorization_code_header, content_type};
 
     std::string body;
-    if (!isRefreshToken)
-        body = "grant_type=authorization_code&code=" + authCodeOrRefreshToken +
+    if (!isRefreshToken) //first access token creation
+    {
+        body = "grant_type=authorization_code&code=" + utils::url_decode(authCodeOrRefreshToken) +
                "&redirect_uri=" + config->getRedirectUri();
-    else
+    }
+    else //access token refresh
+    {
+        std::cout << "Refreshing a new access token\n";
         body = "grant_type=refresh_token&refresh_token=" + authCodeOrRefreshToken;
+    }
 
     try
     {

@@ -15,5 +15,4 @@ int main(int argc, char** argv)
     std::cout << quotes.at("SPY").quote.yearHigh << "\n";
 
     // quotes = sclient->getEquityQuotes(std::set<std::string>{"AAPL"});
-    sclient->createAccessToken("refreshtoken123", true);
 }

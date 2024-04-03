@@ -1,3 +1,4 @@
+#include "EncodeDecodeTest.h"
 #include "RestClientCurlTest.h"
 #include "SchwabAccountDataParserTest.h"
 #include "SchwabClientTest.h"
