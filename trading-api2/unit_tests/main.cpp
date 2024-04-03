@@ -1,8 +1,9 @@
 #include "RestClientCurlTest.h"
 #include "SchwabAccountDataParserTest.h"
+#include "SchwabMarketDataParserTest.h"
+#include "SchwabErrorParserTest.h"
 #include "SchwabClientTest.h"
 #include "SchwabConfigsTest.h"
-#include "SchwabMarketDataParserTest.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
