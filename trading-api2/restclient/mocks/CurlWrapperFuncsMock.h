@@ -25,8 +25,8 @@ public:
     MOCK_METHOD2(mycurl_easy_setopt_httpheader, CURLcode(CURL*, curl_slist*));
     MOCK_METHOD2(
         mycurl_easy_setopt_writefunction, CURLcode(CURL*, size_t (*writefunction)(void*, size_t, size_t, void*)));
-    MOCK_METHOD2(
-        mycurl_easy_setopt_debugfunction, CURLcode(CURL*, int (*debugcallback)(CURL*, curl_infotype, char*, size_t, void*)));
+    MOCK_METHOD2(mycurl_easy_setopt_debugfunction,
+        CURLcode(CURL*, int (*debugcallback)(CURL*, curl_infotype, char*, size_t, void*)));
     MOCK_METHOD2(mycurl_easy_setopt_debugdata, CURLcode(CURL*, void*));
     MOCK_METHOD2(mycurl_easy_setopt_stderr, CURLcode(CURL*, FILE*));
     MOCK_METHOD2(mycurl_easy_setopt_verbose, CURLcode(CURL*, bool));

@@ -81,7 +81,7 @@ public:
 
     /*
         AuthorizationCode: The code returned from the redirect url login
-        RefreshToken: expires every 7 days. Retrieved by creating an access token with the AuthorizationCode. 
+        RefreshToken: expires every 7 days. Retrieved by creating an access token with the AuthorizationCode.
             Use this to refresh the AccessToken
         AccessToken: expires every 30 minutes.
     */

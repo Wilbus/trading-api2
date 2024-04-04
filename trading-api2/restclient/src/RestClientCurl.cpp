@@ -18,7 +18,7 @@ RestClientCurl::RestClientCurl(std::string debugFileFolder)
 
     std::string debugFilePath = debugFileFolder + verboseInfoFileName;
     verboseInfoFilePtr = fopen(debugFilePath.c_str(), "a");
-    if(verboseInfoFilePtr == nullptr)
+    if (verboseInfoFilePtr == nullptr)
     {
         throw std::runtime_error("could not open verboseInfoFile.txt");
     }
@@ -28,7 +28,7 @@ RestClientCurl::~RestClientCurl()
 {
     mycurl_easy_cleanup(curl);
     mycurl_global_cleanup();
-    if(verboseInfoFilePtr != nullptr)
+    if (verboseInfoFilePtr != nullptr)
     {
         fclose(verboseInfoFilePtr);
     }
@@ -106,13 +106,13 @@ std::string RestClientCurl::getResponse(const std::string path, const std::set<s
 #endif
 
     code = mycurl_easy_setopt_stderr(curl, verboseInfoFilePtr);
-    if(!checkCURLcode(code))
+    if (!checkCURLcode(code))
     {
         throw std::runtime_error("invalid curlcode");
     }
 
     code = mycurl_easy_setopt_verbose(curl, true); // TODO: make this configurable
-    if(!checkCURLcode(code))
+    if (!checkCURLcode(code))
     {
         throw std::runtime_error("invalid curlcode");
     }
@@ -205,13 +205,13 @@ std::string RestClientCurl::postResponse(
 #endif
 
     code = mycurl_easy_setopt_stderr(curl, verboseInfoFilePtr);
-    if(!checkCURLcode(code))
+    if (!checkCURLcode(code))
     {
         throw std::runtime_error("invalid curlcode");
     }
 
     code = mycurl_easy_setopt_verbose(curl, true); // TODO: make this configurable
-    if(!checkCURLcode(code))
+    if (!checkCURLcode(code))
     {
         throw std::runtime_error("invalid curlcode");
     }

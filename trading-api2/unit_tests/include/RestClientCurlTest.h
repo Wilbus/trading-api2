@@ -178,9 +178,11 @@ TEST_F(RestClientCurlTest, getResponseSetOpt_WriteData_Failed)
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writefunction(curl, _))
         .WillOnce(Return(CURLcode::CURLE_OK)); // TODO: maybe check if correct function is called?
-    //EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
+    // EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl,
+    // _)).WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_stderr(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
-    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true)).WillOnce(Return(CURLcode::CURLE_OK));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true))
+        .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, _))
         .WillOnce(Return(CURLcode::CURLE_WRITE_ERROR));
 
@@ -203,9 +205,11 @@ TEST_F(RestClientCurlTest, getResponseEasyPerform_Failed)
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writefunction(curl, _))
         .WillOnce(Return(CURLcode::CURLE_OK)); // TODO: maybe check if correct function is called?
-    //EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
+    // EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl,
+    // _)).WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_stderr(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
-    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true)).WillOnce(Return(CURLcode::CURLE_OK));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true))
+        .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, client->getReadBufferPtr()))
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_perform(curl))
@@ -231,9 +235,11 @@ TEST_F(RestClientCurlTest, getResponseTest)
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writefunction(curl, _))
         .WillOnce(Return(CURLcode::CURLE_OK)); // TODO: maybe check if correct function is called somehow?
-    //EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
+    // EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl,
+    // _)).WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_stderr(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
-    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true)).WillOnce(Return(CURLcode::CURLE_OK));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true))
+        .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, client->getReadBufferPtr()))
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_perform(curl)).WillOnce(Return(CURLcode::CURLE_OK));
@@ -268,9 +274,11 @@ TEST_F(RestClientCurlTest, postResponseTest)
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writefunction(curl, _))
         .WillOnce(Return(CURLcode::CURLE_OK)); // TODO: maybe check if correct function is called somehow?
-    //EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
+    // EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl,
+    // _)).WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_stderr(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
-    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true)).WillOnce(Return(CURLcode::CURLE_OK));
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true))
+        .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, client->getReadBufferPtr()))
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_perform(curl)).WillOnce(Return(CURLcode::CURLE_OK));

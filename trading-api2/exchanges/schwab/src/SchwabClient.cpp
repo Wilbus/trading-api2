@@ -62,10 +62,11 @@ bool SchwabClient::checkAccessToken()
     time_t temp_expires_unix_seconds = expires / 1000;
     std::string nowTimeStr = timefuncs::unixTimeToString(temp_now_unix_seconds, "%Y-%m-%dT%H:%M:%S");
     std::string accessTokenExpiresAt = timefuncs::unixTimeToString(temp_expires_unix_seconds, "%Y-%m-%dT%H:%M:%S");
-    std::printf("%s: now is %s, accessTokenExpiresAt: %s\n", __func__, nowTimeStr.c_str(), accessTokenExpiresAt.c_str());
+    std::printf(
+        "%s: now is %s, accessTokenExpiresAt: %s\n", __func__, nowTimeStr.c_str(), accessTokenExpiresAt.c_str());
 
-    //TODO: check if expires_at_time is a valid timestamp somehow
-    //give 5 minute buffer before current token expires to avoid minor mismatches in local time and schwab server time
+    // TODO: check if expires_at_time is a valid timestamp somehow
+    // give 5 minute buffer before current token expires to avoid minor mismatches in local time and schwab server time
     return nowMs < (accessToken.expires_at_time - 300000);
 }
 
@@ -85,7 +86,7 @@ bool SchwabClient::createAccessToken(std::string authorizationCode)
 {
     std::string path = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-    
+
     std::string appkey = config->getAppKey();
     std::string appsecret = config->getAppSecret();
     std::string authorizationBasicField = base64::to_base64(appkey + ":" + appsecret);
@@ -95,7 +96,7 @@ bool SchwabClient::createAccessToken(std::string authorizationCode)
     std::string body;
 
     body = "grant_type=authorization_code&code=" + utils::url_decode(authorizationCode) +
-            "&redirect_uri=" + config->getRedirectUri();
+           "&redirect_uri=" + config->getRedirectUri();
 
     try
     {
@@ -119,7 +120,8 @@ bool SchwabClient::createAccessToken(std::string authorizationCode)
         Token refreshToken;
         refreshToken.token = authTokens.refresh_token;
         refreshToken.granted_at_time = granted_at_time;
-        refreshToken.expires_at_time = refreshToken.granted_at_time + (60 * 60 * 24 * 7 * 1000); //7 days in milliseconds
+        refreshToken.expires_at_time =
+            refreshToken.granted_at_time + (60 * 60 * 24 * 7 * 1000); // 7 days in milliseconds
         config->saveRefreshToken(refreshToken);
 
         return true;
@@ -135,7 +137,7 @@ bool SchwabClient::updateAccessToken(std::string refreshToken)
 {
     std::string path = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-    
+
     std::string appkey = config->getAppKey();
     std::string appsecret = config->getAppSecret();
     std::string authorizationBasicField = base64::to_base64(appkey + ":" + appsecret);
@@ -167,12 +169,11 @@ bool SchwabClient::updateAccessToken(std::string refreshToken)
         config->saveAccessToken(accessToken);
         return true;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cerr << e.what() << '\n';
         return false;
     }
-    
 }
 
 //'https://api.schwabapi.com/marketdata/v1/quotes?symbols=SPY%2C%20AAPL&fields=quote%2Creference&indicative=true'

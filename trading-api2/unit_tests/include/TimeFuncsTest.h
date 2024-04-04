@@ -1,7 +1,7 @@
 #pragma once
 
-#include "timefuncs.h"
 #include "SystemTimer.h"
+#include "timefuncs.h"
 
 using namespace timefuncs;
 
@@ -10,7 +10,6 @@ class TimeFuncsTest : public ::testing::Test
 public:
     TimeFuncsTest()
     {
-
     }
 
     time_t realNowTimeMs()

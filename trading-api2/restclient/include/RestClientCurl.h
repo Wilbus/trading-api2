@@ -26,7 +26,7 @@ private:
     std::string baseEndpoint;
     CURL* curl{nullptr};
     FILE* verboseInfoFilePtr{nullptr};
-    
+
     std::string verboseInfoFileName{"restClientCurlVerboseInfo.txt"};
 };
 } // namespace restclient

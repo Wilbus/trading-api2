@@ -12,7 +12,6 @@ class EncodeDecodeTest : public ::testing::Test
 public:
     EncodeDecodeTest()
     {
-
     }
 };
 

@@ -53,7 +53,8 @@ public:
     {
         std::string expectedPath = "/oauth/token";
         std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-        std::string authHeader = "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
+        std::string authHeader =
+            "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
         std::set<std::string> expectedHeaders{content_type, authHeader};
         std::string expectedBody = "grant_type=refresh_token&refresh_token=" + refreshToken.token;
 
@@ -78,7 +79,8 @@ public:
     {
         std::string expectedPath = "/oauth/token";
         std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-        std::string authHeader = "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
+        std::string authHeader =
+            "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
         std::set<std::string> expectedHeaders{authHeader, content_type};
         std::string expectedBody = "grant_type=refresh_token&refresh_token=" + refreshToken.token;
 
@@ -157,7 +159,8 @@ TEST_F(SchwabClientTest, createAccessToken)
 {
     std::string expectedPath = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-    std::string authHeader = "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
+    std::string authHeader =
+        "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
     std::set<std::string> expectedHeaders{authHeader, content_type};
     std::string expectedBody =
         "grant_type=authorization_code&code=" + utils::url_decode(authCode.code) + "&redirect_uri=https://127.0.0.1";
@@ -193,7 +196,8 @@ TEST_F(SchwabClientTest, createAccessTokenResponseInvalid)
 {
     std::string expectedPath = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
-    std::string authHeader = "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
+    std::string authHeader =
+        "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
     std::set<std::string> expectedHeaders{authHeader, content_type};
     std::string expectedBody =
         "grant_type=authorization_code&code=" + utils::url_decode(authCode.code) + "&redirect_uri=https://127.0.0.1";
@@ -228,12 +232,10 @@ TEST_F(SchwabClientTest, checkAccessTokenTest)
     fakeAccessToken.expires_at_time = 1712196000000;
     EXPECT_CALL(*configMock.get(), getAccessToken()).WillRepeatedly(Return(fakeAccessToken));
 
-    EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs())
-        .WillOnce(Return(1712196000000 - 295000));
+    EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs()).WillOnce(Return(1712196000000 - 295000));
     EXPECT_FALSE(client->checkAccessToken());
 
-    EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs())
-        .WillOnce(Return(1712196000000 - 305000));
+    EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs()).WillOnce(Return(1712196000000 - 305000));
     EXPECT_TRUE(client->checkAccessToken());
 }
 
@@ -502,7 +504,7 @@ TEST_F(SchwabClientTest, getOptionChain)
     std::string expectedPath = "/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
 
     expectValidAccessToken();
-    
+
     {
         InSequence s;
         EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(marketEndpoint));
