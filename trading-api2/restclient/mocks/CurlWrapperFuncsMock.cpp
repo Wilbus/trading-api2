@@ -61,6 +61,21 @@ CURLcode mycurl_easy_setopt_writefunction(CURL* curl, size_t (*writefunction)(vo
     return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_writefunction(curl, writefunction);
 }
 
+CURLcode mycurl_easy_setopt_debugdata(CURL* curl, void* pointer)
+{
+    return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_debugdata(curl, pointer);
+}
+
+CURLcode mycurl_easy_setopt_stderr(CURL* curl, FILE* stream)
+{
+    return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_stderr(curl, stream);
+}
+
+CURLcode mycurl_easy_setopt_debugfunction(CURL* curl, int (*debugcallback)(CURL*, curl_infotype, char*, size_t, void*))
+{
+    return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_debugfunction(curl, debugcallback);
+}
+
 CURLcode mycurl_easy_setopt_verbose(CURL* curl, bool flag)
 {
     return restclient::mocks::CurlWrapperFuncsMock::inst().mycurl_easy_setopt_verbose(curl, flag);

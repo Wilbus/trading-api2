@@ -59,6 +59,21 @@ CURLcode mycurl_easy_setopt_writefunction(CURL* curl, size_t (*writefunction)(vo
     return curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunction);
 }
 
+CURLcode mycurl_easy_setopt_debugfunction(CURL* curl, int (*debugcallback)(CURL*, curl_infotype, char*, size_t, void*))
+{
+    return curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, debugcallback);
+}
+
+CURLcode mycurl_easy_setopt_debugdata(CURL* curl, void* pointer)
+{
+    return curl_easy_setopt(curl, CURLOPT_DEBUGDATA, pointer);
+}
+
+CURLcode mycurl_easy_setopt_stderr(CURL* curl, FILE* stream)
+{
+    return curl_easy_setopt(curl, CURLOPT_STDERR, stream);
+}
+
 CURLcode mycurl_easy_setopt_verbose(CURL* curl, bool flag)
 {
     return curl_easy_setopt(curl, CURLOPT_VERBOSE, flag);

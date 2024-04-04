@@ -5,8 +5,6 @@
 
 namespace restclient {
 
-static std::string staticreadBuffer;
-
 class RestClientCurl : public IRestClientCurl
 {
 public:
