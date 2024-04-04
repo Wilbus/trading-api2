@@ -9,8 +9,7 @@
 #include <set>
 
 namespace schwabMarketData {
-// TODO: parse for error response first
-// TODO: use json.h macros for all responses
+// TODO: use json.h macros for all responses and ensure checking if member exists before accessing
 
 std::map<std::string, QuoteEquityResponse> parseEquityQuotes(std::set<std::string> symbols, std::string jsonstring)
 {
@@ -24,42 +23,49 @@ std::map<std::string, QuoteEquityResponse> parseEquityQuotes(std::set<std::strin
     {
         // TODO: add parsing fundamentals, extended market quotes
         QuoteEquityResponse quoteresp;
-        auto equityresp = d[symbol.c_str()].GetObject();
 
-        quoteresp.assetMainType = stringToAssetMainType.at(equityresp["assetMainType"].GetString());
-        quoteresp.assetSubType = stringToAssetSubType.at(equityresp["assetSubType"].GetString());
-        quoteresp.ssid = equityresp["ssid"].GetInt64();
-        quoteresp.symbol = equityresp["symbol"].GetString();
+        if(d[symbol.c_str()].IsObject())
+        {
+            auto equityresp = d[symbol.c_str()].GetObject();
 
-        auto quotejson = equityresp["quote"].GetObject();
+            quoteresp.assetMainType = stringToAssetMainType.at(equityresp["assetMainType"].GetString());
+            quoteresp.assetSubType = stringToAssetSubType.at(equityresp["assetSubType"].GetString());
+            quoteresp.ssid = equityresp["ssid"].GetInt64();
+            quoteresp.symbol = equityresp["symbol"].GetString();
 
-        quoteresp.quote.yearHigh = quotejson["52WeekHigh"].GetDouble();
-        quoteresp.quote.yearLow = quotejson["52WeekLow"].GetDouble();
-        quoteresp.quote.askMICId = quotejson["askMICId"].GetString();
-        quoteresp.quote.askPrice = quotejson["askPrice"].GetDouble();
-        quoteresp.quote.askSize = quotejson["askSize"].GetUint();
-        quoteresp.quote.askTime = quotejson["askTime"].GetUint64();
-        quoteresp.quote.bidMICId = quotejson["bidMICId"].GetString();
-        quoteresp.quote.bidPrice = quotejson["bidPrice"].GetDouble();
-        quoteresp.quote.bidSize = quotejson["bidSize"].GetUint();
-        quoteresp.quote.bidTime = quotejson["bidTime"].GetUint64();
-        quoteresp.quote.closePrice = quotejson["closePrice"].GetDouble();
-        quoteresp.quote.highPrice = quotejson["highPrice"].GetDouble();
-        quoteresp.quote.lastMICId = quotejson["lastMICId"].GetString();
-        quoteresp.quote.lastPrice = quotejson["lastPrice"].GetDouble();
-        quoteresp.quote.lastSize = quotejson["lastSize"].GetUint();
-        quoteresp.quote.lowPrice = quotejson["lowPrice"].GetDouble();
-        quoteresp.quote.mark = quotejson["mark"].GetDouble();
-        quoteresp.quote.markChange = quotejson["markChange"].GetDouble();
-        quoteresp.quote.markPercentChange = quotejson["markPercentChange"].GetDouble();
-        quoteresp.quote.openPrice = quotejson["openPrice"].GetDouble();
-        quoteresp.quote.postMarketChange = quotejson["postMarketChange"].GetDouble();
-        quoteresp.quote.quoteTime = quotejson["quoteTime"].GetUint64();
-        quoteresp.quote.securityStatus = quotejson["securityStatus"].GetString();
-        quoteresp.quote.totalVolume = quotejson["totalVolume"].GetUint64();
-        quoteresp.quote.tradeTime = quotejson["tradeTime"].GetUint64();
+            if(equityresp["quote"].IsObject())
+            {
+                auto quotejson = equityresp["quote"].GetObject();
 
-        quotesMap[symbol] = quoteresp;
+                quoteresp.quote.yearHigh = quotejson["52WeekHigh"].GetDouble();
+                quoteresp.quote.yearLow = quotejson["52WeekLow"].GetDouble();
+                quoteresp.quote.askMICId = quotejson["askMICId"].GetString();
+                quoteresp.quote.askPrice = quotejson["askPrice"].GetDouble();
+                quoteresp.quote.askSize = quotejson["askSize"].GetUint();
+                quoteresp.quote.askTime = quotejson["askTime"].GetUint64();
+                quoteresp.quote.bidMICId = quotejson["bidMICId"].GetString();
+                quoteresp.quote.bidPrice = quotejson["bidPrice"].GetDouble();
+                quoteresp.quote.bidSize = quotejson["bidSize"].GetUint();
+                quoteresp.quote.bidTime = quotejson["bidTime"].GetUint64();
+                quoteresp.quote.closePrice = quotejson["closePrice"].GetDouble();
+                quoteresp.quote.highPrice = quotejson["highPrice"].GetDouble();
+                quoteresp.quote.lastMICId = quotejson["lastMICId"].GetString();
+                quoteresp.quote.lastPrice = quotejson["lastPrice"].GetDouble();
+                quoteresp.quote.lastSize = quotejson["lastSize"].GetUint();
+                quoteresp.quote.lowPrice = quotejson["lowPrice"].GetDouble();
+                quoteresp.quote.mark = quotejson["mark"].GetDouble();
+                quoteresp.quote.markChange = quotejson["markChange"].GetDouble();
+                quoteresp.quote.markPercentChange = quotejson["markPercentChange"].GetDouble();
+                quoteresp.quote.openPrice = quotejson["openPrice"].GetDouble();
+                quoteresp.quote.postMarketChange = quotejson["postMarketChange"].GetDouble();
+                quoteresp.quote.quoteTime = quotejson["quoteTime"].GetUint64();
+                quoteresp.quote.securityStatus = quotejson["securityStatus"].GetString();
+                quoteresp.quote.totalVolume = quotejson["totalVolume"].GetUint64();
+                quoteresp.quote.tradeTime = quotejson["tradeTime"].GetUint64();
+
+                quotesMap[symbol] = quoteresp;
+            }
+        }
     }
 
     return quotesMap;
@@ -99,18 +105,30 @@ std::vector<OptionExpiration> parseOptionExpirations(std::string jsonstring)
     d.Parse(jsonstring.c_str());
     rapidjson::StringBuffer s;
 
+    if(!d.IsObject())
+    {
+        return {};
+    }
+
     std::vector<OptionExpiration> exps;
 
-    auto expsjson = d["expirationList"].GetArray();
-    for (const auto& expjson : expsjson)
+    if(d.HasMember("expirationList") && d["expirationList"].IsArray())
     {
-        OptionExpiration oe;
-        oe.expirationDate = expjson["expirationDate"].GetString();
-        oe.daysToExpiration = expjson["daysToExpiration"].GetInt();
-        oe.expirationType = expjson["expirationType"].GetString();
-        oe.standard = expjson["standard"].GetBool();
+        auto expsjson = d["expirationList"].GetArray();
+        for (const auto& expjson : expsjson)
+        {
+            OptionExpiration oe;
+            //oe.expirationDate = expjson["expirationDate"].GetString();
+            PARSE_STRING(oe.expirationDate, "expirationDate", expjson);
+            //oe.daysToExpiration = expjson["daysToExpiration"].GetInt();
+            PARSE_INT(oe.daysToExpiration, "daysToExpiration", expjson);
+            //oe.expirationType = expjson["expirationType"].GetString();
+            PARSE_STRING(oe.expirationType, "expirationType", expjson);
+            //oe.standard = expjson["standard"].GetBool();
+            PARSE_BOOL(oe.standard, "standard", expjson);
 
-        exps.push_back(oe);
+            exps.push_back(oe);
+        }
     }
 
     return exps;

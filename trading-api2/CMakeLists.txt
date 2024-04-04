@@ -18,6 +18,7 @@ message(STATUS "BUILD_TESTS is ${BUILD_TESTS}")
 
 if(BUILD_TESTS)
     add_subdirectory(unit_tests)
+    add_subdirectory(endpoint_tests)
 else()
     add_subdirectory(executables)
 endif(BUILD_TESTS)
