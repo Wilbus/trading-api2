@@ -28,40 +28,71 @@ std::map<std::string, QuoteEquityResponse> parseEquityQuotes(std::set<std::strin
         {
             auto equityresp = d[symbol.c_str()].GetObject();
 
-            quoteresp.assetMainType = stringToAssetMainType.at(equityresp["assetMainType"].GetString());
-            quoteresp.assetSubType = stringToAssetSubType.at(equityresp["assetSubType"].GetString());
-            quoteresp.ssid = equityresp["ssid"].GetInt64();
-            quoteresp.symbol = equityresp["symbol"].GetString();
+            std::string assetMainTypeStr;
+            std::string assetSubtypeStr;
+            PARSE_STRING(assetMainTypeStr, "assetMainType", equityresp);
+            PARSE_STRING(assetSubtypeStr, "assetSubType", equityresp);
+            quoteresp.assetMainType = stringToAssetMainType.at(assetMainTypeStr);
+            quoteresp.assetSubType = stringToAssetSubType.at(assetSubtypeStr);
+            //quoteresp.ssid = equityresp["ssid"].GetInt64();
+            PARSE_UINT64(quoteresp.ssid, "ssid", equityresp);
+            //quoteresp.symbol = equityresp["symbol"].GetString();
+            PARSE_STRING(quoteresp.symbol, "symbol", equityresp);
 
             if(equityresp["quote"].IsObject())
             {
                 auto quotejson = equityresp["quote"].GetObject();
 
-                quoteresp.quote.yearHigh = quotejson["52WeekHigh"].GetDouble();
-                quoteresp.quote.yearLow = quotejson["52WeekLow"].GetDouble();
-                quoteresp.quote.askMICId = quotejson["askMICId"].GetString();
-                quoteresp.quote.askPrice = quotejson["askPrice"].GetDouble();
-                quoteresp.quote.askSize = quotejson["askSize"].GetUint();
-                quoteresp.quote.askTime = quotejson["askTime"].GetUint64();
-                quoteresp.quote.bidMICId = quotejson["bidMICId"].GetString();
-                quoteresp.quote.bidPrice = quotejson["bidPrice"].GetDouble();
-                quoteresp.quote.bidSize = quotejson["bidSize"].GetUint();
-                quoteresp.quote.bidTime = quotejson["bidTime"].GetUint64();
-                quoteresp.quote.closePrice = quotejson["closePrice"].GetDouble();
-                quoteresp.quote.highPrice = quotejson["highPrice"].GetDouble();
-                quoteresp.quote.lastMICId = quotejson["lastMICId"].GetString();
-                quoteresp.quote.lastPrice = quotejson["lastPrice"].GetDouble();
-                quoteresp.quote.lastSize = quotejson["lastSize"].GetUint();
-                quoteresp.quote.lowPrice = quotejson["lowPrice"].GetDouble();
-                quoteresp.quote.mark = quotejson["mark"].GetDouble();
-                quoteresp.quote.markChange = quotejson["markChange"].GetDouble();
-                quoteresp.quote.markPercentChange = quotejson["markPercentChange"].GetDouble();
-                quoteresp.quote.openPrice = quotejson["openPrice"].GetDouble();
-                quoteresp.quote.postMarketChange = quotejson["postMarketChange"].GetDouble();
-                quoteresp.quote.quoteTime = quotejson["quoteTime"].GetUint64();
-                quoteresp.quote.securityStatus = quotejson["securityStatus"].GetString();
-                quoteresp.quote.totalVolume = quotejson["totalVolume"].GetUint64();
-                quoteresp.quote.tradeTime = quotejson["tradeTime"].GetUint64();
+                //quoteresp.quote.yearHigh = quotejson["52WeekHigh"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.yearHigh, "52WeekHigh", quotejson);
+                //quoteresp.quote.yearLow = quotejson["52WeekLow"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.yearLow, "52WeekLow", quotejson);
+                //quoteresp.quote.askMICId = quotejson["askMICId"].GetString();
+                PARSE_STRING(quoteresp.quote.askMICId, "askMICId", quotejson);
+                //quoteresp.quote.askPrice = quotejson["askPrice"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.askPrice, "askPrice", quotejson);
+                //quoteresp.quote.askSize = quotejson["askSize"].GetUint();
+                PARSE_UINT(quoteresp.quote.askSize, "askSize", quotejson);
+                //quoteresp.quote.askTime = quotejson["askTime"].GetUint64();
+                PARSE_UINT64(quoteresp.quote.askTime, "askTime", quotejson);
+                //quoteresp.quote.bidMICId = quotejson["bidMICId"].GetString();
+                PARSE_STRING(quoteresp.quote.bidMICId, "bidMICId", quotejson);
+                //quoteresp.quote.bidPrice = quotejson["bidPrice"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.bidPrice, "bidPrice", quotejson);
+                //quoteresp.quote.bidSize = quotejson["bidSize"].GetUint();
+                PARSE_UINT(quoteresp.quote.bidSize, "bidSize", quotejson);
+                //quoteresp.quote.bidTime = quotejson["bidTime"].GetUint64();
+                PARSE_UINT64(quoteresp.quote.bidTime, "bidTime", quotejson);
+                //quoteresp.quote.closePrice = quotejson["closePrice"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.closePrice, "closePrice", quotejson);
+                //quoteresp.quote.highPrice = quotejson["highPrice"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.highPrice, "highPrice", quotejson);
+                //quoteresp.quote.lastMICId = quotejson["lastMICId"].GetString();
+                PARSE_STRING(quoteresp.quote.lastMICId, "lastMICId", quotejson);
+                //quoteresp.quote.lastPrice = quotejson["lastPrice"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.lastPrice, "lastPrice", quotejson);
+                //quoteresp.quote.lastSize = quotejson["lastSize"].GetUint();
+                PARSE_UINT(quoteresp.quote.lastSize, "lastSize", quotejson);
+                //quoteresp.quote.lowPrice = quotejson["lowPrice"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.lowPrice, "lowPrice", quotejson);
+                //quoteresp.quote.mark = quotejson["mark"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.mark, "mark", quotejson);
+                //quoteresp.quote.markChange = quotejson["markChange"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.markChange, "markChange", quotejson);
+                //quoteresp.quote.markPercentChange = quotejson["markPercentChange"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.markPercentChange, "markPercentChange", quotejson);
+                //quoteresp.quote.openPrice = quotejson["openPrice"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.openPrice, "openPrice", quotejson);
+                //quoteresp.quote.postMarketChange = quotejson["postMarketChange"].GetDouble();
+                PARSE_DOUBLE(quoteresp.quote.postMarketChange, "postMarketChange", quotejson);
+                //quoteresp.quote.quoteTime = quotejson["quoteTime"].GetUint64();
+                PARSE_UINT64(quoteresp.quote.quoteTime, "quoteTime", quotejson);
+                //quoteresp.quote.securityStatus = quotejson["securityStatus"].GetString();
+                PARSE_STRING(quoteresp.quote.securityStatus, "securityStatus", quotejson);
+                //quoteresp.quote.totalVolume = quotejson["totalVolume"].GetUint64();
+                PARSE_UINT64(quoteresp.quote.totalVolume, "totalVolume", quotejson);
+                //quoteresp.quote.tradeTime = quotejson["tradeTime"].GetUint64();
+                PARSE_UINT64(quoteresp.quote.tradeTime, "tradeTime", quotejson);
 
                 quotesMap[symbol] = quoteresp;
             }
@@ -78,20 +109,30 @@ PriceHistory parsePriceHistory(std::string jsonstring)
     rapidjson::StringBuffer s;
 
     PriceHistory prices;
-    prices.symbol = d["symbol"].GetString();
-    prices.empty = d["empty"].GetBool();
-    prices.previousClose = d["previousClose"].GetDouble();
-    prices.previousCloseDate = d["previousCloseDate"].GetUint64();
+    //prices.symbol = d["symbol"].GetString();
+    PARSE_STRING(prices.symbol, "symbol", d);
+    //prices.empty = d["empty"].GetBool();
+    PARSE_BOOL(prices.empty, "empty", d);
+    //prices.previousClose = d["previousClose"].GetDouble();
+    PARSE_DOUBLE(prices.previousClose, "previousClose", d);
+    //prices.previousCloseDate = d["previousCloseDate"].GetUint64();
+    PARSE_UINT64(prices.previousCloseDate, "previousCloseDate", d);
     auto candlesjson = d["candles"].GetArray();
     for (const auto& cand : candlesjson)
     {
         Candle c;
-        c.open = cand["open"].GetDouble();
-        c.high = cand["high"].GetDouble();
-        c.low = cand["low"].GetDouble();
-        c.close = cand["close"].GetDouble();
-        c.volume = cand["volume"].GetUint64();
-        c.datetime = cand["datetime"].GetUint64();
+        //c.open = cand["open"].GetDouble();
+        PARSE_DOUBLE(c.open, "open", cand);
+        //c.high = cand["high"].GetDouble();
+        PARSE_DOUBLE(c.high, "high", cand);
+        //c.low = cand["low"].GetDouble();
+        PARSE_DOUBLE(c.low, "low", cand);
+        //c.close = cand["close"].GetDouble();
+        PARSE_DOUBLE(c.close, "close", cand);
+        //c.volume = cand["volume"].GetUint64();
+        PARSE_UINT64(c.volume, "volume", cand);
+        //c.datetime = cand["datetime"].GetUint64();
+        PARSE_UINT64(c.datetime, "datetime", cand);
 
         prices.candles.push_back(c);
     }

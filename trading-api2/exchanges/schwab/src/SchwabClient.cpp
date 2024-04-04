@@ -256,7 +256,7 @@ std::vector<OptionExpiration> SchwabClient::getOptionExpirations(std::string sym
             updateAccessToken(config->getRefreshToken().token);
         }
         setMarketDataEndpoint();
-        std::string path = "?symbol=" + symbol;
+        std::string path = "/expirationchain?symbol=" + symbol;
         auto resp = restClient->getResponse(path, headers());
         auto errorResp = checkErrors(resp);
         if (errorResp.errors.size() > 0)
@@ -319,5 +319,33 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
         std::cout << e.what() << "\n";
         return {};
     }
+}
+
+//TODO: add UT for this
+std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
+{
+    try
+    {
+        std::string path = "/accounts/accountNumbers";
+        if (!checkAccessToken())
+        {
+            updateAccessToken(config->getRefreshToken().token);
+        }
+        setAccountsEndpoint();
+        auto resp = restClient->getResponse(path, headers());
+        auto errorResp = checkErrors(resp);
+        if (errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return {};
+        }
+        return {};
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        return {};
+    }
+    
 }
 } // namespace restclient

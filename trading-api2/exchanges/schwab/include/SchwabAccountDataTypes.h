@@ -101,4 +101,10 @@ struct AuthConfig
 #endif
 };
 
+struct AccountNumbers
+{
+    std::string accountNumber;
+    std::string hashValue;
+};
+
 } // namespace schwabAccountData

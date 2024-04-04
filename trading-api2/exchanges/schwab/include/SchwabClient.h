@@ -71,6 +71,8 @@ class ISchwabClient
         PriceHistoryTimeFreq timeFreq, unsigned freqAmount, std::string startDate, std::string endDate,
         bool extendedHours = false, bool needPreviousClose = false) = 0;
 
+    virtual std::vector<AccountNumbers> getAccountNumbers() = 0;
+
     virtual bool checkAccessToken() = 0;
 };
 
@@ -98,6 +100,8 @@ public:
     virtual PriceHistory getPriceHistory(std::string symbol, PriceHistoryPeriodType periodType, unsigned periodAmount,
         PriceHistoryTimeFreq timeFreq, unsigned freqAmount, std::string startDate, std::string endDate,
         bool extendedHours = false, bool needPreviousClose = false) override;
+
+    virtual std::vector<AccountNumbers> getAccountNumbers() override;
 
     virtual bool checkAccessToken() override;
 

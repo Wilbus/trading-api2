@@ -47,3 +47,16 @@ TEST_F(SchwabEndpointsTest, GetOptionExpirations)
     auto expirations = sclient->getOptionExpirations("SPY");
     EXPECT_GT(expirations.size(), 0);
 }
+
+TEST_F(SchwabEndpointsTest, GetPriceHistory)
+{
+    auto priceHistory = sclient->getPriceHistory(
+        "SPY", PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY, 1, "2024-03-20", "", true, true);
+    EXPECT_GT(priceHistory.candles.size(), 0);
+}
+
+TEST_F(SchwabEndpointsTest, GetAccountNumbers)
+{
+    auto accountNmbers = sclient->getAccountNumbers();
+    //EXPECT_GT(priceHistory.candles.size(), 0);
+}

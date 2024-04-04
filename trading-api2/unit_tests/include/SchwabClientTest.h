@@ -128,7 +128,7 @@ public:
 
     void expectedGetOptionExpirations()
     {
-        std::string expectedPath = "?symbol=AAPL";
+        std::string expectedPath = "/expirationchain?symbol=AAPL";
         {
             InSequence getOptionExpirationSeq;
 
@@ -311,7 +311,7 @@ TEST_F(SchwabClientTest, getQuotesWithRefreshingAccessToken)
 
 TEST_F(SchwabClientTest, getOptionExpirationsCaughtException)
 {
-    std::string expectedPath = "?symbol=AAPL";
+    std::string expectedPath = "/expirationchain?symbol=AAPL";
 
     expectValidAccessToken();
 
@@ -329,7 +329,7 @@ TEST_F(SchwabClientTest, getOptionExpirationsCaughtException)
 TEST_F(SchwabClientTest, getOptionExpirationsErrorResponse)
 {
     expectValidAccessToken();
-    std::string expectedPath = "?symbol=AAPL";
+    std::string expectedPath = "/expirationchain?symbol=AAPL";
     {
         InSequence getOptionExpirationSeq;
 
@@ -350,7 +350,7 @@ TEST_F(SchwabClientTest, getOptionExpirations)
 
 TEST_F(SchwabClientTest, getOptionExpirationsWithUpdateAccessToken)
 {
-    std::string expectedPath = "?symbol=AAPL";
+    std::string expectedPath = "/expirationchain?symbol=AAPL";
 
     expectExpiredAccessToken();
     expectUpdateAccessTokenWhenInvalid();

@@ -11,7 +11,7 @@
 #define PARSE_INT(var, name, obj)                                     \
     if (obj.HasMember(name) && obj[name].IsInt())                     \
     {                                                                 \
-        var = d[name].GetInt();                                       \
+        var = obj[name].GetInt();                                       \
     }                                                                 \
 
 #define PARSE_STRING_TO_UINT64(var, name, obj)                                  \
@@ -53,7 +53,7 @@
 #define PARSE_FLOAT(var, name)                   \
     if (d.HasMember(name) && d[name].IsNumber()) \
     {                                            \
-        var = d[name].GetFloat();                \
+        var = obj[name].GetFloat();                \
     }
 
 #define PARSE_VECTOR_DOUBLES(var, name)            \
