@@ -58,7 +58,8 @@ const std::map<bool, std::string> booleanString =
 
 class ISchwabClient
 {
-    virtual bool createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken) = 0;
+    virtual bool createAccessToken(std::string authorizationCode) = 0;
+    virtual bool updateAccessToken(std::string refreshToken) = 0;
 
     virtual std::map<std::string, QuoteEquityResponse> getEquityQuotes(std::set<std::string> symbols) = 0;
 
@@ -79,10 +80,13 @@ public:
     SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClientCurl> restClient);
 
     /*
-        If isRefreshToken == true, passs the refresh token to update the current access token,
-        otherwise pass the authorization code to retrieve a new refresh token
+        AuthorizationCode: The code returned from the redirect url login
+        RefreshToken: expires every 7 days. Retrieved by creating an access token with the AuthorizationCode. 
+            Use this to refresh the AccessToken
+        AccessToken: expires every 30 minutes.
     */
-    virtual bool createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken) override;
+    virtual bool createAccessToken(std::string authorizationCode) override;
+    virtual bool updateAccessToken(std::string refreshToken) override;
 
     virtual std::map<std::string, QuoteEquityResponse> getEquityQuotes(std::set<std::string> symbols) override;
 

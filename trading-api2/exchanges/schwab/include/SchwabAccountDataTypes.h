@@ -7,7 +7,7 @@ namespace schwabAccountData {
 
 struct AuthTokens
 {
-    uint64_t expires_in;
+    int64_t expires_in;
     std::string token_type;
     std::string scope;
     std::string refresh_token;
@@ -27,14 +27,14 @@ struct SchwabAuth
 struct AuthorizationCode
 {
     std::string code;
-    uint64_t granted_at_time;
+    int64_t granted_at_time;
 };
 
 struct Token
 {
     std::string token;
-    uint64_t granted_at_time;
-    uint64_t expires_at_time;
+    int64_t granted_at_time;
+    int64_t expires_at_time;
 
     bool operator==(const Token& other)
     {

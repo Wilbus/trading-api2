@@ -49,16 +49,24 @@ void SchwabClient::setAccountsEndpoint()
 {
     restClient->setBaseEndpoint("https://api.schwabapi.com/trader/v1");
 }
-//TODO: fixme. this doesn't work as expected
+
 bool SchwabClient::checkAccessToken()
 {
     time_t nowMs = utils::nowMs();
+
     Token accessToken = config->getAccessToken();
-    time_t expires = static_cast<time_t>(accessToken.expires_at_time);
-    std::string nowTimeStr = timefuncs::unixTimeToString(nowMs, "%Y-%m-%dT%H:%M:%S");
-    std::string accessTokenExpiresAt = timefuncs::unixTimeToString(expires, "%Y-%m-%dT%H:%M:%S");
+    time_t expires = accessToken.expires_at_time;
+
+    /*timefuncs functions require unix time in seconds*/
+    time_t temp_now_unix_seconds = nowMs / 1000;
+    time_t temp_expires_unix_seconds = expires / 1000;
+    std::string nowTimeStr = timefuncs::unixTimeToString(temp_now_unix_seconds, "%Y-%m-%dT%H:%M:%S");
+    std::string accessTokenExpiresAt = timefuncs::unixTimeToString(temp_expires_unix_seconds, "%Y-%m-%dT%H:%M:%S");
     std::printf("%s: now is %s, accessTokenExpiresAt: %s\n", __func__, nowTimeStr.c_str(), accessTokenExpiresAt.c_str());
-    return static_cast<uint64_t>(nowMs) < accessToken.expires_at_time;
+
+    //TODO: check if expires_at_time is a valid timestamp somehow
+    //give 5 minute buffer before current token expires to avoid minor mismatches in local time and schwab server time
+    return nowMs < (accessToken.expires_at_time - 300000);
 }
 
 void SchwabClient::logErrorResponse(ErrorResponse errorResp)
@@ -73,11 +81,7 @@ curl -X POST \https://api.schwabapi.com/v1/oauth/token
 \-d
 'grant_type=authorization_code&code={AUTHORIZATION_CODE_VALUE}&redirect_uri=https://example_url.com/callback_example'
 */
-/*
-    If isRefreshToken == true, passs the refresh token to update the current access token,
-    otherwise pass the authorization code to retrieve a new refresh token
-*/
-bool SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool isRefreshToken)
+bool SchwabClient::createAccessToken(std::string authorizationCode)
 {
     std::string path = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
@@ -89,16 +93,58 @@ bool SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
     std::set<std::string> headers{authorization_code_header, content_type};
 
     std::string body;
-    if (!isRefreshToken) //first access token creation
+
+    body = "grant_type=authorization_code&code=" + utils::url_decode(authorizationCode) +
+            "&redirect_uri=" + config->getRedirectUri();
+
+    try
     {
-        body = "grant_type=authorization_code&code=" + utils::url_decode(authCodeOrRefreshToken) +
-               "&redirect_uri=" + config->getRedirectUri();
+        setAuthenticationEndpoint();
+        auto resp = restClient->postResponse(path, headers, body);
+        auto errorResp = checkErrors(resp);
+        if (errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return false;
+        }
+        auto authTokens = parseAuthTokens(resp);
+        auto granted_at_time = utils::nowMs();
+
+        Token accessToken;
+        accessToken.token = authTokens.access_token;
+        accessToken.granted_at_time = granted_at_time;
+        accessToken.expires_at_time = accessToken.granted_at_time + (authTokens.expires_in * 1000);
+        config->saveAccessToken(accessToken);
+
+        Token refreshToken;
+        refreshToken.token = authTokens.refresh_token;
+        refreshToken.granted_at_time = granted_at_time;
+        refreshToken.expires_at_time = refreshToken.granted_at_time + (60 * 60 * 24 * 7 * 1000); //7 days in milliseconds
+        config->saveRefreshToken(refreshToken);
+
+        return true;
     }
-    else //access token refresh
+    catch (const std::exception& e)
     {
-        std::cout << "Refreshing a new access token\n";
-        body = "grant_type=refresh_token&refresh_token=" + authCodeOrRefreshToken;
+        std::cout << e.what() << "\n";
+        return false;
     }
+}
+
+bool SchwabClient::updateAccessToken(std::string refreshToken)
+{
+    std::string path = "/oauth/token";
+    std::string content_type = "Content-Type: application/x-www-form-urlencoded";
+    
+    std::string appkey = config->getAppKey();
+    std::string appsecret = config->getAppSecret();
+    std::string authorizationBasicField = base64::to_base64(appkey + ":" + appsecret);
+    std::string authorization_code_header = "Authorization: Basic " + authorizationBasicField;
+    std::set<std::string> headers{authorization_code_header, content_type};
+
+    std::string body;
+    std::cout << "Refreshing a new access token\n";
+    body = "grant_type=refresh_token&refresh_token=" + refreshToken;
 
     try
     {
@@ -112,21 +158,21 @@ bool SchwabClient::createAccessToken(std::string authCodeOrRefreshToken, bool is
         }
         auto authTokens = parseAuthTokens(resp);
 
-        if (!isRefreshToken)
-        {
-            Token accessToken;
-            accessToken.token = authTokens.access_token;
-            accessToken.granted_at_time = utils::nowMs();
-            accessToken.expires_at_time = accessToken.granted_at_time + authTokens.expires_in;
-            config->saveAccessToken(accessToken);
-        }
+        /*updateAccessToken response also contains copy of current refreshToken.
+        consider saving that also if needed*/
+        Token accessToken;
+        accessToken.token = authTokens.access_token;
+        accessToken.granted_at_time = utils::nowMs();
+        accessToken.expires_at_time = accessToken.granted_at_time + (authTokens.expires_in * 1000);
+        config->saveAccessToken(accessToken);
         return true;
     }
-    catch (const std::exception& e)
+    catch(const std::exception& e)
     {
-        std::cout << e.what() << "\n";
+        std::cerr << e.what() << '\n';
         return false;
     }
+    
 }
 
 //'https://api.schwabapi.com/marketdata/v1/quotes?symbols=SPY%2C%20AAPL&fields=quote%2Creference&indicative=true'
@@ -151,7 +197,7 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
     {
         if (!checkAccessToken())
         {
-            createAccessToken(config->getRefreshToken().token, false);
+            updateAccessToken(config->getRefreshToken().token);
         }
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
@@ -180,7 +226,7 @@ OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCou
     {
         if (!checkAccessToken())
         {
-            createAccessToken(config->getRefreshToken().token, false);
+            updateAccessToken(config->getRefreshToken().token);
         }
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());
@@ -206,7 +252,7 @@ std::vector<OptionExpiration> SchwabClient::getOptionExpirations(std::string sym
     {
         if (!checkAccessToken())
         {
-            createAccessToken(config->getRefreshToken().token, false);
+            updateAccessToken(config->getRefreshToken().token);
         }
         setMarketDataEndpoint();
         std::string path = "?symbol=" + symbol;
@@ -255,7 +301,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
 
         if (!checkAccessToken())
         {
-            createAccessToken(config->getRefreshToken().token, false);
+            updateAccessToken(config->getRefreshToken().token);
         }
         setMarketDataEndpoint();
         auto resp = restClient->getResponse(path, headers());

@@ -19,9 +19,10 @@ static std::time_t stringTimeToUnix(std::string str, std::string format)
     return mktime(&t);
 }
 
+//unix time in seconds
 static std::string unixTimeToString(std::time_t& t, std::string format)
 {
-    std::tm tmtime = *std::localtime(&t);
+    std::tm tmtime = *std::gmtime(&t);
     std::stringstream buff;
     buff << std::put_time(&tmtime, format.c_str());
     return buff.str();

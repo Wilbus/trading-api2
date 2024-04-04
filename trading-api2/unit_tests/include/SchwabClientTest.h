@@ -49,7 +49,7 @@ public:
         return std::set<std::string>{"accept: application/json", "Authorization: Bearer access1234@"};
     }
 
-    void expectRefreshTokenRequest()
+    void expectUpdateAccessTokenRequest()
     {
         std::string expectedPath = "/oauth/token";
         std::string content_type = "Content-Type: application/x-www-form-urlencoded";
@@ -57,26 +57,35 @@ public:
         std::set<std::string> expectedHeaders{content_type, authHeader};
         std::string expectedBody = "grant_type=refresh_token&refresh_token=" + refreshToken.token;
 
-        EXPECT_CALL(*configMock.get(), getAppKey()).WillOnce(Return(stubAuthConfig.app_key));
-        EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));
-        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(authenticationEndpoint));
-        EXPECT_CALL(*restClientCurlMock.get(), postResponse(expectedPath, expectedHeaders, expectedBody))
-            .WillOnce(Return(createAccessTokenRespExample));
+        Token fakeSaveAccessToken;
+        fakeSaveAccessToken.token = "ACCESS_TOKEN_HERE";
+        fakeSaveAccessToken.granted_at_time = 1711937315000;
+        fakeSaveAccessToken.expires_at_time = 1711937315000 + (1800 * 1000);
+
+        {
+            InSequence s;
+            EXPECT_CALL(*configMock.get(), getAppKey()).WillOnce(Return(stubAuthConfig.app_key));
+            EXPECT_CALL(*configMock.get(), getAppSecret()).WillOnce(Return(stubAuthConfig.app_secret));
+            EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(authenticationEndpoint));
+            EXPECT_CALL(*restClientCurlMock.get(), postResponse(expectedPath, expectedHeaders, expectedBody))
+                .WillOnce(Return(createAccessTokenRespExample));
+            EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs()).Times(1).WillOnce(Return(1711937315000));
+            EXPECT_CALL(*configMock.get(), saveAccessToken(fakeSaveAccessToken));
+        }
     }
 
-    void expectUpdateAccessToken()
+    void expectUpdateAccessTokenWhenInvalid()
     {
         std::string expectedPath = "/oauth/token";
         std::string content_type = "Content-Type: application/x-www-form-urlencoded";
         std::string authHeader = "Authorization: Basic " + base64::to_base64(stubAuthConfig.app_key + ":" + stubAuthConfig.app_secret);
         std::set<std::string> expectedHeaders{authHeader, content_type};
-        std::string expectedBody = "grant_type=authorization_code&code=" + stubAuthConfig.refresh_token.token +
-                                   "&redirect_uri=" + stubAuthConfig.redirect_uri;
+        std::string expectedBody = "grant_type=refresh_token&refresh_token=" + refreshToken.token;
 
         Token fakeSaveAccessToken;
         fakeSaveAccessToken.token = "ACCESS_TOKEN_HERE";
         fakeSaveAccessToken.granted_at_time = 1711937315000;
-        fakeSaveAccessToken.expires_at_time = 1711937315000 + 1800;
+        fakeSaveAccessToken.expires_at_time = 1711937315000 + (1800 * 1000);
 
         {
             InSequence createAccessTokenSeq;
@@ -84,7 +93,6 @@ public:
             EXPECT_CALL(*configMock.get(), getRefreshToken()).Times(1).WillOnce(Return(stubAuthConfig.refresh_token));
             EXPECT_CALL(*configMock.get(), getAppKey()).WillOnce(Return(stubAuthConfig.app_key));
             EXPECT_CALL(*configMock.get(), getAppSecret()).Times(1).WillOnce(Return(stubAuthConfig.app_secret));
-            EXPECT_CALL(*configMock.get(), getRedirectUri()).Times(1).WillOnce(Return(stubAuthConfig.redirect_uri));
             EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(authenticationEndpoint));
             EXPECT_CALL(*restClientCurlMock.get(), postResponse(expectedPath, expectedHeaders, expectedBody))
                 .Times(1)
@@ -100,7 +108,7 @@ public:
         {
             InSequence validAccessTokenSeq;
             EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs())
-                .WillOnce(Return(stubAuthConfig.access_token.expires_at_time - 1));
+                .WillOnce(Return(stubAuthConfig.access_token.expires_at_time - 305000));
             EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
         }
     }
@@ -111,7 +119,7 @@ public:
             InSequence expiredAccessTokenSeq;
             EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs())
                 .Times(1)
-                .WillOnce(Return(stubAuthConfig.access_token.expires_at_time + 1));
+                .WillOnce(Return(stubAuthConfig.access_token.expires_at_time - 295000));
             EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
         }
     }
@@ -145,7 +153,7 @@ protected:
     std::string authenticationEndpoint{"https://api.schwabapi.com/v1"};
 };
 
-TEST_F(SchwabClientTest, updateAccessTokenRequest)
+TEST_F(SchwabClientTest, createAccessToken)
 {
     std::string expectedPath = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
@@ -157,7 +165,12 @@ TEST_F(SchwabClientTest, updateAccessTokenRequest)
     Token fakeSaveAccessToken;
     fakeSaveAccessToken.token = "ACCESS_TOKEN_HERE";
     fakeSaveAccessToken.granted_at_time = 1711937315000;
-    fakeSaveAccessToken.expires_at_time = 1711937315000 + 1800;
+    fakeSaveAccessToken.expires_at_time = 1711937315000 + (1800 * 1000);
+
+    Token fakeSaveRefreshToken;
+    fakeSaveRefreshToken.token = "REFRESH_TOKEN_HERE";
+    fakeSaveRefreshToken.granted_at_time = 1711937315000;
+    fakeSaveRefreshToken.expires_at_time = 1711937315000 + (60 * 60 * 24 * 7 * 1000);
 
     {
         InSequence createAccessTokenSeq;
@@ -171,11 +184,12 @@ TEST_F(SchwabClientTest, updateAccessTokenRequest)
         EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs()).WillOnce(Return(1711937315000));
 
         EXPECT_CALL(*configMock.get(), saveAccessToken(fakeSaveAccessToken));
+        EXPECT_CALL(*configMock.get(), saveRefreshToken(fakeSaveRefreshToken));
     }
-    EXPECT_TRUE(client->createAccessToken(authCode.code, false));
+    EXPECT_TRUE(client->createAccessToken(authCode.code));
 }
 
-TEST_F(SchwabClientTest, updateAcessTokenResponseInvalid)
+TEST_F(SchwabClientTest, createAccessTokenResponseInvalid)
 {
     std::string expectedPath = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
@@ -187,7 +201,7 @@ TEST_F(SchwabClientTest, updateAcessTokenResponseInvalid)
     Token fakeSaveAccessToken;
     fakeSaveAccessToken.token = "ACCESS_TOKEN_HERE";
     fakeSaveAccessToken.granted_at_time = 1711937315000;
-    fakeSaveAccessToken.expires_at_time = 1711937315000 + 1800;
+    fakeSaveAccessToken.expires_at_time = 1711937315000 + (1800 * 1000);
 
     {
         InSequence createAccessTokenSeq;
@@ -199,25 +213,27 @@ TEST_F(SchwabClientTest, updateAcessTokenResponseInvalid)
         EXPECT_CALL(*restClientCurlMock.get(), postResponse(expectedPath, expectedHeaders, expectedBody))
             .WillOnce(Return(postErrorInvalidClient));
     }
-    EXPECT_FALSE(client->createAccessToken(authCode.code, false));
+    EXPECT_FALSE(client->createAccessToken(authCode.code));
 }
 
 TEST_F(SchwabClientTest, updatehAccessTokenRequest)
 {
-    expectRefreshTokenRequest();
-    EXPECT_TRUE(client->createAccessToken(refreshToken.token, true));
+    expectUpdateAccessTokenRequest();
+    EXPECT_TRUE(client->updateAccessToken(refreshToken.token));
 }
 
 TEST_F(SchwabClientTest, checkAccessTokenTest)
 {
-    EXPECT_CALL(*configMock.get(), getAccessToken()).WillRepeatedly(Return(stubAuthConfig.access_token));
+    Token fakeAccessToken;
+    fakeAccessToken.expires_at_time = 1712196000000;
+    EXPECT_CALL(*configMock.get(), getAccessToken()).WillRepeatedly(Return(fakeAccessToken));
 
     EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs())
-        .WillOnce(Return(stubAuthConfig.access_token.expires_at_time + 1));
+        .WillOnce(Return(1712196000000 - 295000));
     EXPECT_FALSE(client->checkAccessToken());
 
     EXPECT_CALL(utils::mocks::SystemTimerMock::inst(), nowMs())
-        .WillOnce(Return(stubAuthConfig.access_token.expires_at_time - 1));
+        .WillOnce(Return(1712196000000 - 305000));
     EXPECT_TRUE(client->checkAccessToken());
 }
 
@@ -278,7 +294,7 @@ TEST_F(SchwabClientTest, getQuotesWithRefreshingAccessToken)
     std::string path = R"(/quotes?symbols=AAPL%2CSPY&fields=quote&indicative=false)";
 
     expectExpiredAccessToken();
-    expectUpdateAccessToken();
+    expectUpdateAccessTokenWhenInvalid();
 
     {
         InSequence getQuotesSeq;
@@ -335,7 +351,7 @@ TEST_F(SchwabClientTest, getOptionExpirationsWithUpdateAccessToken)
     std::string expectedPath = "?symbol=AAPL";
 
     expectExpiredAccessToken();
-    expectUpdateAccessToken();
+    expectUpdateAccessTokenWhenInvalid();
     expectedGetOptionExpirations();
 }
 
@@ -449,7 +465,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDatesMinutesWithUpdateAccessT
         "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
 
     expectExpiredAccessToken();
-    expectUpdateAccessToken();
+    expectUpdateAccessTokenWhenInvalid();
 
     {
         InSequence s;
@@ -522,7 +538,7 @@ TEST_F(SchwabClientTest, getOptionChainWithUpdateAccessToken)
     std::string expectedPath = "/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE";
 
     expectExpiredAccessToken();
-    expectUpdateAccessToken();
+    expectUpdateAccessTokenWhenInvalid();
 
     {
         InSequence s;
