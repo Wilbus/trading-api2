@@ -153,6 +153,7 @@ protected:
 
     std::string marketEndpoint{"https://api.schwabapi.com/marketdata/v1"};
     std::string authenticationEndpoint{"https://api.schwabapi.com/v1"};
+    std::string accountsEndpoint{"https://api.schwabapi.com/trader/v1"};
 };
 
 TEST_F(SchwabClientTest, createAccessToken)
@@ -552,4 +553,23 @@ TEST_F(SchwabClientTest, getOptionChainWithUpdateAccessToken)
     auto optionChain = client->getOptionChain("AAPL", 5);
     EXPECT_GT(optionChain.callExpDateMap.size(), 0);
     EXPECT_GT(optionChain.putExpDateMap.size(), 0);
+}
+
+TEST_F(SchwabClientTest, getUserPreference)
+{
+    std::string expectedPath = "/userPreference";
+
+    expectExpiredAccessToken();
+    expectUpdateAccessTokenWhenInvalid();
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(accountsEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(userPreferenceRespExample));
+    }
+    auto prefs = client->getUserPreferences();
+    EXPECT_GT(prefs.accounts.size(), 0);
+    EXPECT_GT(prefs.streamerInfo.size(), 0);
 }

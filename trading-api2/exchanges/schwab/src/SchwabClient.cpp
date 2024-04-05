@@ -349,7 +349,7 @@ std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
 }
 
 // TODO: add UT for this
-UserPreference SchwabClient::getUserPreference()
+UserPreferences SchwabClient::getUserPreferences()
 {
     try
     {
@@ -361,12 +361,13 @@ UserPreference SchwabClient::getUserPreference()
         setAccountsEndpoint();
         auto resp = restClient->getResponse(path, headers());
         auto errorResp = checkErrors(resp);
+        auto preferences = parseUserPreferences(resp);
         if (errorResp.errors.size() > 0)
         {
             logErrorResponse(errorResp);
             return {};
         }
-        return {};
+        return preferences;
     }
     catch (const std::exception& e)
     {

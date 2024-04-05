@@ -62,6 +62,7 @@ TEST_F(SchwabEndpointsTest, GetAccountNumbers)
 
 TEST_F(SchwabEndpointsTest, GetUserPreferences)
 {
-    auto accountNmbers = sclient->getUserPreference();
-    // EXPECT_GT(priceHistory.candles.size(), 0);
+    auto prefs = sclient->getUserPreferences();
+    EXPECT_GT(prefs.accounts.size(), 0);
+    EXPECT_GT(prefs.streamerInfo.size(), 0);
 }

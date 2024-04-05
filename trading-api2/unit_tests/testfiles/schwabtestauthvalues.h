@@ -11,3 +11,40 @@ std::string createAccessTokenRespExample =
 	"access_token": "ACCESS_TOKEN_HERE",
 	"id_token": "JWT_HERE"
 })";
+
+std::string userPreferenceRespExample = R"({
+  "accounts": [
+    {
+      "accountNumber": "123456789",
+      "primaryAccount": true,
+      "type": "BROKERAGE",
+      "nickName": "Individual",
+      "displayAcctId": "...249",
+      "autoPositionEffect": true,
+      "accountColor": "Green"
+    },
+    {
+      "accountNumber": "444555666",
+      "primaryAccount": false,
+      "type": "BROKERAGE",
+      "nickName": "Individual",
+      "displayAcctId": "...742",
+      "autoPositionEffect": false,
+      "accountColor": "Blue"
+    }
+  ],
+  "streamerInfo": [
+    {
+      "streamerSocketUrl": "wss://streamer-api.schwab.com/ws",
+      "schwabClientCustomerId": "some-customer-id",
+      "schwabClientCorrelId": "some-correl-id",
+      "schwabClientChannel": "N9",
+      "schwabClientFunctionId": "APIAPP"
+    }
+  ],
+  "offers": [
+    {
+      "level2Permissions": false
+    }
+  ]
+})";

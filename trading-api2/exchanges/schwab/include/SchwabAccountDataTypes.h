@@ -122,7 +122,7 @@ struct StreamerInfo
 {
     std::string streamerSocketUrl;
     std::string schwabClientCustomerId;
-    std::string schwabCLientCorrelId;
+    std::string schwabClientCorrelId;
     std::string schwabClientChannel;
     std::string schwabClientFunctionId;
 };
@@ -132,7 +132,7 @@ struct Offers
     bool level2Permissions;
 };
 
-struct UserPreference
+struct UserPreferences
 {
     std::vector<Account> accounts;
     std::vector<StreamerInfo> streamerInfo;
