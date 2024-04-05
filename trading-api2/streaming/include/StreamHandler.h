@@ -21,7 +21,6 @@ namespace streamer {
 class SchwabStreamHandler : public IStreamHandler
 {
 public:
-    SchwabStreamHandler(std::string url, std::set<std::string> product_ids, std::string seshId);
     SchwabStreamHandler(std::string url);
     ~SchwabStreamHandler();
 
@@ -36,17 +35,13 @@ public:
     virtual void reconnectingStream() override;
     virtual void connectStream() override;
     virtual std::shared_ptr<DataQueue<std::string>> repliesQueue() override;
-    virtual void setSeshId(std::string id) override{};
-    virtual void setProductIds(std::set<std::string> ids) override{};
 
 private:
     uWS::Hub hub;
     uWS::Group<uWS::CLIENT>* group;
     std::string streamUrl;
     std::shared_ptr<DataQueue<std::string>> repliesQue;
-    std::set<std::string> product_ids;
-    std::string seshId;
-
+    
     uint64_t msgcount{0};
 };
 

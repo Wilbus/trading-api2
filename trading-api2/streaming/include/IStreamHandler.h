@@ -26,8 +26,6 @@ public:
     virtual void reconnectingStream() = 0;
     virtual void connectStream() = 0;
     virtual std::shared_ptr<DataQueue<std::string>> repliesQueue() = 0;
-    virtual void setSeshId(std::string id) = 0;
-    virtual void setProductIds(std::set<std::string> ids) = 0;
 };
 
 } // namespace streamer

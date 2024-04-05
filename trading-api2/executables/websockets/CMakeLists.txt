@@ -7,6 +7,7 @@ add_executable(schwabsocket)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
     trading-api2-streaming
+    trading-api2-exchange
     trading-api2-utils
 )
 

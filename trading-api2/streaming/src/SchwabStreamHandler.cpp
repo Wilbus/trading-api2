@@ -20,6 +20,7 @@ void SchwabStreamHandler::setupCallbacks()
 
 void SchwabStreamHandler::onConnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req)
 {
+
 }
 
 void SchwabStreamHandler::onMessageCallback(char* message, size_t length)
