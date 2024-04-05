@@ -559,6 +559,42 @@ TEST_F(SchwabClientTest, getUserPreference)
 {
     std::string expectedPath = "/userPreference";
 
+    expectValidAccessToken();
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(accountsEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(userPreferenceRespExample));
+    }
+    auto prefs = client->getUserPreferences();
+    EXPECT_GT(prefs.accounts.size(), 0);
+    EXPECT_GT(prefs.streamerInfo.size(), 0);
+}
+
+TEST_F(SchwabClientTest, getUserPreferenceWithErroResponse)
+{
+    std::string expectedPath = "/userPreference";
+
+    expectValidAccessToken();
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(accountsEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(genericError400));
+    }
+    auto prefs = client->getUserPreferences();
+    EXPECT_EQ(prefs.accounts.size(), 0);
+    EXPECT_EQ(prefs.streamerInfo.size(), 0);
+}
+
+TEST_F(SchwabClientTest, getUserPreferenceWithUpdateAccessToken)
+{
+    std::string expectedPath = "/userPreference";
+
     expectExpiredAccessToken();
     expectUpdateAccessTokenWhenInvalid();
 
