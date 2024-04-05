@@ -9,7 +9,13 @@ target_include_directories(trading-api2-streaming PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
-target_link_libraries(${PROJECT_NAME} trading-api2-utils)
+
+target_link_libraries(${PROJECT_NAME} 
+    trading-api2-utils
+    uWebSockets-v0.14
+)
+
+add_subdirectory(uWebSockets-v0.14)
 
 if(BUILD_TESTS)
     add_subdirectory(mocks)

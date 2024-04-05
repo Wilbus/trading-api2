@@ -25,7 +25,6 @@ int main(int argc, char** argv)
     (void)argc;
     (void)argv;
     CURL* curl;
-    CURLcode res;
     std::string readBuffer;
 
     curl = curl_easy_init();
@@ -98,7 +97,7 @@ int main(int argc, char** argv)
         */
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        res = curl_easy_perform(curl);
+        curl_easy_perform(curl);
         curl_easy_cleanup(curl);
 
         std::cout << readBuffer << std::endl;

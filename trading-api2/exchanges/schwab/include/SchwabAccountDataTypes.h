@@ -107,4 +107,36 @@ struct AccountNumbers
     std::string hashValue;
 };
 
+struct Account
+{
+    std::string accountNumber;
+    bool primaryAccount;
+    std::string type;
+    std::string nickName;
+    std::string accountColor;
+    std::string displayAcctId;
+    std::string autoPositionEffect;
+};
+
+struct StreamerInfo
+{
+    std::string streamerSocketUrl;
+    std::string schwabClientCustomerId;
+    std::string schwabCLientCorrelId;
+    std::string schwabClientChannel;
+    std::string schwabClientFunctionId;
+};
+
+struct Offers
+{
+    bool level2Permissions;
+};
+
+struct UserPreference
+{
+    std::vector<Account> accounts;
+    std::vector<StreamerInfo> streamerInfo;
+    std::vector<Offers> offers;
+};
+
 } // namespace schwabAccountData

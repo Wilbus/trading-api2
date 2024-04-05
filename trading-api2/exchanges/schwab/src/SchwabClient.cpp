@@ -321,7 +321,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
     }
 }
 
-//TODO: add UT for this
+// TODO: add UT for this
 std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
 {
     try
@@ -341,11 +341,37 @@ std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
         }
         return {};
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cerr << e.what() << '\n';
         return {};
     }
-    
+}
+
+// TODO: add UT for this
+UserPreference SchwabClient::getUserPreference()
+{
+    try
+    {
+        std::string path = "/userPreference";
+        if (!checkAccessToken())
+        {
+            updateAccessToken(config->getRefreshToken().token);
+        }
+        setAccountsEndpoint();
+        auto resp = restClient->getResponse(path, headers());
+        auto errorResp = checkErrors(resp);
+        if (errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return {};
+        }
+        return {};
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        return {};
+    }
 }
 } // namespace restclient

@@ -11,18 +11,17 @@ target_include_directories(trading-api2-utils PUBLIC
 )
 
 find_package(RapidJSON)
-find_package(ZLIB)
+#find_package(ZLIB)
 find_package(InfluxDB)
 
-
-set(OPENSSL_USE_STATIC_LIBS TRUE)
-find_package(OpenSSL REQUIRED)
+#set(OPENSSL_USE_STATIC_LIBS TRUE)
+#find_package(OpenSSL REQUIRED)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wfatal-errors -Wunused-parameter -Wunused-variable -Wno-unused-function -DLOG_FORMAT_VERIFICATION)
-target_link_libraries(${PROJECT_NAME} OpenSSL::Crypto)
-target_link_libraries(${PROJECT_NAME} OpenSSL::SSL)
-target_link_libraries(${PROJECT_NAME} ZLIB::ZLIB)
-target_link_libraries(${PROJECT_NAME} uWS)
+#target_link_libraries(${PROJECT_NAME} OpenSSL::Crypto)
+#target_link_libraries(${PROJECT_NAME} OpenSSL::SSL)
+#target_link_libraries(${PROJECT_NAME} ZLIB::ZLIB)
+#target_link_libraries(${PROJECT_NAME} uWS)
 target_link_libraries(${PROJECT_NAME} InfluxData::InfluxDB)
 
 

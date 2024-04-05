@@ -57,7 +57,7 @@ ErrorResponse checkErrors(std::string jsonstring)
     d.Parse(jsonstring.c_str());
     rapidjson::StringBuffer s;
 
-    if(!d.IsObject())
+    if (!d.IsObject())
     {
         return {};
     }

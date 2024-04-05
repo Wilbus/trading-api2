@@ -18,11 +18,12 @@ namespace streamer {
 // typedef std::function<void(DataType)> StreamCallbackFunc;
 // typedef std::map<std::string, StreamCallbackFunc> CallbackFuncMap;
 
-class StreamHandler : public IStreamHandler
+class SchwabStreamHandler : public IStreamHandler
 {
 public:
-    StreamHandler(std::string url, std::set<std::string> product_ids, std::string seshId);
-    ~StreamHandler();
+    SchwabStreamHandler(std::string url, std::set<std::string> product_ids, std::string seshId);
+    SchwabStreamHandler(std::string url);
+    ~SchwabStreamHandler();
 
     virtual void run() override;
     // virtual void poll() override;
@@ -35,6 +36,8 @@ public:
     virtual void reconnectingStream() override;
     virtual void connectStream() override;
     virtual std::shared_ptr<DataQueue<std::string>> repliesQueue() override;
+    virtual void setSeshId(std::string id) override{};
+    virtual void setProductIds(std::set<std::string> ids) override{};
 
 private:
     uWS::Hub hub;

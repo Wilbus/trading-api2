@@ -72,6 +72,7 @@ class ISchwabClient
         bool extendedHours = false, bool needPreviousClose = false) = 0;
 
     virtual std::vector<AccountNumbers> getAccountNumbers() = 0;
+    virtual UserPreference getUserPreference() = 0;
 
     virtual bool checkAccessToken() = 0;
 };
@@ -102,6 +103,7 @@ public:
         bool extendedHours = false, bool needPreviousClose = false) override;
 
     virtual std::vector<AccountNumbers> getAccountNumbers() override;
+    virtual UserPreference getUserPreference() override;
 
     virtual bool checkAccessToken() override;
 
