@@ -12,6 +12,8 @@ SchwabStreamHandler::SchwabStreamHandler(std::string url, SchwabRequestsIdMap re
 
 SchwabStreamHandler::~SchwabStreamHandler()
 {
+    group->close();
+    delete group;
 }
 
 void SchwabStreamHandler::setupCallbacks()
@@ -36,7 +38,7 @@ void SchwabStreamHandler::run()
 
 void SchwabStreamHandler::onConnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req)
 {
-    RequestId loginRequestId{0, ServiceType::LOGIN};
+    RequestId loginRequestId{0, ServiceType::ADMIN, CommandType::LOGIN};
     if (requestsIdMap.find(loginRequestId) == requestsIdMap.end())
     {
         throw std::runtime_error("no login request was requested");
