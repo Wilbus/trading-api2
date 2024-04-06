@@ -41,7 +41,7 @@ private:
     uWS::Group<uWS::CLIENT>* group;
     std::string streamUrl;
     std::shared_ptr<DataQueue<std::string>> repliesQue;
-    
+
     uint64_t msgcount{0};
 };
 

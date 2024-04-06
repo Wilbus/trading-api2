@@ -25,7 +25,6 @@ struct RequestId
 {
     int requestId;
     ServiceType serviceType;
-
 };
 
 bool operator<(const RequestId& lhs, const RequestId& rhs)
@@ -44,7 +43,8 @@ public:
     virtual void run() = 0;
 
     virtual void onConnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req) = 0;
-    virtual void onMessageCallback(uWS::WebSocket<uWS::CLIENT>* ws, char* message, size_t length, uWS::OpCode opCode) = 0;
+    virtual void onMessageCallback(
+        uWS::WebSocket<uWS::CLIENT>* ws, char* message, size_t length, uWS::OpCode opCode) = 0;
     virtual void onDisconnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, int code, char* message, size_t length) = 0;
     virtual void onErrorCallback(void* e) = 0;
     virtual void reconnectingStream() = 0;
@@ -61,12 +61,15 @@ public:
     virtual void run() override;
 
     virtual void onConnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req) override;
-    virtual void onMessageCallback(uWS::WebSocket<uWS::CLIENT>* ws, char* message, size_t length, uWS::OpCode opCode) override;
-    virtual void onDisconnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, int code, char* message, size_t length) override;
+    virtual void onMessageCallback(
+        uWS::WebSocket<uWS::CLIENT>* ws, char* message, size_t length, uWS::OpCode opCode) override;
+    virtual void onDisconnectionCallback(
+        uWS::WebSocket<uWS::CLIENT>* ws, int code, char* message, size_t length) override;
     virtual void onErrorCallback(void* e) override;
     virtual void reconnectingStream() override;
     virtual void connectStream() override;
     virtual std::shared_ptr<DataQueue<std::string>> repliesQueue() override;
+
 protected:
     SchwabRequestsIdMap requestsIdMap;
 

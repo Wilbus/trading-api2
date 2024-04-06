@@ -2,8 +2,8 @@
 
 #include <string>
 
-const std::string testlogin = 
-R"({
+const std::string testlogin =
+    R"({
     "service": "ADMIN",
     "requestid": 0,
     "command": "LOGIN",

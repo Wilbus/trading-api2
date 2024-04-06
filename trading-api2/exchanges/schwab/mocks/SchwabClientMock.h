@@ -4,7 +4,7 @@
 
 #include <gmock/gmock.h>
 
-class SchwabClientMock : public ISchwabClient
+    class SchwabClientMock : public ISchwabClient
 {
     MOCK_METHOD2(createAccessToken, bool(std::string, bool));
     MOCK_METHOD2(getEquityQuotes, std::map<std::string, QuoteEquityResponse>(std::set<std::string>));

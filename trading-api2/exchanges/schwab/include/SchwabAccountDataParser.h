@@ -31,17 +31,17 @@ UserPreferences parseUserPreferences(std::string jsonstring)
     d.Parse(jsonstring.c_str());
     rapidjson::StringBuffer s;
 
-    if(!d.IsObject())
+    if (!d.IsObject())
     {
         return {};
     }
 
     UserPreferences pref;
 
-    if(d.HasMember("accounts") && d["accounts"].IsArray())
+    if (d.HasMember("accounts") && d["accounts"].IsArray())
     {
         Account acc;
-        for(const auto& accountObj : d["accounts"].GetArray())
+        for (const auto& accountObj : d["accounts"].GetArray())
         {
             PARSE_STRING(acc.accountNumber, "accountNumber", accountObj);
             PARSE_BOOL(acc.primaryAccount, "primaryAccount", accountObj);
@@ -52,9 +52,9 @@ UserPreferences parseUserPreferences(std::string jsonstring)
             pref.accounts.push_back(acc);
         }
     }
-    if(d.HasMember("streamerInfo") && d["streamerInfo"].IsArray())
+    if (d.HasMember("streamerInfo") && d["streamerInfo"].IsArray())
     {
-        for(const auto& streamerObj : d["streamerInfo"].GetArray())
+        for (const auto& streamerObj : d["streamerInfo"].GetArray())
         {
             StreamerInfo streamerInfo;
             PARSE_STRING(streamerInfo.streamerSocketUrl, "streamerSocketUrl", streamerObj);
@@ -65,9 +65,9 @@ UserPreferences parseUserPreferences(std::string jsonstring)
             pref.streamerInfo.push_back(streamerInfo);
         }
     }
-    if(d.HasMember("offers") && d["offers"].IsArray())
+    if (d.HasMember("offers") && d["offers"].IsArray())
     {
-        for(const auto& offersObj : d["offers"].GetArray())
+        for (const auto& offersObj : d["offers"].GetArray())
         {
             Offers offers;
             PARSE_STRING(offers.level2Permissions, "level2Permissions", offersObj);
