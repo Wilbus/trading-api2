@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DataQueue.h"
-
+#include "SchwabStreamParser.h"
 #include <uWS/uWS.h>
 
 #include <functional>
@@ -15,16 +15,14 @@
 
 namespace streamer {
 
-enum ServiceType : unsigned
-{
-    LOGIN,
-};
+using namespace schwabStreamParser;
 
-/*only one request for each stream type*/
+/*only one request per requestId*/
 struct RequestId
 {
     int requestId;
     ServiceType serviceType;
+    CommandType commandType;
 };
 
 bool operator<(const RequestId& lhs, const RequestId& rhs)

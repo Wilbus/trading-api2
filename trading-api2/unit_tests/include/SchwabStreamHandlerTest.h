@@ -35,6 +35,7 @@ public:
     };
     SchwabStreamHandlerTest()
     {
+        someWebSocketInstance = (uWS::WebSocket<uWS::CLIENT>*)0xdeadbeef;
     }
 
     uWS::WebSocket<uWS::CLIENT>* someWebSocketInstance;
@@ -51,7 +52,7 @@ TEST_F(SchwabStreamHandlerTest, noLoginRequestOnConnectionThrows)
 TEST_F(SchwabStreamHandlerTest, loginRequestOnConnection)
 {
     SchwabRequestsIdMap map;
-    RequestId loginReq{0, ServiceType::LOGIN};
+    RequestId loginReq{0, ServiceType::ADMIN, CommandType::LOGIN};
     std::string loginReqStr{"loginRequestJson"};
     map[loginReq] = loginReqStr;
 

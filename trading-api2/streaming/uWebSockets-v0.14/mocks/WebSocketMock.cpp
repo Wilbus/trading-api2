@@ -10,6 +10,7 @@ void WebSocket<uWS::CLIENT>::send(const char *message, size_t length, OpCode opC
     void(*callback)(WebSocket<uWS::CLIENT> *webSocket, void *data, bool cancelled,
     void *reserved), void *callbackData, bool compress)
 {
+    std::cout << "mock\n";
     return uWS::mocks::WebSocketMock<uWS::CLIENT>::inst().send(message, length, opCode);
 }
 
@@ -19,7 +20,6 @@ void WebSocket<uWS::SERVER>::send(const char *message, size_t length, OpCode opC
     void(*callback)(WebSocket<uWS::SERVER> *webSocket, void *data, bool cancelled,
     void *reserved), void *callbackData, bool compress)
 {
-    std::cout << "mock\n";
     return uWS::mocks::WebSocketMock<uWS::SERVER>::inst().send(message, length, opCode);
 }
 
