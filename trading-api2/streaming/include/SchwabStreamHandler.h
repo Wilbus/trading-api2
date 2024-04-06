@@ -3,6 +3,7 @@
 #include "IStreamHandler.h"
 #include "DataQueue.h"
 #include "SchwabStreamParser.h"
+#include "SchwabStreamDataTypes.h"
 
 #include <functional>
 #include <map>
@@ -16,22 +17,6 @@
 namespace streamer {
 
 using namespace schwabStreamParser;
-
-/*only one request per requestId*/
-struct RequestId
-{
-    int requestId;
-    ServiceType serviceType;
-    CommandType commandType;
-};
-
-bool operator<(const RequestId& lhs, const RequestId& rhs)
-{
-    return lhs.requestId < rhs.requestId;
-}
-
-typedef std::string RequestJson;
-typedef std::map<RequestId, RequestJson> SchwabRequestsIdMap;
 
 using utils::DataQueue;
 
@@ -57,7 +42,7 @@ public:
 
 protected:
     SchwabRequestsIdMap requestsIdMap;
-    uWS::WebSocket<uWS::CLIENT>* ws;
+    std::map<RequestId, std::string> requestsIdStrMap;
 
 private:
     void setupCallbacks();

@@ -25,12 +25,12 @@ public:
 
         const char* getRequestDataPtr(RequestId id)
         {
-            return requestsIdMap.at(id).data();
+            return requestsIdStrMap.at(id).data();
         }
 
         size_t getRequestDataSize(RequestId id)
         {
-            return requestsIdMap.at(id).size();
+            return requestsIdStrMap.at(id).size();
         }
     };
     SchwabStreamHandlerTest()
@@ -52,14 +52,27 @@ TEST_F(SchwabStreamHandlerTest, noLoginRequestOnConnectionThrows)
 TEST_F(SchwabStreamHandlerTest, loginRequestOnConnection)
 {
     SchwabRequestsIdMap map;
-    RequestId loginReq{0, ServiceType::ADMIN, CommandType::LOGIN};
-    std::string loginReqStr{"loginRequestJson"};
-    map[loginReq] = loginReqStr;
+    Request req;
+    req.serviceType = ServiceType::ADMIN;
+    req.requestid = 0;
+    req.commandType = CommandType::LOGIN;
+    req.schwabClientCustomerId = "customerId";
+    req.schwabClientCorrelId = "correlId";
+    req.parameters.authorization = "accessToken";
+    req.parameters.schwabClientChannel = "clientChannel";
+    req.parameters.schwabClientFunctionId = "clientFunctionId";
+
+    map[0] = req;
 
     SchwabStreamHandlerTestWrapper handlerTestWrapper = SchwabStreamHandlerTestWrapper("wss://stream.com", map);
 
     EXPECT_CALL(WebSocketMock<uWS::CLIENT>::inst(),
-        send(handlerTestWrapper.getRequestDataPtr(loginReq), handlerTestWrapper.getRequestDataSize(loginReq),
+        send(handlerTestWrapper.getRequestDataPtr(0), handlerTestWrapper.getRequestDataSize(0),
             uWS::OpCode::TEXT));
     handlerTestWrapper.onConnectionCallback(someWebSocketInstance, {});
+}
+
+TEST_F(SchwabStreamHandlerTest, onMessageResponse)
+{
+    
 }

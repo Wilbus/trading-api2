@@ -1,4 +1,5 @@
 #include "SchwabEndpointsTest.h"
+#include "SchwabStreamEndpointsTest.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

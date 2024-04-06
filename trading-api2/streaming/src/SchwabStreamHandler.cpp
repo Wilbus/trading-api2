@@ -1,4 +1,8 @@
 #include "SchwabStreamHandler.h"
+#include "SchwabStreamReqGenerator.h"
+#include "SchwabStreamParser.h"
+
+#include <iostream>
 
 namespace streamer {
 // TODO: consider moving callback functions outside of this class to for example SchwabConnection class
@@ -8,6 +12,11 @@ SchwabStreamHandler::SchwabStreamHandler(std::string url, SchwabRequestsIdMap re
     , requestsIdMap(requestsIdMap)
 {
     repliesQue = std::make_shared<DataQueue<std::string>>();
+    for(const auto& [id, req] : requestsIdMap)
+    {
+        requestsIdStrMap[id] = schwabStreamReq::buildRequestString(req);
+    }
+    setupCallbacks();
 }
 
 SchwabStreamHandler::~SchwabStreamHandler()
@@ -37,19 +46,19 @@ void SchwabStreamHandler::setupCallbacks()
 
 void SchwabStreamHandler::run()
 {
+    std::cout << "SchwabStreamHandler start run()\n";
     hub.run();
 }
 
 void SchwabStreamHandler::onConnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req)
 {
-    RequestId loginRequestId{0, ServiceType::ADMIN, CommandType::LOGIN};
-    if (requestsIdMap.find(loginRequestId) == requestsIdMap.end())
+    if (requestsIdMap.find(0) == requestsIdMap.end())
     {
         throw std::runtime_error("no login request was requested");
     }
-    std::cout << "SchwabStreamHandler sends: \n" << requestsIdMap.at(loginRequestId) << "\n";
+    //std::cout << "SchwabStreamHandler sends: \n" << requestsIdMap.at(loginRequestId) << "\n";
 
-    ws->send(requestsIdMap.at(loginRequestId).data(), requestsIdMap.at(loginRequestId).size(), uWS::OpCode::TEXT),
+    ws->send(requestsIdStrMap.at(0).data(), requestsIdStrMap.at(0).size(), uWS::OpCode::TEXT),
         nullptr, nullptr, nullptr;
 }
 
@@ -59,7 +68,10 @@ void SchwabStreamHandler::onMessageCallback(
     (void)ws;
     (void)opCode;
     std::string text = std::string(message, length);
-    std::cout << text << "\n";
+    //std::cout << text << "\n";
+
+
+    repliesQue->push(text);
 }
 
 void SchwabStreamHandler::onDisconnectionCallback(
@@ -69,6 +81,7 @@ void SchwabStreamHandler::onDisconnectionCallback(
     (void)code;
     (void)message;
     (void)length;
+    std::cout << "disconnect event";
 }
 
 void SchwabStreamHandler::onErrorCallback(void* e)
@@ -82,7 +95,9 @@ void SchwabStreamHandler::reconnectingStream()
 
 void SchwabStreamHandler::connectStream()
 {
-    hub.connect(streamUrl);
+    std::cout << "SchwabStreamHandler connect to " << streamUrl << "\n";
+    hub.connect(streamUrl, nullptr, {}, 5000, group);
+    //hub.run();
 }
 
 std::shared_ptr<DataQueue<std::string>> SchwabStreamHandler::repliesQueue()

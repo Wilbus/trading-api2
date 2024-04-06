@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SchwabStreamDataTypes.h"
 #include "json.h"
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
@@ -7,33 +8,6 @@
 
 namespace schwabStreamParser
 {
-enum ServiceType : unsigned
-{
-    ADMIN,
-    NOSERVICE
-};
-
-enum CommandType : unsigned
-{
-    LOGIN,
-    NOCOMMAND
-};
-
-struct ResponseContent
-{
-    int code{-1};
-    std::string msg;
-};
-
-struct Response
-{
-    ServiceType service{ServiceType::NOSERVICE};
-    CommandType command{CommandType::NOCOMMAND};
-    int requestid{-1}; //assuming we dont get a negative responseId ever
-    std::string SchwabClientCorrelId;
-    time_t timestamp{-1};
-    ResponseContent content;
-};
 
 std::vector<Response> parseResponse(std::string jsonstring)
 {
