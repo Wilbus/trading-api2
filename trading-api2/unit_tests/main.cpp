@@ -6,6 +6,7 @@
 #include "SchwabErrorParserTest.h"
 #include "SchwabMarketDataParserTest.h"
 #include "SchwabStreamReqGeneratorTest.h"
+#include "SchwabStreamHandlerTest.h"
 #include "TimeFuncsTest.h"
 
 #include <gmock/gmock.h>

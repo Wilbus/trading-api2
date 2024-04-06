@@ -13,6 +13,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     trading-api2-restclient-mocks
     trading-api2-streaming
     trading-api2-streaming-mocks
+    uWebSockets-v0.14-mocks
     trading-api2-utils
     trading-api2-utils-mocks
     gtest_main
