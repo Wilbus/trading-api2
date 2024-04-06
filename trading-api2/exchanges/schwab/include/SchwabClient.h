@@ -58,6 +58,7 @@ const std::map<bool, std::string> booleanString =
 
 class ISchwabClient
 {
+public:
     virtual bool createAccessToken(std::string authorizationCode) = 0;
     virtual bool updateAccessToken(std::string refreshToken) = 0;
 
