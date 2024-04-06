@@ -12,6 +12,4 @@ then
 else
     echo "normal build\n"
     cmake --build output/ -j 6
-    rm -rf runfiles/
-    mkdir runfiles/
 fi
