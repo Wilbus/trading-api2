@@ -19,7 +19,10 @@ SchwabStreamHandler::~SchwabStreamHandler()
 void SchwabStreamHandler::setupCallbacks()
 {
     group->onConnection(
-        [this](uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req) { onConnectionCallback(ws, req); });
+        [this](uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req) {
+            onConnectionCallback(ws, req);
+            //onConnection(ws, req);
+        });
 
     group->onMessage([this](uWS::WebSocket<uWS::CLIENT>* ws, char* message, size_t length, uWS::OpCode opCode) {
         onMessageCallback(ws, message, length, opCode);
@@ -34,6 +37,7 @@ void SchwabStreamHandler::setupCallbacks()
 
 void SchwabStreamHandler::run()
 {
+    hub.run();
 }
 
 void SchwabStreamHandler::onConnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req)
@@ -55,6 +59,7 @@ void SchwabStreamHandler::onMessageCallback(
     (void)ws;
     (void)opCode;
     std::string text = std::string(message, length);
+    std::cout << text << "\n";
 }
 
 void SchwabStreamHandler::onDisconnectionCallback(
@@ -77,6 +82,7 @@ void SchwabStreamHandler::reconnectingStream()
 
 void SchwabStreamHandler::connectStream()
 {
+    hub.connect(streamUrl);
 }
 
 std::shared_ptr<DataQueue<std::string>> SchwabStreamHandler::repliesQueue()

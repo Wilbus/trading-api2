@@ -1,8 +1,8 @@
 #pragma once
 
+#include "IStreamHandler.h"
 #include "DataQueue.h"
 #include "SchwabStreamParser.h"
-#include <uWS/uWS.h>
 
 #include <functional>
 #include <map>
@@ -35,22 +35,7 @@ typedef std::map<RequestId, RequestJson> SchwabRequestsIdMap;
 
 using utils::DataQueue;
 
-class ISchwabStreamHandler
-{
-public:
-    virtual void run() = 0;
-
-    virtual void onConnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req) = 0;
-    virtual void onMessageCallback(
-        uWS::WebSocket<uWS::CLIENT>* ws, char* message, size_t length, uWS::OpCode opCode) = 0;
-    virtual void onDisconnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, int code, char* message, size_t length) = 0;
-    virtual void onErrorCallback(void* e) = 0;
-    virtual void reconnectingStream() = 0;
-    virtual void connectStream() = 0;
-    virtual std::shared_ptr<DataQueue<std::string>> repliesQueue() = 0;
-};
-
-class SchwabStreamHandler : public ISchwabStreamHandler
+class SchwabStreamHandler : public IStreamHandler
 {
 public:
     SchwabStreamHandler(std::string url, SchwabRequestsIdMap requestsIdMap);
@@ -68,8 +53,11 @@ public:
     virtual void connectStream() override;
     virtual std::shared_ptr<DataQueue<std::string>> repliesQueue() override;
 
+    //std::function<void(uWS::WebSocket<uWS::CLIENT>*, uWS::HttpRequest)> onConnection;
+
 protected:
     SchwabRequestsIdMap requestsIdMap;
+    uWS::WebSocket<uWS::CLIENT>* ws;
 
 private:
     void setupCallbacks();
