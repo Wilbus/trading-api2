@@ -1,9 +1,8 @@
 #!/bin/bash
-cd "$(dirname "$0")"
+cwd=$(pwd)
 
-cd output/configs/ut && ctest
-
-cd output/exchanges/schwab/ut && ctest
-#./output/restclient/ut/trading-api2-restclient-ut
-#./output/streaming/ut/trading-api2-streaming-ut
-#./output/utils/ut/trading-api2-utils-ut
+cd ${cwd}/output/configs/ut && ctest --stop-on-failure --output-on-failure --progress
+cd ${cwd}/output/exchanges/schwab/ut && ctest --stop-on-failure --output-on-failure --progress
+cd ${cwd}/output/restclient/ut/ && ctest --stop-on-failure --output-on-failure --progress
+cd ${cwd}/output/streaming/ut/ && ctest --stop-on-failure --output-on-failure --progress
+cd ${cwd}/output/utils/ut/ && ctest --stop-on-failure --output-on-failure --progress

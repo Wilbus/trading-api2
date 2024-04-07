@@ -1,2 +1,1 @@
 add_subdirectory(endpoint_tests)
-add_subdirectory(unit_tests)
