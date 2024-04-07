@@ -28,4 +28,21 @@ static std::string unixTimeToString(std::time_t& t, std::string format)
     return buff.str();
 }
 
+static std::string getCurrentLocalTimeStrNs(int64_t hours)
+{
+    auto t = std::chrono::high_resolution_clock::now();
+    int64_t nsUnixTime = t.time_since_epoch().count() + (hours * 3600 * 1000000000);
+
+    int nsFraction = nsUnixTime % 1'000'000'000;
+    time_t seconds = nsUnixTime / 1'000'000'000;
+
+    char timestr_sec[] = "YYYY-MM-DDThh:mm:ss.sssssssss";
+    std::strftime(timestr_sec, sizeof(timestr_sec) - 1, "%FT%T", std::gmtime(&seconds));
+    std::ostringstream tout;
+    tout << timestr_sec << '.' << std::setfill('0') << std::setw(9) << nsFraction << "Z";
+    std::string timestr_micro = tout.str();
+
+    return timestr_micro;
+}
+
 }; // namespace timefuncs

@@ -5,6 +5,7 @@
 #include "SchwabConnectionManager.h"
 #include "SchwabStreamHandler.h"
 #include "SchwabStreamReqGenerator.h"
+#include "Logger.h"
 
 #include <gtest/gtest.h>
 
@@ -31,8 +32,9 @@ public:
         {
             if (!queue->isEmpty())
             {
-                std::cout << "count: " << count << "\n";
-                std::cout << "dataqueue: " << queue->front() << "\n";
+                //std::cout << "count: " << count << "\n";
+                //std::cout << "dataqueue: " << queue->front() << "\n";
+                infologprint(logfile, "%s: count %u", __func__, count);
                 queue->pop();
                 count++;
             }
@@ -46,6 +48,7 @@ public:
     std::shared_ptr<SchwabClient> sclient;
     std::shared_ptr<SchwabStreamHandler> streamer;
     std::shared_ptr<SchwabConnectionManager> manager;
+    std::string logfile = "/datadisk0/sambashare0/coding/trading-api2-endpoint-test-logs/endpointTestLog.txt";
 };
 #if 0
 TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
