@@ -5,13 +5,13 @@
 
 #include <memory>
 
-class SchwabConnection
+class SchwabConnectionManager
 {
 public:
     // testing
-    SchwabConnection(std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient);
+    SchwabConnectionManager(std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient);
     // production
-    SchwabConnection(std::string configfolder);
+    SchwabConnectionManager(std::string configfolder);
 
 private:
     std::shared_ptr<ISchwabConfigs> configs;

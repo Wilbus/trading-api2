@@ -14,5 +14,5 @@ target_link_libraries(${PROJECT_NAME} trading-api2-exchange)
 target_link_libraries(${PROJECT_NAME} trading-api2-streaming)
 
 if(BUILD_TESTS)
-    #add_subdirectory(schwab/mocks)
+    add_subdirectory(ut)
 endif(BUILD_TESTS)
