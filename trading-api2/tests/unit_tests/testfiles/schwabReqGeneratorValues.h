@@ -41,4 +41,17 @@ const std::string accountAcitivtyRequest =
         "fields": "0,1,2,3"
     }
 })";
+
+const std::string levelOneEquitiesRequest =
+    R"({
+    "service": "LEVELONE_EQUITIES",
+    "requestid": 2,
+    "command": "SUBS",
+    "SchwabClientCustomerId": "customerId",
+    "SchwabClientCorrelId": "correlId",
+    "parameters": {
+        "keys": "QQQ",
+        "fields": "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16"
+    }
+})";
 //clang-format on

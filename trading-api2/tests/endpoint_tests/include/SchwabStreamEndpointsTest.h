@@ -51,8 +51,6 @@ TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
 
     UserPreferences prefs = sclient->getUserPreferences();
 
-    RequestId reqId;
-
     Request loginReq;
     loginReq.serviceType = ServiceType::ADMIN;
     loginReq.requestid = 0;
@@ -84,10 +82,15 @@ TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
     levelOneActivityReq.serviceType = ServiceType::LEVELONE_EQUITIES;
     levelOneActivityReq.requestid = 2;
     levelOneActivityReq.commandType = CommandType::SUBS;
+    levelOneActivityReq.schwabClientCustomerId = prefs.streamerInfo[0].schwabClientCustomerId;
+    levelOneActivityReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
+    levelOneActivityReq.parameters.keys = "QQQ";
+    levelOneActivityReq.parameters.fields = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16";
 
     map[0] = loginReq;
     // map[1] = qosReq;
     map[1] = acctActivityReq;
+    map[2] = levelOneActivityReq;
 
     streamer = std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", map);
 
