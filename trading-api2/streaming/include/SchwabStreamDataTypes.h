@@ -1,12 +1,13 @@
 #pragma once
 
-#include <string>
 #include <map>
+#include <string>
 
 enum ServiceType : unsigned
 {
     ADMIN,
     ACCT_ACTIVITY,
+    LEVELONE_EQUITIES,
     NOSERVICE
 };
 
@@ -48,7 +49,7 @@ struct Response
 {
     ServiceType service{ServiceType::NOSERVICE};
     CommandType command{CommandType::NOCOMMAND};
-    int requestid{-1}; //assuming we dont get a negative responseId ever
+    int requestid{-1}; // assuming we dont get a negative responseId ever
     std::string SchwabClientCorrelId;
     time_t timestamp{-1};
     ResponseContent content;

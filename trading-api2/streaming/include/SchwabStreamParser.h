@@ -6,8 +6,7 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"
 
-namespace schwabStreamParser
-{
+namespace schwabStreamParser {
 
 std::vector<Response> parseResponse(std::string jsonstring)
 {
@@ -15,40 +14,40 @@ std::vector<Response> parseResponse(std::string jsonstring)
     d.Parse(jsonstring.c_str());
     rapidjson::StringBuffer s;
 
-    if(!d.IsObject())
+    if (!d.IsObject())
     {
         return {};
     }
 
     std::vector<Response> resps;
 
-    if(d.HasMember("response") && d["response"].IsArray())
+    if (d.HasMember("response") && d["response"].IsArray())
     {
-        for(const auto& respObj : d["response"].GetArray())
+        for (const auto& respObj : d["response"].GetArray())
         {
             Response resp;
             std::string temp;
             PARSE_STRING(temp, "service", respObj);
-            if(temp == "ADMIN")
+            if (temp == "ADMIN")
             {
                 resp.service = ServiceType::ADMIN;
             }
-            //else if...
+            // else if...
 
             PARSE_STRING(temp, "command", respObj);
-            if(temp == "LOGIN")
+            if (temp == "LOGIN")
             {
                 resp.command = CommandType::LOGIN;
             }
-            //else if...
+            // else if...
 
             std::string id;
             PARSE_STRING(id, "requestid", respObj);
             resp.requestid = std::stoi(id);
             PARSE_STRING(resp.SchwabClientCorrelId, "SchwabClientCorrelId", respObj);
             PARSE_INT64(resp.timestamp, "timestamp", respObj);
-            
-            if(respObj.HasMember("content") && respObj["content"].IsObject())
+
+            if (respObj.HasMember("content") && respObj["content"].IsObject())
             {
                 auto contentObj = respObj["content"].GetObject();
                 PARSE_INT(resp.content.code, "code", contentObj);
@@ -61,4 +60,4 @@ std::vector<Response> parseResponse(std::string jsonstring)
     return resps;
 }
 
-}
+} // namespace schwabStreamParser

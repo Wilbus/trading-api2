@@ -83,8 +83,7 @@ TEST_F(SchwabStreamHandlerTest, loginRequestOnConnection)
     SchwabStreamHandlerTestWrapper handlerTestWrapper = SchwabStreamHandlerTestWrapper("wss://stream.com", map);
 
     EXPECT_CALL(WebSocketMock<uWS::CLIENT>::inst(),
-        send(handlerTestWrapper.getRequestDataPtr(0), handlerTestWrapper.getRequestDataSize(0),
-            uWS::OpCode::TEXT));
+        send(handlerTestWrapper.getRequestDataPtr(0), handlerTestWrapper.getRequestDataSize(0), uWS::OpCode::TEXT));
 
     handlerTestWrapper.onConnectionCallback(someWebSocketInstance, {});
     EXPECT_EQ(handlerTestWrapper.getCurrentReqid(), 1);
@@ -107,8 +106,9 @@ TEST_F(SchwabStreamHandlerTest, onMessageLoginFailedResponse)
 
     SchwabStreamHandlerTestWrapper handlerTestWrapper = SchwabStreamHandlerTestWrapper("wss://stream.com", map);
 
-    EXPECT_THROW(handlerTestWrapper.onMessageCallback(someWebSocketInstance, loginDeniedResponse.data(),
-        loginDeniedResponse.size(), uWS::OpCode::TEXT), std::runtime_error);
+    EXPECT_THROW(handlerTestWrapper.onMessageCallback(
+                     someWebSocketInstance, loginDeniedResponse.data(), loginDeniedResponse.size(), uWS::OpCode::TEXT),
+        std::runtime_error);
 }
 
 TEST_F(SchwabStreamHandlerTest, onMessageResponse)
@@ -131,7 +131,7 @@ TEST_F(SchwabStreamHandlerTest, onMessageResponse)
     qosReq.schwabClientCustomerId = "customerId";
     qosReq.schwabClientCorrelId = "correlId";
     qosReq.parameters.qoslevel = "0";*/
-    
+
     Request accActivityReq;
     accActivityReq.serviceType = ServiceType::ACCT_ACTIVITY;
     accActivityReq.requestid = 2;
@@ -142,7 +142,7 @@ TEST_F(SchwabStreamHandlerTest, onMessageResponse)
     accActivityReq.parameters.fields = "0,1,2,3";
 
     map[0] = req;
-    //map[1] = qosReq;
+    // map[1] = qosReq;
     map[1] = accActivityReq;
 
     SchwabStreamHandlerTestWrapper handlerTestWrapper = SchwabStreamHandlerTestWrapper("wss://stream.com", map);
@@ -150,5 +150,6 @@ TEST_F(SchwabStreamHandlerTest, onMessageResponse)
     EXPECT_CALL(WebSocketMock<uWS::CLIENT>::inst(),
         send(handlerTestWrapper.getRequestDataAtCurrentId(), handlerTestWrapper.getRequestDataSizeAtCurrentId(),
             uWS::OpCode::TEXT));
-    handlerTestWrapper.onMessageCallback(someWebSocketInstance, loginResponse.data(), loginResponse.size(), uWS::OpCode::TEXT);
+    handlerTestWrapper.onMessageCallback(
+        someWebSocketInstance, loginResponse.data(), loginResponse.size(), uWS::OpCode::TEXT);
 }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IStreamHandler.h"
 #include "DataQueue.h"
+#include "IStreamHandler.h"
 #include "SchwabStreamDataTypes.h"
 
 #include <functional>
@@ -35,7 +35,7 @@ public:
     virtual void connectStream() override;
     virtual std::shared_ptr<DataQueue<std::string>> repliesQueue() override;
 
-    //std::function<void(uWS::WebSocket<uWS::CLIENT>*, uWS::HttpRequest)> onConnection;
+    // std::function<void(uWS::WebSocket<uWS::CLIENT>*, uWS::HttpRequest)> onConnection;
 
 protected:
     SchwabRequestsIdMap requestsIdMap;

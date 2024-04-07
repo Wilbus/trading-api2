@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "SchwabAccountDataTypes.h"
+// #include "SchwabAccountDataTypes.h"
 #include "SchwabStreamDataTypes.h"
 #include "json.h"
 #include "rapidjson/document.h"
@@ -13,7 +13,7 @@
 #include <iostream>
 
 namespace schwabStreamReq {
-//using namespace schwabAccountData;
+// using namespace schwabAccountData;
 
 using rapidjson::Document;
 using rapidjson::FileWriteStream;
@@ -52,77 +52,69 @@ std::string buildRequestString(Request request)
 {
     Document d;
     d.SetObject();
-    switch(request.serviceType)
+    switch (request.serviceType)
     {
-        case ServiceType::ADMIN:
-        {
+        case ServiceType::ADMIN: {
             d.AddMember("service", "ADMIN", d.GetAllocator());
             break;
         }
-        case ServiceType::ACCT_ACTIVITY:
-        {
+        case ServiceType::ACCT_ACTIVITY: {
             d.AddMember("service", "ACCT_ACTIVITY", d.GetAllocator());
             break;
         }
-        default:
-        {
+        default: {
             throw std::runtime_error("invalid service type provided");
         }
     }
 
     d.AddMember("requestid", request.requestid, d.GetAllocator());
 
-    switch(request.commandType)
+    switch (request.commandType)
     {
-        case CommandType::LOGIN:
-        {
+        case CommandType::LOGIN: {
             d.AddMember("command", "LOGIN", d.GetAllocator());
             break;
         }
-        case CommandType::QOS:
-        {
+        case CommandType::QOS: {
             d.AddMember("command", "QOS", d.GetAllocator());
             break;
         }
-        case CommandType::SUBS:
-        {
+        case CommandType::SUBS: {
             d.AddMember("command", "SUBS", d.GetAllocator());
             break;
         }
-        default:
-        {
+        default: {
             throw std::runtime_error("invalid command type type provided");
         }
     }
 
-    d.AddMember(
-        "SchwabClientCustomerId", StringRef(request.schwabClientCustomerId.c_str()), d.GetAllocator());
-    d.AddMember("SchwabClientCorrelId", StringRef(request.schwabClientCorrelId.c_str()), d.GetAllocator());\
+    d.AddMember("SchwabClientCustomerId", StringRef(request.schwabClientCustomerId.c_str()), d.GetAllocator());
+    d.AddMember("SchwabClientCorrelId", StringRef(request.schwabClientCorrelId.c_str()), d.GetAllocator());
 
     Value parameters(kObjectType);
-    if(request.parameters.authorization.size() > 0)
+    if (request.parameters.authorization.size() > 0)
     {
         parameters.AddMember("Authorization", StringRef(request.parameters.authorization.c_str()), d.GetAllocator());
     }
-    if(request.parameters.schwabClientChannel.size() > 0)
+    if (request.parameters.schwabClientChannel.size() > 0)
     {
         parameters.AddMember(
             "SchwabClientChannel", StringRef(request.parameters.schwabClientChannel.c_str()), d.GetAllocator());
     }
-    if(request.parameters.schwabClientFunctionId.size() > 0)
+    if (request.parameters.schwabClientFunctionId.size() > 0)
     {
         parameters.AddMember(
             "SchwabClientFunctionId", StringRef(request.parameters.schwabClientFunctionId.c_str()), d.GetAllocator());
     }
-    if(request.parameters.qoslevel.size() > 0)
+    if (request.parameters.qoslevel.size() > 0)
     {
         parameters.AddMember("qoslevel", StringRef(request.parameters.qoslevel.c_str()), d.GetAllocator());
     }
-    if(request.parameters.keys.size() > 0)
+    if (request.parameters.keys.size() > 0)
     {
         parameters.AddMember("keys", StringRef(request.parameters.keys.c_str()), d.GetAllocator());
     }
-    if(request.parameters.fields.size() > 0)
+    if (request.parameters.fields.size() > 0)
     {
         parameters.AddMember("fields", StringRef(request.parameters.fields.c_str()), d.GetAllocator());
     }

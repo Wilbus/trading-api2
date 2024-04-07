@@ -2,10 +2,9 @@
 
 #include <string>
 
-
 //clang-format off
 const std::string testlogin =
-R"({
+    R"({
     "service": "ADMIN",
     "requestid": 0,
     "command": "LOGIN",
@@ -19,7 +18,7 @@ R"({
 })";
 
 const std::string qosRequest =
-R"({
+    R"({
     "service": "ADMIN",
     "requestid": 1,
     "command": "QOS",
@@ -31,7 +30,7 @@ R"({
 })";
 
 const std::string accountAcitivtyRequest =
-R"({
+    R"({
     "service": "ACCT_ACTIVITY",
     "requestid": 2,
     "command": "SUBS",

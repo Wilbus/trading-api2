@@ -5,9 +5,9 @@
 #include "SchwabStreamHandler.h"
 #include "SchwabStreamReqGenerator.h"
 
-#include <thread>
-
 #include <gtest/gtest.h>
+
+#include <thread>
 
 using namespace streamer;
 
@@ -25,16 +25,16 @@ public:
     void popQueue(std::shared_ptr<DataQueue<std::string>> queue)
     {
         unsigned count = 0;
-        while(true)
+        while (true)
         {
-            if(!queue->isEmpty())
+            if (!queue->isEmpty())
             {
                 std::cout << "count: " << count << "\n";
                 std::cout << "response: " << queue->front() << "\n";
                 queue->pop();
                 count++;
             }
-            if(count > 3) //we can incrase this if we want to increase how many mesages to test receive
+            if (count > 3) // we can incrase this if we want to increase how many mesages to test receive
                 break;
         }
     }
@@ -50,7 +50,9 @@ TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
     SchwabRequestsIdMap map;
 
     UserPreferences prefs = sclient->getUserPreferences();
-    
+
+    RequestId reqId;
+
     Request loginReq;
     loginReq.serviceType = ServiceType::ADMIN;
     loginReq.requestid = 0;
@@ -71,15 +73,20 @@ TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
 
     Request acctActivityReq;
     acctActivityReq.serviceType = ServiceType::ACCT_ACTIVITY;
-    acctActivityReq.requestid = 2;
+    acctActivityReq.requestid = 1;
     acctActivityReq.commandType = CommandType::SUBS;
     acctActivityReq.schwabClientCustomerId = prefs.streamerInfo[0].schwabClientCustomerId;
     acctActivityReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
     acctActivityReq.parameters.keys = "somekey";
     acctActivityReq.parameters.fields = "0,1,2,3";
 
+    Request levelOneActivityReq;
+    levelOneActivityReq.serviceType = ServiceType::LEVELONE_EQUITIES;
+    levelOneActivityReq.requestid = 2;
+    levelOneActivityReq.commandType = CommandType::SUBS;
+
     map[0] = loginReq;
-    //map[1] = qosReq;
+    // map[1] = qosReq;
     map[1] = acctActivityReq;
 
     streamer = std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", map);

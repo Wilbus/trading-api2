@@ -16,7 +16,7 @@
 
 #define PARSE_INT64(var, name, obj)                 \
     if (obj.HasMember(name) && obj[name].IsInt64()) \
-    {                                             \
+    {                                               \
         var = obj[name].GetInt64();                 \
     }
 
