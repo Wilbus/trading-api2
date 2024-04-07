@@ -2,6 +2,7 @@
 
 #include "RestClientCurl.h"
 #include "SchwabClient.h"
+#include "SchwabConnectionManager.h"
 #include "SchwabStreamHandler.h"
 #include "SchwabStreamReqGenerator.h"
 
@@ -20,9 +21,10 @@ public:
 
         configs = std::make_shared<SchwabConfigs>("/datadisk0/sambashare0/coding/configs/");
         sclient = std::make_shared<SchwabClient>(configs, restclient);
+        manager = std::make_shared<SchwabConnectionManager>(configs, sclient);
     }
 
-    void popQueue(std::shared_ptr<DataQueue<std::string>> queue)
+    void popQueue(std::shared_ptr<DataQueue<std::string>> queue, unsigned numberOfPops)
     {
         unsigned count = 0;
         while (true)
@@ -34,7 +36,7 @@ public:
                 queue->pop();
                 count++;
             }
-            if (count > 3) // we can incrase this if we want to increase how many mesages to test receive
+            if (count > numberOfPops) // we can incrase this if we want to increase how many mesages to test receive
                 break;
         }
     }
@@ -43,8 +45,9 @@ public:
     std::shared_ptr<SchwabConfigs> configs;
     std::shared_ptr<SchwabClient> sclient;
     std::shared_ptr<SchwabStreamHandler> streamer;
+    std::shared_ptr<SchwabConnectionManager> manager;
 };
-
+#if 0
 TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
 {
     SchwabRequestsIdMap map;
@@ -120,4 +123,17 @@ TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
 
     popThread.join();
     streamThread.join();
+}
+#endif
+TEST_F(SchwabStreamEndpointsTest, schwabConnectionManagerTest)
+{
+    manager->buildAllRequests();
+    manager->startThreadFuncThread();
+    // manager->streamThreadFunc();
+
+    std::thread popThread(&SchwabStreamEndpointsTest::popQueue, this, manager->getStreamer()->repliesQueue(), 10);
+    // popThread.detach();
+
+    popThread.join();
+    manager->reconnectingStreamThread.join();
 }
