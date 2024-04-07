@@ -141,9 +141,39 @@ TEST_F(SchwabStreamHandlerTest, onMessageResponse)
     accActivityReq.parameters.keys = "somekey";
     accActivityReq.parameters.fields = "0,1,2,3";
 
+    Request levelOneActivityReq;
+    levelOneActivityReq.serviceType = ServiceType::LEVELONE_EQUITIES;
+    levelOneActivityReq.requestid = 2;
+    levelOneActivityReq.commandType = CommandType::SUBS;
+    levelOneActivityReq.schwabClientCustomerId = "customerId";
+    levelOneActivityReq.schwabClientCorrelId = "correlId";
+    levelOneActivityReq.parameters.keys = "QQQ";
+    levelOneActivityReq.parameters.fields = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16";
+
+    Request chartEquityReq;
+    chartEquityReq.serviceType = ServiceType::CHART_EQUITY;
+    chartEquityReq.requestid = 2;
+    chartEquityReq.commandType = CommandType::SUBS;
+    chartEquityReq.schwabClientCustomerId = "customerId";
+    chartEquityReq.schwabClientCorrelId = "correlId";
+    chartEquityReq.parameters.keys = "QQQ";
+    chartEquityReq.parameters.fields = "0,1,2,3,4,5,6,7,8";
+
+    Request optionReq;
+    optionReq.serviceType = ServiceType::OPTION;
+    optionReq.requestid = 2;
+    optionReq.commandType = CommandType::SUBS;
+    optionReq.schwabClientCustomerId = "customerId";
+    optionReq.schwabClientCorrelId = "correlId";
+    optionReq.parameters.keys = "QQQ";
+    optionReq.parameters.fields = "0,1,2,3,4,5,6,7,8,9,10,11,12,20,21,22,23,24,32,33,34,35,36,38,41";
+
     map[0] = req;
     // map[1] = qosReq;
     map[1] = accActivityReq;
+    // map[2] = levelOneActivityReq;
+    // map[3] = chartEquityReq;
+    // map[4] = optionReq;
 
     SchwabStreamHandlerTestWrapper handlerTestWrapper = SchwabStreamHandlerTestWrapper("wss://stream.com", map);
 
@@ -152,4 +182,28 @@ TEST_F(SchwabStreamHandlerTest, onMessageResponse)
             uWS::OpCode::TEXT));
     handlerTestWrapper.onMessageCallback(
         someWebSocketInstance, loginResponse.data(), loginResponse.size(), uWS::OpCode::TEXT);
+
+    EXPECT_CALL(WebSocketMock<uWS::CLIENT>::inst(),
+        send(handlerTestWrapper.getRequestDataAtCurrentId(), handlerTestWrapper.getRequestDataSizeAtCurrentId(),
+            uWS::OpCode::TEXT));
+    handlerTestWrapper.onMessageCallback(
+        someWebSocketInstance, acccountActivityResponse.data(), acccountActivityResponse.size(), uWS::OpCode::TEXT);
+
+    EXPECT_CALL(WebSocketMock<uWS::CLIENT>::inst(),
+        send(handlerTestWrapper.getRequestDataAtCurrentId(), handlerTestWrapper.getRequestDataSizeAtCurrentId(),
+            uWS::OpCode::TEXT));
+    handlerTestWrapper.onMessageCallback(
+        someWebSocketInstance, levelOneEquitiesResponse.data(), levelOneEquitiesResponse.size(), uWS::OpCode::TEXT);
+
+    EXPECT_CALL(WebSocketMock<uWS::CLIENT>::inst(),
+        send(handlerTestWrapper.getRequestDataAtCurrentId(), handlerTestWrapper.getRequestDataSizeAtCurrentId(),
+            uWS::OpCode::TEXT));
+    handlerTestWrapper.onMessageCallback(
+        someWebSocketInstance, chartEquityResponse.data(), chartEquityResponse.size(), uWS::OpCode::TEXT);
+
+    EXPECT_CALL(WebSocketMock<uWS::CLIENT>::inst(),
+        send(handlerTestWrapper.getRequestDataAtCurrentId(), handlerTestWrapper.getRequestDataSizeAtCurrentId(),
+            uWS::OpCode::TEXT));
+    handlerTestWrapper.onMessageCallback(
+        someWebSocketInstance, optionResponse.data(), optionResponse.size(), uWS::OpCode::TEXT);
 }

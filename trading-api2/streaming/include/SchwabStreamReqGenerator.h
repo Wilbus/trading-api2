@@ -62,8 +62,7 @@ std::string buildRequestString(Request request)
             d.AddMember("service", "ACCT_ACTIVITY", d.GetAllocator());
             break;
         }
-        case ServiceType::LEVELONE_EQUITIES:
-        {
+        case ServiceType::LEVELONE_EQUITIES: {
             d.AddMember("service", "LEVELONE_EQUITIES", d.GetAllocator());
             break;
         }

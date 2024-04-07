@@ -28,18 +28,10 @@ std::vector<Response> parseResponse(std::string jsonstring)
             Response resp;
             std::string temp;
             PARSE_STRING(temp, "service", respObj);
-            if (temp == "ADMIN")
-            {
-                resp.service = ServiceType::ADMIN;
-            }
-            // else if...
+            resp.service = stringToServiceTypeMap.at(temp);
 
             PARSE_STRING(temp, "command", respObj);
-            if (temp == "LOGIN")
-            {
-                resp.command = CommandType::LOGIN;
-            }
-            // else if...
+            resp.command = stringToCommandTypeMap.at(temp);
 
             std::string id;
             PARSE_STRING(id, "requestid", respObj);

@@ -13,6 +13,28 @@ enum ServiceType : unsigned
     NOSERVICE
 };
 
+// clang-format off
+static const std::map<ServiceType, std::string> serviceTypeToStringMap =
+{
+    {ServiceType::ADMIN, "ADMIN"},
+    {ServiceType::ACCT_ACTIVITY, "ACCT_ACTIVITY"},
+    {ServiceType::LEVELONE_EQUITIES, "LEVELONE_EQUITIES"},
+    {ServiceType::CHART_EQUITY, "CHART_EQUITY"},
+    {ServiceType::OPTION, "OPTION"},
+    {ServiceType::NOSERVICE, "NOSERVICE"}
+};
+
+static const std::map<std::string, ServiceType> stringToServiceTypeMap = 
+{
+    {"ADMIN", ServiceType::ADMIN},
+    {"ACCT_ACTIVITY", ServiceType::ACCT_ACTIVITY},
+    {"LEVELONE_EQUITIES", ServiceType::LEVELONE_EQUITIES},
+    {"CHART_EQUITY", ServiceType::CHART_EQUITY},
+    {"OPTION", ServiceType::OPTION},
+    {"NOSERVICE", ServiceType::NOSERVICE}
+};
+// clang-format on
+
 enum CommandType : unsigned
 {
     LOGIN,
@@ -20,6 +42,24 @@ enum CommandType : unsigned
     SUBS,
     NOCOMMAND
 };
+
+// clang-format off
+static const std::map<CommandType, std::string> commandTypeToStringMap =
+{
+    {CommandType::LOGIN, "LOGIN"},
+    {CommandType::QOS, "QOS"},
+    {CommandType::SUBS, "SUBS"},
+    {CommandType::NOCOMMAND, "NOCOMMAND"}
+};
+
+static const std::map<std::string, CommandType> stringToCommandTypeMap =
+{
+    {"LOGIN", CommandType::LOGIN},
+    {"QOS", CommandType::QOS},
+    {"SUBS", CommandType::SUBS},
+    {"NOCMOMAND", CommandType::NOCOMMAND}
+};
+// clang-format on
 
 struct ResponseContent
 {

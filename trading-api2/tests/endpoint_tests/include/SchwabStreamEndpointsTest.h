@@ -30,7 +30,7 @@ public:
             if (!queue->isEmpty())
             {
                 std::cout << "count: " << count << "\n";
-                std::cout << "response: " << queue->front() << "\n";
+                std::cout << "dataqueue: " << queue->front() << "\n";
                 queue->pop();
                 count++;
             }
@@ -89,19 +89,19 @@ TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
 
     Request chartEquityReq;
     chartEquityReq.serviceType = ServiceType::CHART_EQUITY;
-    chartEquityReq.requestid = 2;
+    chartEquityReq.requestid = 3;
     chartEquityReq.commandType = CommandType::SUBS;
-    chartEquityReq.schwabClientCustomerId = "customerId";
-    chartEquityReq.schwabClientCorrelId = "correlId";
+    chartEquityReq.schwabClientCustomerId = prefs.streamerInfo[0].schwabClientCustomerId;
+    chartEquityReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
     chartEquityReq.parameters.keys = "QQQ";
     chartEquityReq.parameters.fields = "0,1,2,3,4,5,6,7,8";
 
     Request optionReq;
     optionReq.serviceType = ServiceType::OPTION;
-    optionReq.requestid = 2;
+    optionReq.requestid = 4;
     optionReq.commandType = CommandType::SUBS;
-    optionReq.schwabClientCustomerId = "customerId";
-    optionReq.schwabClientCorrelId = "correlId";
+    optionReq.schwabClientCustomerId = prefs.streamerInfo[0].schwabClientCustomerId;
+    optionReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
     optionReq.parameters.keys = "QQQ";
     optionReq.parameters.fields = "0,1,2,3,4,5,6,7,8,9,10,11,12,20,21,22,23,24,32,33,34,35,36,38,41";
 

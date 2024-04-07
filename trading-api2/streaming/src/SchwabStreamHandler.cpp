@@ -80,6 +80,7 @@ void SchwabStreamHandler::onMessageCallback(
         Response resp = responses[0]; // assuming we only get 1 response element per json text
         if (resp.content.code >= 0)
         {
+            std::cout << "Response: " << text << "\n";
             // special case for for failed login
             if (resp.command == CommandType::LOGIN && resp.content.code != 0)
             {
@@ -90,8 +91,13 @@ void SchwabStreamHandler::onMessageCallback(
             }
             else if (resp.content.code != 0)
             {
+                std::string serviceTypeStr;
+                if (requestsIdMap.find(resp.requestid) != requestsIdMap.end())
+                {
+                    serviceTypeStr = serviceTypeToStringMap.at(requestsIdMap.at(resp.requestid).serviceType);
+                }
                 std::stringstream failmsgss;
-                std::string erromsg = "Failed request: " + resp.content.msg;
+                std::string erromsg = "Failed request: SERVICE: " + serviceTypeStr + "MSG:" + resp.content.msg;
                 failmsgss << erromsg;
                 throw std::runtime_error(failmsgss.str().c_str());
             }

@@ -33,3 +33,67 @@ std::string loginDeniedResponse = R"({
     }
   ]
 })";
+
+std::string acccountActivityResponse = R"({
+  "response": [
+    {
+      "service": "ACCT_ACTIVITY",
+      "command": "SUBS",
+      "requestid": "1",
+      "SchwabClientCorrelId": "abcd-1234",
+      "timestamp": 1712461126712,
+      "content": {
+        "code": 0,
+        "msg": "SUBS command succeeded"
+      }
+    }
+  ]
+})";
+
+std::string levelOneEquitiesResponse = R"({
+  "response": [
+    {
+      "service": "LEVELONE_EQUITIES",
+      "command": "SUBS",
+      "requestid": "1",
+      "SchwabClientCorrelId": "abcd-1234",
+      "timestamp": 1712461126712,
+      "content": {
+        "code": 0,
+        "msg": "SUBS command succeeded"
+      }
+    }
+  ]
+})";
+
+std::string chartEquityResponse = R"({
+  "response": [
+    {
+      "service": "CHART_EQUITY",
+      "command": "SUBS",
+      "requestid": "3",
+      "SchwabClientCorrelId": "abcd-1234",
+      "timestamp": 1712461126819,
+      "content": {
+        "code": 0,
+        "msg": "SUBS command succeeded"
+      }
+    }
+  ]
+})";
+
+std::string optionResponse = R"({
+  "response": [
+    {
+      "service": "OPTION",
+      "command": "SUBS",
+      "requestid": "4",
+      "SchwabClientCorrelId": "abcd-1234",
+      "timestamp": 1712461126869,
+      "content": {
+        "code": 0,
+        "msg": "SUBS command succeeded"
+      }
+    }
+  ]
+})";
