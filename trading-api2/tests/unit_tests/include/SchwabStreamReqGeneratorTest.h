@@ -102,3 +102,33 @@ TEST_F(SchwabStreamReqGeneratorTest, levelOneEquitiesRequestTest)
 
     EXPECT_EQ(reqstr, levelOneEquitiesRequest);
 }
+
+TEST_F(SchwabStreamReqGeneratorTest, chartEquityRequestTest)
+{
+    Request req;
+    req.serviceType = ServiceType::CHART_EQUITY;
+    req.requestid = 2;
+    req.commandType = CommandType::SUBS;
+    req.schwabClientCustomerId = "customerId";
+    req.schwabClientCorrelId = "correlId";
+    req.parameters.keys = "QQQ";
+    req.parameters.fields = "0,1,2,3,4,5,6,7,8";
+    std::string reqstr = schwabStreamReq::buildRequestString(req);
+
+    EXPECT_EQ(reqstr, chartEquityRequest);
+}
+
+TEST_F(SchwabStreamReqGeneratorTest, optionRequestTest)
+{
+    Request req;
+    req.serviceType = ServiceType::OPTION;
+    req.requestid = 2;
+    req.commandType = CommandType::SUBS;
+    req.schwabClientCustomerId = "customerId";
+    req.schwabClientCorrelId = "correlId";
+    req.parameters.keys = "QQQ";
+    req.parameters.fields = "0,1,2,3,4,5,6,7,8,9,10,11,12,20,21,22,23,24,32,33,34,35,36,38,41";
+    std::string reqstr = schwabStreamReq::buildRequestString(req);
+
+    EXPECT_EQ(reqstr, optionRequest);
+}

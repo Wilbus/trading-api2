@@ -67,6 +67,14 @@ std::string buildRequestString(Request request)
             d.AddMember("service", "LEVELONE_EQUITIES", d.GetAllocator());
             break;
         }
+        case ServiceType::CHART_EQUITY: {
+            d.AddMember("service", "CHART_EQUITY", d.GetAllocator());
+            break;
+        }
+        case ServiceType::OPTION: {
+            d.AddMember("service", "OPTION", d.GetAllocator());
+            break;
+        }
         default: {
             throw std::runtime_error("invalid service type provided");
         }

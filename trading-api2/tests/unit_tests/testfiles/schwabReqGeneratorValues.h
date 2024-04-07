@@ -54,4 +54,30 @@ const std::string levelOneEquitiesRequest =
         "fields": "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16"
     }
 })";
+
+const std::string chartEquityRequest =
+    R"({
+    "service": "CHART_EQUITY",
+    "requestid": 2,
+    "command": "SUBS",
+    "SchwabClientCustomerId": "customerId",
+    "SchwabClientCorrelId": "correlId",
+    "parameters": {
+        "keys": "QQQ",
+        "fields": "0,1,2,3,4,5,6,7,8"
+    }
+})";
+
+const std::string optionRequest =
+    R"({
+    "service": "OPTION",
+    "requestid": 2,
+    "command": "SUBS",
+    "SchwabClientCustomerId": "customerId",
+    "SchwabClientCorrelId": "correlId",
+    "parameters": {
+        "keys": "QQQ",
+        "fields": "0,1,2,3,4,5,6,7,8,9,10,11,12,20,21,22,23,24,32,33,34,35,36,38,41"
+    }
+})";
 //clang-format on

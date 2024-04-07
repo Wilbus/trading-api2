@@ -8,6 +8,8 @@ enum ServiceType : unsigned
     ADMIN,
     ACCT_ACTIVITY,
     LEVELONE_EQUITIES,
+    CHART_EQUITY,
+    OPTION,
     NOSERVICE
 };
 

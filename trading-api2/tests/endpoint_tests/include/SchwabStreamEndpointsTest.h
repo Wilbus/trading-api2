@@ -87,10 +87,30 @@ TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
     levelOneActivityReq.parameters.keys = "QQQ";
     levelOneActivityReq.parameters.fields = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16";
 
+    Request chartEquityReq;
+    chartEquityReq.serviceType = ServiceType::CHART_EQUITY;
+    chartEquityReq.requestid = 2;
+    chartEquityReq.commandType = CommandType::SUBS;
+    chartEquityReq.schwabClientCustomerId = "customerId";
+    chartEquityReq.schwabClientCorrelId = "correlId";
+    chartEquityReq.parameters.keys = "QQQ";
+    chartEquityReq.parameters.fields = "0,1,2,3,4,5,6,7,8";
+
+    Request optionReq;
+    optionReq.serviceType = ServiceType::OPTION;
+    optionReq.requestid = 2;
+    optionReq.commandType = CommandType::SUBS;
+    optionReq.schwabClientCustomerId = "customerId";
+    optionReq.schwabClientCorrelId = "correlId";
+    optionReq.parameters.keys = "QQQ";
+    optionReq.parameters.fields = "0,1,2,3,4,5,6,7,8,9,10,11,12,20,21,22,23,24,32,33,34,35,36,38,41";
+
     map[0] = loginReq;
     // map[1] = qosReq;
     map[1] = acctActivityReq;
     map[2] = levelOneActivityReq;
+    map[3] = chartEquityReq;
+    map[4] = optionReq;
 
     streamer = std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", map);
 
