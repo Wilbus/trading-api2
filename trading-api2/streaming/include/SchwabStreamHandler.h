@@ -2,7 +2,6 @@
 
 #include "IStreamHandler.h"
 #include "DataQueue.h"
-#include "SchwabStreamParser.h"
 #include "SchwabStreamDataTypes.h"
 
 #include <functional>
@@ -15,8 +14,6 @@
 #include <variant>
 
 namespace streamer {
-
-using namespace schwabStreamParser;
 
 using utils::DataQueue;
 
@@ -43,6 +40,8 @@ public:
 protected:
     SchwabRequestsIdMap requestsIdMap;
     std::map<RequestId, std::string> requestsIdStrMap;
+    std::queue<Request> requestsQueue;
+    RequestId currentReqId{0};
 
 private:
     void setupCallbacks();

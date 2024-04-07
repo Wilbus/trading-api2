@@ -48,8 +48,6 @@ public:
 TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
 {
     SchwabRequestsIdMap map;
-    
-    
 
     UserPreferences prefs = sclient->getUserPreferences();
     
@@ -63,13 +61,13 @@ TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
     loginReq.parameters.schwabClientChannel = prefs.streamerInfo[0].schwabClientChannel;
     loginReq.parameters.schwabClientFunctionId = prefs.streamerInfo[0].schwabClientFunctionId;
 
-    Request qosReq;
+    /*Request qosReq;
     qosReq.serviceType = ServiceType::ADMIN;
     qosReq.requestid = 1;
     qosReq.commandType = CommandType::QOS;
     qosReq.schwabClientCustomerId = prefs.streamerInfo[0].schwabClientCustomerId;
-    qosReq.schwabClientCorrelId = loginReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
-    qosReq.parameters.qoslevel = "0";
+    qosReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
+    qosReq.parameters.qoslevel = "0";*/
 
     Request acctActivityReq;
     acctActivityReq.serviceType = ServiceType::ACCT_ACTIVITY;
@@ -81,8 +79,8 @@ TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
     acctActivityReq.parameters.fields = "0,1,2,3";
 
     map[0] = loginReq;
-    map[1] = qosReq;
-    map[2] = acctActivityReq;
+    //map[1] = qosReq;
+    map[1] = acctActivityReq;
 
     streamer = std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", map);
 
