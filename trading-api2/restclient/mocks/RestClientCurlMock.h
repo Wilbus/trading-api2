@@ -2,6 +2,10 @@
 
 #include "IRestClientCurl.h"
 
+#include <gmock/gmock.h>
+
+using namespace restclient;
+
 class RestClientCurlMock : public IRestClientCurl
 {
 public:

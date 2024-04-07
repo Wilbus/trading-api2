@@ -7,15 +7,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -fPIC")
 add_executable(${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-    trading-api2-exchange
-    trading-api2-exchange-mocks
-    trading-api2-restclient
-    trading-api2-restclient-mocks
-    trading-api2-streaming
-    trading-api2-streaming-mocks
-    uWebSockets-v0.14-mocks
-    trading-api2-utils
-    trading-api2-utils-mocks
     gtest_main
     gmock
 )

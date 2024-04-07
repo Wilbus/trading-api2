@@ -10,13 +10,15 @@ target_include_directories(trading-api2-streaming PUBLIC
 )
 
 
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(${PROJECT_NAME}
+    trading-api2-exchange-datatypes
     trading-api2-utils
     uWebSockets-v0.14
 )
 
-add_subdirectory(uWebSockets-v0.14)
+#add_subdirectory(uWebSockets-v0.14)
 
 if(BUILD_TESTS)
     add_subdirectory(mocks)
+    add_subdirectory(ut)
 endif(BUILD_TESTS)

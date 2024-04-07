@@ -10,6 +10,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     trading-api2-exchange
     trading-api2-restclient
     trading-api2-streaming
+    trading-api2-connection-manager
     trading-api2-utils
     gtest_main
     gmock

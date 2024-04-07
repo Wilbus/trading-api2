@@ -13,6 +13,7 @@ using namespace restclient;
 using namespace schwabMarketData;
 using namespace schwabAccountData;
 using namespace schwabErrors;
+using namespace configs;
 
 namespace restclient {
 

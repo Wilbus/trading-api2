@@ -1,22 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
-project(trading-api2-utils)
+project(trading-api2-configs)
 
 add_library(${PROJECT_NAME} SHARED
-    ${CMAKE_CURRENT_LIST_DIR}/src/FileWriter.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/SystemTimer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/CurlWrapperFuncs.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/SchwabConfigs.cpp
 )
 
-target_include_directories(trading-api2-utils PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
-find_package(RapidJSON)
-find_package(InfluxDB)
-
+target_link_libraries(${PROJECT_NAME} 
+    trading-api2-exchange-datatypes
+    trading-api2-utils
+)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wfatal-errors -Wunused-parameter -Wunused-variable -Wno-unused-function -DLOG_FORMAT_VERIFICATION)
-target_link_libraries(${PROJECT_NAME} InfluxData::InfluxDB)
-
 
 if(BUILD_TESTS)
     add_subdirectory(mocks)

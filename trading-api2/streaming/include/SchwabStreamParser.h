@@ -6,6 +6,8 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"
 
+#include <vector>
+
 namespace schwabStreamParser {
 
 std::vector<Response> parseResponse(std::string jsonstring)
