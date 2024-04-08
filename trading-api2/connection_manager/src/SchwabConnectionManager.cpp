@@ -87,7 +87,7 @@ void SchwabConnectionManager::buildAllRequests()
     requestsMap[1] = acctActivityReq;
     requestsMap[2] = levelOneActivityReq;
     requestsMap[3] = chartEquityReq;
-    // requestsMap[4] = optionReq;
+    requestsMap[4] = optionReq;
 
     streamer.reset();
     streamer = std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", requestsMap);
@@ -103,7 +103,7 @@ void SchwabConnectionManager::connectAndRunStream()
     }
     catch (const std::exception& e)
     {
-        infologprint(logfile, "%s: stream handler threw exception: ", __func__, e.what());
+        infologprint(logfile, "%s: stream handler threw exception: %s", __func__, e.what());
         using namespace std::chrono_literals;
         std::this_thread::sleep_for(5000ms);
     }

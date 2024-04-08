@@ -79,13 +79,18 @@ void SchwabStreamHandler::onMessageCallback(
     (void)opCode;
     std::string text = std::string(message, length);
 
+    Heartbeat heartbeat = parseHeartbeat(text);
+    if(heartbeat.timestamp > 0)
+    {
+        infologprint(logfile, "%s: heartbeat timestamp recved: %ld", __func__, heartbeat.timestamp);
+    }
     std::vector<Response> responses = schwabStreamParser::parseResponse(text);
 
     if (responses.size() > 0)
     {
         Response resp = responses[0]; // assuming we only get 1 response element per json text
-        if (resp.content.code >= 0)
-        {
+        //if (resp.content.code >= 0)
+        //{
             infologprint(logfile, "%s: Response is: %s", __func__, text.c_str());
             // special case for for failed login
             if (resp.command == CommandType::LOGIN && resp.content.code != 0)
@@ -103,7 +108,7 @@ void SchwabStreamHandler::onMessageCallback(
                     serviceTypeStr = serviceTypeToStringMap.at(requestsIdMap.at(resp.requestid).serviceType);
                 }
                 std::stringstream failmsgss;
-                std::string erromsg = "Failed request: SERVICE: " + serviceTypeStr + "MSG:" + resp.content.msg;
+                std::string erromsg = "Failed request: SERVICE: " + serviceTypeStr + "MSG: " + resp.content.msg;
                 failmsgss << erromsg;
                 throw std::runtime_error(failmsgss.str().c_str());
             }
@@ -124,11 +129,11 @@ void SchwabStreamHandler::onMessageCallback(
                     requestsIdStrMap[currentReqId].data(), requestsIdStrMap[currentReqId].size(), uWS::OpCode::TEXT);
                 currentReqId += 1;
             }
-        }
-        else
-        {
+        //}
+        //else
+        //{
             // response was never parsed. could be data response instead of a regular response
-        }
+        //}
     }
     else // no responses to request parsed, could be data response instead
     {
