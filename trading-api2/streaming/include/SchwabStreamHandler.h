@@ -34,6 +34,7 @@ public:
     virtual void reconnectingStream() override;
     virtual void connectStream() override;
     virtual std::shared_ptr<DataQueue<std::string>> repliesQueue() override;
+    virtual uWS::Group<uWS::CLIENT>* getGroupPtr() override;
 
     // std::function<void(uWS::WebSocket<uWS::CLIENT>*, uWS::HttpRequest)> onConnection;
 
@@ -50,6 +51,7 @@ private:
     std::string streamUrl;
     std::string logfile;
     std::shared_ptr<DataQueue<std::string>> repliesQue;
+    time_t lastReceivedHeartbeat{-1};
 
     uint64_t msgcount{0};
 };

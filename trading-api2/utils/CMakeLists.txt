@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME} SHARED
     ${CMAKE_CURRENT_LIST_DIR}/src/SystemTimer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/CurlWrapperFuncs.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Logger.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/Timer.cpp
 )
 
 target_include_directories(trading-api2-utils PUBLIC

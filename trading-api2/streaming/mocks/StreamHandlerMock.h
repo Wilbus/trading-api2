@@ -18,4 +18,5 @@ public:
     MOCK_METHOD0(reconnectingStream, void());
     MOCK_METHOD0(connectStream, void());
     MOCK_METHOD0(repliesQueue, std::shared_ptr<DataQueue<std::string>>());
+    MOCK_METHOD0(getGroupPtr, uWS::Group<uWS::CLIENT>*());
 };

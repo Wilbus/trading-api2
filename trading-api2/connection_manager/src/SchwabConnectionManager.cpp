@@ -87,7 +87,7 @@ void SchwabConnectionManager::buildAllRequests()
     requestsMap[1] = acctActivityReq;
     requestsMap[2] = levelOneActivityReq;
     requestsMap[3] = chartEquityReq;
-    requestsMap[4] = optionReq;
+    // requestsMap[4] = optionReq;
 
     streamer.reset();
     streamer = std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", requestsMap);

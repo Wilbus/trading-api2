@@ -51,6 +51,11 @@ void SchwabStreamHandler::setupCallbacks()
     group->onError([this](void* e) { onErrorCallback(e); });
 }
 
+uWS::Group<uWS::CLIENT>* SchwabStreamHandler::getGroupPtr()
+{
+    return group;
+}
+
 void SchwabStreamHandler::run()
 {
     infologprint(logfile, "SchwabStreamHandler start run()\n");
@@ -80,59 +85,59 @@ void SchwabStreamHandler::onMessageCallback(
     std::string text = std::string(message, length);
 
     Heartbeat heartbeat = parseHeartbeat(text);
-    if(heartbeat.timestamp > 0)
+    if (heartbeat.timestamp > 0)
     {
         infologprint(logfile, "%s: heartbeat timestamp recved: %ld", __func__, heartbeat.timestamp);
+        lastReceivedHeartbeat = heartbeat.timestamp;
     }
     std::vector<Response> responses = schwabStreamParser::parseResponse(text);
 
     if (responses.size() > 0)
     {
         Response resp = responses[0]; // assuming we only get 1 response element per json text
-        //if (resp.content.code >= 0)
+                                      // if (resp.content.code >= 0)
         //{
-            infologprint(logfile, "%s: Response is: %s", __func__, text.c_str());
-            // special case for for failed login
-            if (resp.command == CommandType::LOGIN && resp.content.code != 0)
+        infologprint(logfile, "%s: Response is: %s", __func__, text.c_str());
+        // special case for for failed login
+        if (resp.command == CommandType::LOGIN && resp.content.code != 0)
+        {
+            std::stringstream failmsgss;
+            std::string erromsg = "Failed login: " + resp.content.msg;
+            failmsgss << erromsg;
+            throw std::runtime_error(failmsgss.str().c_str());
+        }
+        else if (resp.content.code != 0)
+        {
+            std::string serviceTypeStr;
+            if (requestsIdMap.find(resp.requestid) != requestsIdMap.end())
             {
-                std::stringstream failmsgss;
-                std::string erromsg = "Failed login: " + resp.content.msg;
-                failmsgss << erromsg;
-                throw std::runtime_error(failmsgss.str().c_str());
+                serviceTypeStr = serviceTypeToStringMap.at(requestsIdMap.at(resp.requestid).serviceType);
             }
-            else if (resp.content.code != 0)
-            {
-                std::string serviceTypeStr;
-                if (requestsIdMap.find(resp.requestid) != requestsIdMap.end())
-                {
-                    serviceTypeStr = serviceTypeToStringMap.at(requestsIdMap.at(resp.requestid).serviceType);
-                }
-                std::stringstream failmsgss;
-                std::string erromsg = "Failed request: SERVICE: " + serviceTypeStr + "MSG: " + resp.content.msg;
-                failmsgss << erromsg;
-                throw std::runtime_error(failmsgss.str().c_str());
-            }
+            std::stringstream failmsgss;
+            std::string erromsg = "Failed request: SERVICE: " + serviceTypeStr + "MSG: " + resp.content.msg;
+            failmsgss << erromsg;
+            throw std::runtime_error(failmsgss.str().c_str());
+        }
 
-            // TODO: maybe we can use a queue instead, so we can easily reattempt sending by re-pushing the same message
-            //  if the request failed
-            // For now just error out if any message failed
-            if (requestsIdStrMap.find(currentReqId) != requestsIdStrMap.end()) // we have pending requests to be made
-            {
-                // requestsIdStrMap.erase(resp.requestid); //remove the request from the map that this response belongs
-                // to
+        // TODO: maybe we can use a queue instead, so we can easily reattempt sending by re-pushing the same message
+        //  if the request failed
+        // For now just error out if any message failed
+        if (requestsIdStrMap.find(currentReqId) != requestsIdStrMap.end()) // we have pending requests to be made
+        {
+            // requestsIdStrMap.erase(resp.requestid); //remove the request from the map that this response belongs
+            // to
 
-                // std::string nextRequest = requestsIdStrMap[currentReqId];
-                // ws->send(nextRequest.data(), nextRequest.size(), uWS::OpCode::TEXT);
-                // ws->send(requestsIdStrMap.begin()->second.data(), requestsIdStrMap.begin()->second.size(),
-                // uWS::OpCode::TEXT);
-                ws->send(
-                    requestsIdStrMap[currentReqId].data(), requestsIdStrMap[currentReqId].size(), uWS::OpCode::TEXT);
-                currentReqId += 1;
-            }
+            // std::string nextRequest = requestsIdStrMap[currentReqId];
+            // ws->send(nextRequest.data(), nextRequest.size(), uWS::OpCode::TEXT);
+            // ws->send(requestsIdStrMap.begin()->second.data(), requestsIdStrMap.begin()->second.size(),
+            // uWS::OpCode::TEXT);
+            ws->send(requestsIdStrMap[currentReqId].data(), requestsIdStrMap[currentReqId].size(), uWS::OpCode::TEXT);
+            currentReqId += 1;
+        }
         //}
-        //else
+        // else
         //{
-            // response was never parsed. could be data response instead of a regular response
+        // response was never parsed. could be data response instead of a regular response
         //}
     }
     else // no responses to request parsed, could be data response instead

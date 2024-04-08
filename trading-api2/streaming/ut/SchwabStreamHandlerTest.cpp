@@ -205,3 +205,11 @@ TEST_F(SchwabStreamHandlerTest, onMessageResponse)
     handlerTestWrapper.onMessageCallback(
         someWebSocketInstance, optionResponse.data(), optionResponse.size(), uWS::OpCode::TEXT);
 }
+
+TEST_F(SchwabStreamHandlerTest, getGroupPtrTest)
+{
+    SchwabRequestsIdMap map;
+    SchwabStreamHandlerTestWrapper handlerTestWrapper = SchwabStreamHandlerTestWrapper("wss://stream.com", map);
+
+    EXPECT_NE(handlerTestWrapper.getGroupPtr(), nullptr);
+}

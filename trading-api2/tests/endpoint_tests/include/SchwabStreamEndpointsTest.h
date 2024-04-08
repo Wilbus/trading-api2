@@ -35,12 +35,14 @@ public:
             {
                 // std::cout << "count: " << count << "\n";
                 // std::cout << "dataqueue: " << queue->front() << "\n";
-                infologprint(logfile, "%s: count %u", __func__, count);
-                infologprint(logfile, "%s: %s", __func__, queue->front().c_str());
+                // infologprint(logfile, "%s: count %u", __func__, count);
+                // infologprint(logfile, "%s: %s", __func__, queue->front().c_str());
+                coutlog(logfile, "%s: %s", __func__, queue->front().c_str());
                 queue->pop();
                 count++;
             }
-            if (count > numberOfPops) // we can incrase this if we want to increase how many mesages to test receive
+            if (numberOfPops != 0 &&
+                count > numberOfPops) // we can incrase this if we want to increase how many mesages to test receive
                 break;
         }
     }
@@ -130,15 +132,33 @@ TEST_F(SchwabStreamEndpointsTest, streamOutputTest)
     streamThread.join();
 }
 #endif
-TEST_F(SchwabStreamEndpointsTest, schwabConnectionManagerTest)
+
+TEST_F(SchwabStreamEndpointsTest, schwabConnectionManagerContinuityTest)
 {
     manager->buildAllRequests();
     manager->startThreadFuncThread();
     // manager->streamThreadFunc();
 
-    std::thread popThread(&SchwabStreamEndpointsTest::popQueue, this, manager->getStreamer()->repliesQueue(), 10);
+    std::thread popThread(&SchwabStreamEndpointsTest::popQueue, this, manager->getStreamer()->repliesQueue(), 0);
     // popThread.detach();
 
     popThread.join();
     manager->reconnectingStreamThread.join();
 }
+
+#if 0
+TEST_F(SchwabStreamEndpointsTest, schwabConnectionManagerGroupCloseTest)
+{
+    manager->buildAllRequests();
+    manager->startThreadFuncThread();
+    // manager->streamThreadFunc();
+
+    std::thread popThread(&SchwabStreamEndpointsTest::popQueue, this, manager->getStreamer()->repliesQueue(), 3);
+    // popThread.detach();
+
+    popThread.join();
+    manager->getStreamer()->getGroupPtr()->close();
+    
+    manager->reconnectingStreamThread.join();
+}
+#endif
