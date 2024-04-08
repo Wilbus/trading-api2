@@ -111,8 +111,7 @@ void SchwabConnectionManager::connectAndRunStream()
 
 void SchwabConnectionManager::streamThreadFunc()
 {
-    std::cout << "SchwabConnectionManager::streamThreadFunc()\n";
-    infologprint(logfile, "%s: Starting the stream connection thread function", __func__);
+    infologprint(logfile, "%s: Begin the stream connection thread function", __func__);
     while (true)
     {
         connectAndRunStream();
@@ -126,7 +125,7 @@ void SchwabConnectionManager::streamThreadFunc()
 
 void SchwabConnectionManager::startThreadFuncThread()
 {
-    std::cout << "SchwabConnectionManager::startThreadFuncThread()\n";
+    infologprint(logfile, "%s: Spawn reconnecting stream thread", __func__);
     reconnectingStreamThread = std::thread(&SchwabConnectionManager::streamThreadFunc, this);
 }
 
