@@ -51,11 +51,6 @@ void SchwabStreamHandler::setupCallbacks()
     group->onError([this](void* e) { onErrorCallback(e); });
 }
 
-uWS::Group<uWS::CLIENT>* SchwabStreamHandler::getGroupPtr()
-{
-    return group;
-}
-
 void SchwabStreamHandler::run()
 {
     infologprint(logfile, "SchwabStreamHandler start run()\n");

@@ -25,7 +25,6 @@ public:
     virtual void reconnectingStream() = 0;
     virtual void connectStream() = 0;
     virtual std::shared_ptr<DataQueue<std::string>> repliesQueue() = 0;
-    virtual uWS::Group<uWS::CLIENT>* getGroupPtr() = 0;
 };
 
 } // namespace streamer
