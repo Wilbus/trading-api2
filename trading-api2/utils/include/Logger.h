@@ -22,7 +22,8 @@
 
 namespace utils {
 
-#define infologprint(filepath, msg, ...) utils::Logger::loggerInst(filepath)->log2(true, typeid(this).name(), msg __VA_OPT__(, ) __VA_ARGS__)
+#define infologprint(filepath, msg, ...) \
+    utils::Logger::loggerInst(filepath)->log2(true, typeid(this).name(), msg __VA_OPT__(, ) __VA_ARGS__)
 
 class Logger
 {
@@ -31,115 +32,25 @@ protected:
     Logger(std::string executableName, std::string logpath);
 
 public:
-    Logger(Logger& other) = delete; //not cloneable
-    void operator=(const Logger& other) = delete; //not assignable
+    Logger(Logger& other) = delete;               // not cloneable
+    void operator=(const Logger& other) = delete; // not assignable
 
     static Logger* loggerInst(std::string logFilePath);
-    
-    void error(const char* fmt, ...)
-    {
-        //std::lock_guard<std::mutex> lg(mtx);
 
-        char buffer[1024];
-        va_list args;
-        va_start(args, fmt);
-        vsprintf(buffer, fmt, args);
+    void error(const char* fmt, ...);
 
-        std::string message = buildString(true, buffer);
+    void error2(bool cout, std::string classname, const char* fmt, ...);
 
-        filewriter.write(message);
-
-        va_end(args);
-    }
-
-    void error2(bool cout, std::string classname, const char* fmt, ...)
-    {
-        //std::lock_guard<std::mutex> lg(mtx);
-
-        char buffer[1024];
-        va_list args;
-        va_start(args, fmt);
-        vsprintf(buffer, fmt, args);
-
-        std::string classNameAppend = classname + "::" + buffer;
-        std::string message = buildString(true, classNameAppend);
-
-        if (cout)
-            std::cout << message;
-        filewriter.write(message);
-
-        va_end(args);
-    }
-
-    void log(const char* fmt, ...)
-    {
-        //std::lock_guard<std::mutex> lg(mtx);
-
-        char buffer[1024];
-        va_list args;
-        va_start(args, fmt);
-        vsprintf(buffer, fmt, args);
-
-        std::string message = buildString(false, buffer);
-
-        filewriter.write(message);
-
-        va_end(args);
-    }
+    void log(const char* fmt, ...);
 
     /*SomeClass fmtmessage*/
-    void log2(bool cout, std::string classname, const char* fmt, ...)
-    {
-        //std::lock_guard<std::mutex> lg(mtx);
-        char buffer[1024];
-        va_list args;
-        va_start(args, fmt);
-        vsprintf(buffer, fmt, args);
-
-        std::string classNameAppend = classname + "::" + buffer;
-        std::string message = buildString(false, classNameAppend);
-        if (cout)
-            std::cout << message;
-
-        filewriter.write(message);
-
-        va_end(args);
-    }
+    void log2(bool cout, std::string classname, const char* fmt, ...);
 
     /*SomeClass fmtmessage*/
-    void logprint(std::string classname, const char* fmt, ...)
-    {
-        //std::lock_guard<std::mutex> lg(mtx);
-        char buffer[1024];
-        va_list args;
-        va_start(args, fmt);
-        vsprintf(buffer, fmt, args);
-
-        std::string classNameAppend = classname + "::" + buffer;
-        std::string message = buildString(false, classNameAppend);
-
-        std::cout << message;
-        filewriter.write(message);
-
-        va_end(args);
-    }
+    void logprint(std::string classname, const char* fmt, ...);
 
     /*SomeClass fmtmessage*/
-    void coutprint(std::string classname, const char* fmt, ...)
-    {
-        //std::lock_guard<std::mutex> lg(mtx);
-        char buffer[1024];
-        va_list args;
-        va_start(args, fmt);
-        vsprintf(buffer, fmt, args);
-
-        std::string classNameAppend = classname + "::" + buffer;
-        std::string message = buildString(false, classNameAppend);
-
-        std::cout << message;
-
-        va_end(args);
-    }
+    void coutprint(std::string classname, const char* fmt, ...);
 
 private:
     std::string buildString(bool err, std::string buffer);

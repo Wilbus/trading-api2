@@ -14,7 +14,7 @@ class SchwabConnectionManager
 {
 public:
     // testing
-    SchwabConnectionManager(std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient);
+    SchwabConnectionManager(std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient, std::string logfile = "");
     // production
     SchwabConnectionManager(std::string configfolder);
 
@@ -32,4 +32,5 @@ private:
     std::shared_ptr<ISchwabClient> sclient;
     std::shared_ptr<IStreamHandler> streamer;
     SchwabRequestsIdMap requestsMap;
+    std::string logfile;
 };

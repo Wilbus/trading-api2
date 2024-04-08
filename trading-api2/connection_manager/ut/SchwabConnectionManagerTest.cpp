@@ -10,6 +10,8 @@ class SchwabConnectionManagerTest : public ::testing::Test
 public:
     SchwabConnectionManagerTest()
     {
+        configsMock = std::make_shared<SchwabConfigsMock>();
+        clientMock = std::make_shared<SchwabClientMock>();
     }
 
 protected:
@@ -20,4 +22,5 @@ protected:
 
 TEST_F(SchwabConnectionManagerTest, test0)
 {
+    manager = std::make_shared<SchwabConnectionManager>(configsMock, clientMock);
 }

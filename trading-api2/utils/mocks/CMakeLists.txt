@@ -4,6 +4,7 @@ project(trading-api2-utils-mocks)
 add_library(${PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_LIST_DIR}/SystemTimerMock.cpp
     ${CMAKE_CURRENT_LIST_DIR}/CurlWrapperFuncsMock.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/LoggerStub.cpp
 )
 
 #target_sources(${PROJECT_NAME}

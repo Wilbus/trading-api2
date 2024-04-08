@@ -15,6 +15,7 @@ enum FileExt
 class FileWriter
 {
 public:
+    FileWriter();
     FileWriter(std::string filepath, bool startNewFile = true, FileExt ext = FileExt::TXT);
     FileWriter(std::string filepath, bool startNewFile = false, FileExt ext = FileExt::CSV, std::string csvHeader = "");
     ~FileWriter();

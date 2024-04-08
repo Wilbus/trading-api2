@@ -1,11 +1,11 @@
 #pragma once
 
+#include "Logger.h"
 #include "RestClientCurl.h"
 #include "SchwabClient.h"
 #include "SchwabConnectionManager.h"
 #include "SchwabStreamHandler.h"
 #include "SchwabStreamReqGenerator.h"
-#include "Logger.h"
 
 #include <gtest/gtest.h>
 
@@ -22,7 +22,7 @@ public:
 
         configs = std::make_shared<SchwabConfigs>("/datadisk0/sambashare0/coding/configs/");
         sclient = std::make_shared<SchwabClient>(configs, restclient);
-        manager = std::make_shared<SchwabConnectionManager>(configs, sclient);
+        manager = std::make_shared<SchwabConnectionManager>(configs, sclient, logfile);
     }
 
     void popQueue(std::shared_ptr<DataQueue<std::string>> queue, unsigned numberOfPops)
@@ -32,8 +32,8 @@ public:
         {
             if (!queue->isEmpty())
             {
-                //std::cout << "count: " << count << "\n";
-                //std::cout << "dataqueue: " << queue->front() << "\n";
+                // std::cout << "count: " << count << "\n";
+                // std::cout << "dataqueue: " << queue->front() << "\n";
                 infologprint(logfile, "%s: count %u", __func__, count);
                 queue->pop();
                 count++;

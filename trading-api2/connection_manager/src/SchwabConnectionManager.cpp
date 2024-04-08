@@ -1,13 +1,16 @@
 #include "SchwabConnectionManager.h"
+#include "Logger.h"
 
 #include <chrono>
 
 // testing
 SchwabConnectionManager::SchwabConnectionManager(
-    std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient)
+    std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient, std::string logfile)
     : configs(configs)
     , sclient(sclient)
+    , logfile(logfile)
 {
+    infologprint(logfile, "%s init", __func__);
 }
 // production
 SchwabConnectionManager::SchwabConnectionManager(std::string configfolder)
