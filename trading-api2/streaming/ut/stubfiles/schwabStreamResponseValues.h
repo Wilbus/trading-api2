@@ -97,3 +97,11 @@ static std::string optionResponse = R"({
     }
   ]
 })";
+
+static std::string heartbeatResponse = R"({
+  "notify": [
+    {
+      "heartbeat": "1712547393411"
+    }
+  ]
+})";

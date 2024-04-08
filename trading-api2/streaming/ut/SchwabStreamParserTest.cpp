@@ -96,3 +96,9 @@ TEST_F(SchwabStreamParserTest, parseOptionResponse)
     EXPECT_EQ(resp.content.code, 0);
     EXPECT_EQ(resp.content.msg, "SUBS command succeeded");
 }
+
+TEST_F(SchwabStreamParserTest, parseHeartbeatResponse)
+{
+    Heartbeat hb = parseHeartbeat(heartbeatResponse);
+    EXPECT_EQ(hb.timestamp, 1712547393411);
+}
