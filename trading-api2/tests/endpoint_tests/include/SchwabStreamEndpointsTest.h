@@ -18,10 +18,11 @@ class SchwabStreamEndpointsTest : public ::testing::Test
 public:
     SchwabStreamEndpointsTest()
     {
-        restclient = std::make_shared<RestClientCurl>("/datadisk0/sambashare0/coding/trading-api2-endpoint-test-logs/");
+        restclient =
+            std::make_shared<RestClientCurl>("/datadisk0/sambashare0/coding/trading-api2-endpoint-test-logs/", logfile);
 
         configs = std::make_shared<SchwabConfigs>("/datadisk0/sambashare0/coding/configs/");
-        sclient = std::make_shared<SchwabClient>(configs, restclient);
+        sclient = std::make_shared<SchwabClient>(configs, restclient, logfile);
         manager = std::make_shared<SchwabConnectionManager>(configs, sclient, logfile);
     }
 
@@ -35,6 +36,7 @@ public:
                 // std::cout << "count: " << count << "\n";
                 // std::cout << "dataqueue: " << queue->front() << "\n";
                 infologprint(logfile, "%s: count %u", __func__, count);
+                infologprint(logfile, "%s: %s", __func__, queue->front().c_str());
                 queue->pop();
                 count++;
             }
@@ -48,7 +50,7 @@ public:
     std::shared_ptr<SchwabClient> sclient;
     std::shared_ptr<SchwabStreamHandler> streamer;
     std::shared_ptr<SchwabConnectionManager> manager;
-    std::string logfile = "/datadisk0/sambashare0/coding/trading-api2-endpoint-test-logs/endpointTestLog.txt";
+    std::string logfile = "/datadisk0/sambashare0/coding/trading-api2-endpoint-test-logs/endpoint_stream_testlog.txt";
 };
 #if 0
 TEST_F(SchwabStreamEndpointsTest, streamOutputTest)

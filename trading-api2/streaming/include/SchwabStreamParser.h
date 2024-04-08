@@ -6,35 +6,36 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"
 
-#include <vector>
 #include <iostream>
+#include <vector>
 
 namespace schwabStreamParser {
 
-//TODO: consider using same rapidjson::Document instance for all, and use d.Clear() on each parse call to save some time from re-initializing
+// TODO: consider using same rapidjson::Document instance for all, and use d.Clear() on each parse call to save some
+// time from re-initializing
 Heartbeat parseHeartbeat(std::string jsonstring)
 {
     rapidjson::Document d;
     d.Parse(jsonstring.c_str());
     rapidjson::StringBuffer s;
 
-    if(!d.IsObject())
+    if (!d.IsObject())
     {
         return {};
     }
 
-    if(d.HasMember("notify") && d["notify"].IsArray())
+    if (d.HasMember("notify") && d["notify"].IsArray())
     {
         Heartbeat hb;
-        for(const auto& heartbeatObj : d["notify"].GetArray())
+        for (const auto& heartbeatObj : d["notify"].GetArray())
         {
             std::string temp;
             PARSE_STRING(temp, "heartbeat", heartbeatObj);
             hb.timestamp = std::stol(temp);
-            return hb; //assuming only one heartbeat value per heartbeat response
+            return hb; // assuming only one heartbeat value per heartbeat response
         }
     }
-    return {}; //response isn't a heartbeat type
+    return {}; // response isn't a heartbeat type
 }
 
 std::vector<Response> parseResponse(std::string jsonstring)

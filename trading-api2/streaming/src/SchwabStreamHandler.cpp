@@ -1,5 +1,6 @@
 #include "SchwabStreamHandler.h"
 
+#include "Logger.h"
 #include "SchwabStreamParser.h"
 #include "SchwabStreamReqGenerator.h"
 
@@ -9,11 +10,13 @@
 namespace streamer {
 using namespace schwabStreamParser;
 // TODO: consider moving callback functions outside of this class to for example SchwabConnection class
-SchwabStreamHandler::SchwabStreamHandler(std::string url, SchwabRequestsIdMap requestsIdMap)
+SchwabStreamHandler::SchwabStreamHandler(std::string url, SchwabRequestsIdMap requestsIdMap, std::string logfile)
     : group(hub.createGroup<uWS::CLIENT>())
     , streamUrl(url)
+    , logfile(logfile)
     , requestsIdMap(requestsIdMap)
 {
+    infologprint(logfile, "%s init", __func__);
     repliesQue = std::make_shared<DataQueue<std::string>>();
     for (const auto& [id, req] : requestsIdMap)
     {
@@ -31,6 +34,7 @@ SchwabStreamHandler::~SchwabStreamHandler()
 
 void SchwabStreamHandler::setupCallbacks()
 {
+    infologprint(logfile, "%s: setup callbacks", __func__);
     group->onConnection([this](uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req) {
         onConnectionCallback(ws, req);
         // onConnection(ws, req);
@@ -49,17 +53,19 @@ void SchwabStreamHandler::setupCallbacks()
 
 void SchwabStreamHandler::run()
 {
-    std::cout << "SchwabStreamHandler start run()\n";
+    infologprint(logfile, "SchwabStreamHandler start run()\n");
     hub.run();
 }
 
 void SchwabStreamHandler::onConnectionCallback(uWS::WebSocket<uWS::CLIENT>* ws, uWS::HttpRequest req)
 {
+    // use 0 as the special requestId for login request
     if (requestsIdMap.find(0) == requestsIdMap.end())
     {
         throw std::runtime_error("no login request was requested");
     }
-    // std::cout << "SchwabStreamHandler sends: \n" << requestsIdMap.at(loginRequestId) << "\n";
+
+    infologprint(logfile, "%s: connected. Send login request: %s", __func__, requestsIdStrMap.at(0).c_str());
 
     ws->send(requestsIdStrMap.at(0).data(), requestsIdStrMap.at(0).size(), uWS::OpCode::TEXT), nullptr, nullptr,
         nullptr;
@@ -72,7 +78,7 @@ void SchwabStreamHandler::onMessageCallback(
     (void)ws;
     (void)opCode;
     std::string text = std::string(message, length);
-    // std::cout << text << "\n";
+
     std::vector<Response> responses = schwabStreamParser::parseResponse(text);
 
     if (responses.size() > 0)
@@ -80,7 +86,7 @@ void SchwabStreamHandler::onMessageCallback(
         Response resp = responses[0]; // assuming we only get 1 response element per json text
         if (resp.content.code >= 0)
         {
-            std::cout << "Response: " << text << "\n";
+            infologprint(logfile, "%s: Response is: %s", __func__, text.c_str());
             // special case for for failed login
             if (resp.command == CommandType::LOGIN && resp.content.code != 0)
             {
@@ -111,7 +117,6 @@ void SchwabStreamHandler::onMessageCallback(
                 // to
 
                 // std::string nextRequest = requestsIdStrMap[currentReqId];
-                // std::cout << "nextRequest is: \n" << nextRequest << "\n";
                 // ws->send(nextRequest.data(), nextRequest.size(), uWS::OpCode::TEXT);
                 // ws->send(requestsIdStrMap.begin()->second.data(), requestsIdStrMap.begin()->second.size(),
                 // uWS::OpCode::TEXT);
@@ -125,7 +130,7 @@ void SchwabStreamHandler::onMessageCallback(
             // response was never parsed. could be data response instead of a regular response
         }
     }
-    else
+    else // no responses to request parsed, could be data response instead
     {
         repliesQue->push(text);
     }
@@ -138,13 +143,14 @@ void SchwabStreamHandler::onDisconnectionCallback(
     (void)code;
     (void)message;
     (void)length;
-    std::cout << "disconnect event";
+    std::string msg = std::string(message, length);
+    infologprint(logfile, "%s: Disconnected: code = %d, message: %s", __func__, code, msg.c_str());
 }
 
 void SchwabStreamHandler::onErrorCallback(void* e)
 {
-    (void)e;
-    std::cout << "error event";
+    (void)e; // TODO: what is this pointer for?
+    infologprint(logfile, "%s: Error occured", __func__);
 }
 
 void SchwabStreamHandler::reconnectingStream()
@@ -153,9 +159,8 @@ void SchwabStreamHandler::reconnectingStream()
 
 void SchwabStreamHandler::connectStream()
 {
-    std::cout << "SchwabStreamHandler connect to " << streamUrl << "\n";
+    infologprint(logfile, "%s: connecting to %s", __func__, streamUrl.c_str());
     hub.connect(streamUrl, nullptr, {}, 5000, group);
-    // hub.run();
 }
 
 std::shared_ptr<DataQueue<std::string>> SchwabStreamHandler::repliesQueue()

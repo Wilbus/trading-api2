@@ -14,7 +14,8 @@ class SchwabConnectionManager
 {
 public:
     // testing
-    SchwabConnectionManager(std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient, std::string logfile = "");
+    SchwabConnectionManager(
+        std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient, std::string logfile = "");
     // production
     SchwabConnectionManager(std::string configfolder);
 

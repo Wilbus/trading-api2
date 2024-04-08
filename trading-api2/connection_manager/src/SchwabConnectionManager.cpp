@@ -1,4 +1,5 @@
 #include "SchwabConnectionManager.h"
+
 #include "Logger.h"
 
 #include <chrono>
@@ -15,6 +16,7 @@ SchwabConnectionManager::SchwabConnectionManager(
 // production
 SchwabConnectionManager::SchwabConnectionManager(std::string configfolder)
 {
+    infologprint(logfile, "%s init", __func__);
     configs = std::make_shared<SchwabConfigs>(configfolder);
     sclient = std::make_shared<SchwabClient>(configs, std::make_shared<RestClientCurl>());
 }
@@ -22,6 +24,7 @@ SchwabConnectionManager::SchwabConnectionManager(std::string configfolder)
 // make this configurable
 void SchwabConnectionManager::buildAllRequests()
 {
+    infologprint(logfile, "%s building request jsons to send", __func__);
     UserPreferences prefs = sclient->getUserPreferences();
 
     Request loginReq;
@@ -84,7 +87,7 @@ void SchwabConnectionManager::buildAllRequests()
     requestsMap[1] = acctActivityReq;
     requestsMap[2] = levelOneActivityReq;
     requestsMap[3] = chartEquityReq;
-    requestsMap[4] = optionReq;
+    // requestsMap[4] = optionReq;
 
     streamer.reset();
     streamer = std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", requestsMap);
@@ -94,13 +97,13 @@ void SchwabConnectionManager::connectAndRunStream()
 {
     try
     {
-        std::cout << "test\n";
+        infologprint(logfile, "%s Stream connect and run starting", __func__);
         streamer->connectStream();
         streamer->run();
     }
     catch (const std::exception& e)
     {
-        std::cout << "SchwabConnectionManager::reconnectingStream() error: " << e.what() << "\n";
+        infologprint(logfile, "%s: stream handler threw exception: ", __func__, e.what());
         using namespace std::chrono_literals;
         std::this_thread::sleep_for(5000ms);
     }
@@ -109,10 +112,14 @@ void SchwabConnectionManager::connectAndRunStream()
 void SchwabConnectionManager::streamThreadFunc()
 {
     std::cout << "SchwabConnectionManager::streamThreadFunc()\n";
+    infologprint(logfile, "%s: Starting the stream connection thread function", __func__);
     while (true)
     {
         connectAndRunStream();
         // if we fall out of connectAndRunStream(), rebuild requests and streamer instance
+        infologprint(logfile,
+            "%s: fell out of the stream handler run() loop. Rebuild requests and new instance of stream handler",
+            __func__);
         buildAllRequests();
     }
 }

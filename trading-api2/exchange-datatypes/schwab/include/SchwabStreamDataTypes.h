@@ -97,6 +97,11 @@ struct Response
     ResponseContent content;
 };
 
+struct Heartbeat
+{
+    time_t timestamp{-1};
+};
+
 /*only one request per requestId*/
 typedef int RequestId;
 typedef std::string RequestJson;

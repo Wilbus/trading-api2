@@ -63,6 +63,7 @@ void Logger::coutprint(std::string classname, const char* fmt, ...)
 std::string Logger::buildString(bool err, std::string buffer)
 {
     (void)err;
-    (void)buffer;   
+    (void)buffer;
+    return "";
 }
 } // namespace utils

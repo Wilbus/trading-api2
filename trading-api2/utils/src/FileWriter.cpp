@@ -4,7 +4,6 @@ namespace utils {
 
 FileWriter::FileWriter()
 {
-    
 }
 
 FileWriter::FileWriter(std::string filepath, bool startNewFile, FileExt ext)

@@ -1,5 +1,6 @@
 #include "SchwabClient.h"
 
+#include "Logger.h"
 #include "SchwabAccountDataParser.h"
 #include "SchwabErrorParser.h"
 #include "SchwabMarketDataParser.h"
@@ -13,10 +14,13 @@
 namespace restclient {
 using namespace std::chrono;
 
-SchwabClient::SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClientCurl> restClient)
+SchwabClient::SchwabClient(
+    std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClientCurl> restClient, std::string logfile)
     : config(config)
     , restClient(restClient)
+    , logfile(logfile)
 {
+    infologprint(logfile, "%s: init", __func__);
 }
 
 /*
@@ -38,16 +42,19 @@ std::set<std::string> SchwabClient::headers() const
 void SchwabClient::setMarketDataEndpoint()
 {
     restClient->setBaseEndpoint("https://api.schwabapi.com/marketdata/v1");
+    infologprint(logfile, "%s", __func__);
 }
 
 void SchwabClient::setAuthenticationEndpoint()
 {
     restClient->setBaseEndpoint("https://api.schwabapi.com/v1");
+    infologprint(logfile, "%s", __func__);
 }
 
 void SchwabClient::setAccountsEndpoint()
 {
     restClient->setBaseEndpoint("https://api.schwabapi.com/trader/v1");
+    infologprint(logfile, "%s", __func__);
 }
 
 bool SchwabClient::checkAccessToken()
@@ -62,17 +69,26 @@ bool SchwabClient::checkAccessToken()
     time_t temp_expires_unix_seconds = expires / 1000;
     std::string nowTimeStr = timefuncs::unixTimeToString(temp_now_unix_seconds, "%Y-%m-%dT%H:%M:%S");
     std::string accessTokenExpiresAt = timefuncs::unixTimeToString(temp_expires_unix_seconds, "%Y-%m-%dT%H:%M:%S");
-    std::printf(
-        "%s: now is %s, accessTokenExpiresAt: %s\n", __func__, nowTimeStr.c_str(), accessTokenExpiresAt.c_str());
+
+    infologprint(logfile, "%s: Current time is %s, Access Token expires at %s", __func__, nowTimeStr.c_str(),
+        accessTokenExpiresAt.c_str());
 
     // TODO: check if expires_at_time is a valid timestamp somehow
     // give 5 minute buffer before current token expires to avoid minor mismatches in local time and schwab server time
-    return nowMs < (accessToken.expires_at_time - 300000);
+    time_t preemtiveExpire = accessToken.expires_at_time - 300000;
+    if (nowMs < preemtiveExpire)
+    {
+        return true;
+    }
+
+    infologprint(logfile, "%s: Preemtively refreshing access token 5 minutes before expiry (which is %ld)", __func__,
+        preemtiveExpire);
+    return false;
 }
 
 void SchwabClient::logErrorResponse(ErrorResponse errorResp)
 {
-    std::cout << errorResp.toString();
+    infologprint(logfile, "%s: client received error: %s", errorResp.toString().c_str());
 }
 
 /*
@@ -84,6 +100,7 @@ curl -X POST \https://api.schwabapi.com/v1/oauth/token
 */
 bool SchwabClient::createAccessToken(std::string authorizationCode)
 {
+    infologprint(logfile, "%s: creating access token", __func__);
     std::string path = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
 
@@ -128,13 +145,14 @@ bool SchwabClient::createAccessToken(std::string authorizationCode)
     }
     catch (const std::exception& e)
     {
-        std::cout << e.what() << "\n";
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
         return false;
     }
 }
 
 bool SchwabClient::updateAccessToken(std::string refreshToken)
 {
+    infologprint(logfile, "%s: updating access token", __func__);
     std::string path = "/oauth/token";
     std::string content_type = "Content-Type: application/x-www-form-urlencoded";
 
@@ -167,11 +185,13 @@ bool SchwabClient::updateAccessToken(std::string refreshToken)
         accessToken.granted_at_time = utils::nowMs();
         accessToken.expires_at_time = accessToken.granted_at_time + (authTokens.expires_in * 1000);
         config->saveAccessToken(accessToken);
+
+        infologprint(logfile, "%s: updated access token expires at: %ld", __func__, accessToken.expires_at_time);
         return true;
     }
     catch (const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
         return false;
     }
 }
@@ -179,6 +199,12 @@ bool SchwabClient::updateAccessToken(std::string refreshToken)
 //'https://api.schwabapi.com/marketdata/v1/quotes?symbols=SPY%2C%20AAPL&fields=quote%2Creference&indicative=true'
 std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::set<std::string> symbols)
 {
+    std::string logsymbols;
+    for (const auto& symb : symbols)
+    {
+        logsymbols += (symb + ", ");
+    }
+    infologprint(logfile, "%s: requesting equity quotes for: %s", __func__, logsymbols.c_str());
     // TODO: add ways to handle other fields such as fundamental, extended
     std::string path = "/quotes?symbols=";
     std::string quotelist;
@@ -213,7 +239,7 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
     }
     catch (std::exception& e)
     {
-        std::cout << e.what() << "\n";
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
         return {};
     }
 }
@@ -221,6 +247,8 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
 //'https://api.schwabapi.com/marketdata/v1/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE'
 OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCount)
 {
+    infologprint(logfile, "%s: request option chain for: %s, strikesCount: %u", __func__, symbol.c_str(), strikesCount);
+
     std::string path = "/chains?symbol=" + symbol + "&contractType=ALL&strikeCount=" + std::to_string(strikesCount) +
                        "&strategy=SINGLE";
     try
@@ -241,7 +269,7 @@ OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCou
     }
     catch (const std::exception& e)
     {
-        std::cout << e.what() << '\n';
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
         return {};
     }
 }
@@ -249,6 +277,7 @@ OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCou
 //'https://api.schwabapi.com/marketdata/v1/expirationchain?symbol=AAPL'
 std::vector<OptionExpiration> SchwabClient::getOptionExpirations(std::string symbol)
 {
+    infologprint(logfile, "%s: request option expirations for: %s", __func__, symbol.c_str());
     try
     {
         if (!checkAccessToken())
@@ -268,7 +297,7 @@ std::vector<OptionExpiration> SchwabClient::getOptionExpirations(std::string sym
     }
     catch (const std::exception& e)
     {
-        std::cout << e.what() << '\n';
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
         return {};
     }
 }
@@ -280,6 +309,12 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
 {
     try
     {
+        infologprint(logfile,
+            "%s: request price history for: symbol=%s, periodType=%d, periodAmount=%u, timeFreq=%d,"
+            "freqAmount=%u, startDate=%s, endDate=%s, extendedHours=%d, needPreviousClose=%d",
+            __func__, symbol.c_str(), static_cast<int>(periodType), periodAmount, static_cast<int>(timeFreq),
+            freqAmount, startDate.c_str(), endDate.c_str(), extendedHours, needPreviousClose);
+
         int64_t unixStartDate = static_cast<int64_t>(timefuncs::stringTimeToUnix(startDate, "%Y-%m-%d")) * 1000;
         int64_t unixEndDate;
         if (endDate.length() > 0)
@@ -316,7 +351,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
     }
     catch (std::exception& e)
     {
-        std::cout << e.what() << "\n";
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
         return {};
     }
 }
@@ -326,6 +361,8 @@ std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
 {
     try
     {
+        infologprint(logfile, "%s: requesting account numbers", __func__);
+
         std::string path = "/accounts/accountNumbers";
         if (!checkAccessToken())
         {
@@ -343,7 +380,7 @@ std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
     }
     catch (const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
         return {};
     }
 }
@@ -353,6 +390,8 @@ UserPreferences SchwabClient::getUserPreferences()
 {
     try
     {
+        infologprint(logfile, "%s: requesting user preferences", __func__);
+
         std::string path = "/userPreference";
         if (!checkAccessToken())
         {
@@ -371,7 +410,7 @@ UserPreferences SchwabClient::getUserPreferences()
     }
     catch (const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
         return {};
     }
 }

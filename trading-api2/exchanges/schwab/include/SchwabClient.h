@@ -82,7 +82,8 @@ public:
 class SchwabClient : public ISchwabClient
 {
 public:
-    SchwabClient(std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClientCurl> restClient);
+    SchwabClient(
+        std::shared_ptr<ISchwabConfigs> config, std::shared_ptr<IRestClientCurl> restClient, std::string logfile = "");
 
     /*
         AuthorizationCode: The code returned from the redirect url login
@@ -118,6 +119,7 @@ private:
     SchwabAuth auths;
     std::shared_ptr<ISchwabConfigs> config;
     std::shared_ptr<IRestClientCurl> restClient;
+    std::string logfile;
 };
 
 } // namespace restclient

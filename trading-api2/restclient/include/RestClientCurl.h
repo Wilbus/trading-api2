@@ -9,7 +9,7 @@ class RestClientCurl : public IRestClientCurl
 {
 public:
     RestClientCurl();
-    RestClientCurl(std::string debugFileFolder);
+    RestClientCurl(std::string debugFileFolder, std::string logfile = "");
     ~RestClientCurl();
     virtual void setBaseEndpoint(const std::string endpoint) override;
     virtual std::string getResponse(const std::string path, const std::set<std::string> headersList) override;
@@ -20,13 +20,13 @@ public:
 protected:
     std::string readbuffer;
     std::string debugFileFolder;
+    std::string logfile;
 
 private:
     bool checkCURLcode(const CURLcode code);
     std::string baseEndpoint;
     CURL* curl{nullptr};
     FILE* verboseInfoFilePtr{nullptr};
-
     std::string verboseInfoFileName{"restClientCurlVerboseInfo.txt"};
 };
 } // namespace restclient

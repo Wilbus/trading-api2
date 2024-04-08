@@ -1,5 +1,7 @@
 #include "RestClientCurl.h"
 
+#include "Logger.h"
+
 #include <iostream>
 
 namespace restclient {
@@ -10,8 +12,9 @@ RestClientCurl::RestClientCurl()
     curl = mycurl_easy_init();
 }
 
-RestClientCurl::RestClientCurl(std::string debugFileFolder)
+RestClientCurl::RestClientCurl(std::string debugFileFolder, std::string logfile)
     : debugFileFolder(debugFileFolder)
+    , logfile(logfile)
 {
     mycurl_global_init(CURL_GLOBAL_ALL);
     curl = mycurl_easy_init();
@@ -57,6 +60,8 @@ std::string RestClientCurl::getResponse(const std::string path, const std::set<s
         throw std::runtime_error("CURL* curl is nullptr");
     }
     std::string finalUrl = baseEndpoint + path;
+    infologprint(logfile, "%s: %s", __func__, finalUrl.c_str());
+
     readbuffer.clear();
 
     CURLcode code;
@@ -145,6 +150,8 @@ std::string RestClientCurl::postResponse(
         throw std::runtime_error("CURL* curl is nullptr");
     }
     std::string finalUrl = baseEndpoint + path;
+    infologprint(logfile, "%s: %s", __func__, finalUrl.c_str());
+
     readbuffer.clear();
 
     CURLcode code;
