@@ -79,6 +79,9 @@ void SchwabStreamHandler::onMessageCallback(
     (void)opCode;
     std::string text = std::string(message, length);
 
+    //coutlog(logfile, "%s: %s", __func__, text.c_str()); //ONLY 1024 BYTES MAX FOR LOGGER COUTLOG function
+    //std::cout << "RAW DATA: " << text << "\n";
+
     Heartbeat heartbeat = parseHeartbeat(text);
     if (heartbeat.timestamp > 0)
     {

@@ -60,7 +60,7 @@ void SchwabConnectionManager::buildAllRequests()
     levelOneActivityReq.commandType = CommandType::SUBS;
     levelOneActivityReq.schwabClientCustomerId = prefs.streamerInfo[0].schwabClientCustomerId;
     levelOneActivityReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
-    levelOneActivityReq.parameters.keys = "QQQ";
+    levelOneActivityReq.parameters.keys = "QQQ,SPY,MSFT,CAVA,AMD,TSM,NVDA,DELL,TGT,ORCL,OXY,XOM";
     levelOneActivityReq.parameters.fields = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16";
 
     Request chartEquityReq;
@@ -69,7 +69,7 @@ void SchwabConnectionManager::buildAllRequests()
     chartEquityReq.commandType = CommandType::SUBS;
     chartEquityReq.schwabClientCustomerId = prefs.streamerInfo[0].schwabClientCustomerId;
     chartEquityReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
-    chartEquityReq.parameters.keys = "QQQ";
+    chartEquityReq.parameters.keys = "QQQ,SPY,MSFT,CAVA,AMD,TSM,NVDA,DELL,TGT,ORCL,OXY,XOM";
     chartEquityReq.parameters.fields = "0,1,2,3,4,5,6,7,8";
 
     Request optionReq;
@@ -78,7 +78,7 @@ void SchwabConnectionManager::buildAllRequests()
     optionReq.commandType = CommandType::SUBS;
     optionReq.schwabClientCustomerId = prefs.streamerInfo[0].schwabClientCustomerId;
     optionReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
-    optionReq.parameters.keys = "QQQ";
+    optionReq.parameters.keys = "QQQ,SPY,MSFT,CAVA,AMD,TSM,NVDA,DELL,TGT,ORCL,OXY,XOM";
     optionReq.parameters.fields = "0,1,2,3,4,5,6,7,8,9,10,11,12,20,21,22,23,24,32,33,34,35,36,38,41";
 
     requestsMap.clear();
@@ -86,6 +86,7 @@ void SchwabConnectionManager::buildAllRequests()
     // map[1] = qosReq;
     requestsMap[1] = acctActivityReq;
     requestsMap[2] = levelOneActivityReq;
+    //requestsMap[3] = levelOneActivityReqSPY;
     requestsMap[3] = chartEquityReq;
     // requestsMap[4] = optionReq;
 

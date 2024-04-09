@@ -102,3 +102,9 @@ TEST_F(SchwabStreamParserTest, parseHeartbeatResponse)
     Heartbeat hb = parseHeartbeat(heartbeatResponse);
     EXPECT_EQ(hb.timestamp, 1712547393411);
 }
+
+TEST_F(SchwabStreamParserTest, parseBigDataLevelOneEquityResponseWithHeartbeatParser)
+{
+    Heartbeat hb = parseHeartbeat(bigLevelOneDataResponse);
+    EXPECT_EQ(hb.timestamp, -1);
+}
