@@ -86,7 +86,7 @@ void SchwabConnectionManager::buildAllRequests()
     // map[1] = qosReq;
     requestsMap[1] = acctActivityReq;
     requestsMap[2] = levelOneActivityReq;
-    //requestsMap[3] = levelOneActivityReqSPY;
+    // requestsMap[3] = levelOneActivityReqSPY;
     requestsMap[3] = chartEquityReq;
     // requestsMap[4] = optionReq;
 

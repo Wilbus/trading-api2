@@ -37,7 +37,7 @@ public:
                 // std::cout << "dataqueue: " << queue->front() << "\n";
                 // infologprint(logfile, "%s: count %u", __func__, count);
                 // infologprint(logfile, "%s: %s", __func__, queue->front().c_str());
-                //coutlog(logfile, "%s: %s", __func__, queue->front().c_str());
+                // coutlog(logfile, "%s: %s", __func__, queue->front().c_str());
                 std::cout << "DATA: " << queue->front().c_str() << "\n";
                 queue->pop();
                 count++;

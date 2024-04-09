@@ -106,3 +106,53 @@ struct Heartbeat
 typedef int RequestId;
 typedef std::string RequestJson;
 typedef std::map<RequestId, Request> SchwabRequestsIdMap;
+
+enum LevelOneEquityField : unsigned
+{
+    SYMBOL = 0,
+    BIDPRICE = 1,
+    ASKPRICE = 2,
+    LASTPRICE = 3,
+    BIDSIZE = 4,
+    ASKSIZE = 5,
+    ASKID = 6,
+    BIDID = 7,
+    TOTALVOLUME = 8,
+    LASTSIZE = 9,
+    TRADETIME = 10,
+    QUOTETIME = 11,
+    //there are more to add
+};
+
+static std::string toString(LevelOneEquityField field)
+{
+    return std::to_string(field);
+}
+
+struct LevelOneEquity
+{
+    std::string symbol;
+    double bidprice{-1};
+    double askprice{-1};
+    double lastprice{-1};
+    int bidsize{-1};
+    int asksize{-1};
+    std::string askid;
+    std::string bidid;
+    long totalvolume;
+    time_t tradetime;
+    time_t quotetime;
+};
+
+struct ChartEquity
+{
+    //minute timeframe
+    std::string symbol;
+    double open{-1};
+    double high{-1};
+    double low{-1};
+    double close{-1};
+    double volume{-1};
+    long sequence{-1};
+    time_t time; //in ms since epoch
+};
