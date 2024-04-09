@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(trading-api2-databank)
 
 add_library(${PROJECT_NAME} SHARED
-    ${CMAKE_CURRENT_LIST_DIR}/src/Databank.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/SchwabDatabank.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -19,5 +19,5 @@ target_link_libraries(${PROJECT_NAME}
 
 if(BUILD_TESTS)
     #add_subdirectory(schwab/mocks)
-    #add_subdirectory(schwab/ut)
+    add_subdirectory(ut)
 endif(BUILD_TESTS)

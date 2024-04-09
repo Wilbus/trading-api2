@@ -121,7 +121,7 @@ enum LevelOneEquityField : unsigned
     LASTSIZE = 9,
     TRADETIME = 10,
     QUOTETIME = 11,
-    //there are more to add
+    // there are more to add
 };
 
 static std::string toString(LevelOneEquityField field)
@@ -129,24 +129,29 @@ static std::string toString(LevelOneEquityField field)
     return std::to_string(field);
 }
 
+// TODO: SUBJECT TO CHANGE WHEN OFFICIAL SCHWAB STREAMING API DOCS AVAILABLE
 struct LevelOneEquity
 {
+    // use -1 as uninitialized value
+    // only values that change are received so we don't always receive all fields for each data
     std::string symbol;
     double bidprice{-1};
     double askprice{-1};
     double lastprice{-1};
+    double lastsize{-1};
     int bidsize{-1};
     int asksize{-1};
     std::string askid;
     std::string bidid;
-    long totalvolume;
-    time_t tradetime;
-    time_t quotetime;
+    long totalvolume{-1};
+    time_t tradetime{-1};
+    time_t quotetime{-1};
 };
 
+// TODO: SUBJECT TO CHANGE WHEN OFFICIAL SCHWAB STREAMING API DOCS AVAILABLE
 struct ChartEquity
 {
-    //minute timeframe
+    // minute timeframe
     std::string symbol;
     double open{-1};
     double high{-1};
@@ -154,5 +159,11 @@ struct ChartEquity
     double close{-1};
     double volume{-1};
     long sequence{-1};
-    time_t time; //in ms since epoch
+    time_t time; // in ms since epoch
+};
+
+struct SchwabServiceData
+{
+    std::map<std::string, LevelOneEquity> levelOneEquities;
+    std::map<std::string, ChartEquity> chartEquities;
 };
