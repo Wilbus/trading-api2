@@ -16,6 +16,7 @@ add_subdirectory(streaming)
 add_subdirectory(connection_manager)
 add_subdirectory(uWebSockets-v0.14)
 add_subdirectory(exchange-datatypes)
+add_subdirectory(databank)
 
 message(STATUS "BUILD_TESTS is ${BUILD_TESTS}")
 
