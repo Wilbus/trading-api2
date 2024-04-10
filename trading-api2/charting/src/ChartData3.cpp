@@ -53,7 +53,6 @@ void ChartData3::dumpToCSV(std::string& csvString) const
 
     csvString += indicatorKeys + "\n";
 
-
     for (unsigned i = 0; i < mcandles.size(); i++)
     {
         char databuffer[1024]; // might need to increase

@@ -15,17 +15,19 @@ SchwabDatabank::SchwabDatabank(std::shared_ptr<DataQueue<std::string>> streamque
 
 void SchwabDatabank::startParsing()
 {
-    std::thread parseThread(&SchwabDatabank::parseStreamQueue, this);
+    std::thread parseThread(&SchwabDatabank::parseStreamQueue, this, 0);
 }
 
-void SchwabDatabank::parseStreamQueue()
+void SchwabDatabank::parseStreamQueue(unsigned count)
 {
+    unsigned pops = 0;
     while (true)
     {
         if (!streamqueue->isEmpty())
         {
             SchwabServiceData data = parseServiceData(streamqueue->front());
             streamqueue->pop();
+            pops++;
 
             for (const auto& [symbol, chartEqu] : data.chartEquities)
             {
@@ -34,10 +36,12 @@ void SchwabDatabank::parseStreamQueue()
 
             for (const auto& [symbol, levelOneE] : data.levelOneEquities)
             {
-                // update levelone equities databank
-                (void)symbol;
-                (void)levelOneE;
+                updateLevelOneEquities(symbol, levelOneE);
             }
+        }
+        if (pops >= count && count != 0)
+        {
+            break;
         }
     }
 }
@@ -50,20 +54,25 @@ void SchwabDatabank::updateMinuteCharts(const std::string symbol, const ChartEqu
 
     if (minuteCharts.find(symbol) == minuteCharts.end())
     {
-        std::vector<MultiCandle> mcandles;
-        mcandles.push_back(MultiCandle(CandleStick(timestamp, minuteCandle.low, minuteCandle.high, minuteCandle.open,
-            minuteCandle.close, minuteCandle.volume)));
-        // ChartData2 needs refactoring to better accomadate being used in a map
-        // minuteCharts[symbol] = ChartData2(mcandles);
+        minuteCharts[symbol] = ChartData3();
+        minuteCharts[symbol].addMultiCandle(MultiCandle(CandleStick(timestamp, minuteCandle.low, minuteCandle.high,
+            minuteCandle.open, minuteCandle.close, minuteCandle.volume)));
     }
     else
     {
-        // minuteCharts[symbol].addCandle(CandleStick(timestamp, minuteCandle.low, minuteCandle.high, minuteCandle.open,
-        //     minuteCandle.close, minuteCandle.volume));
+        minuteCharts[symbol].addMultiCandle(MultiCandle(CandleStick(timestamp, minuteCandle.low, minuteCandle.high,
+            minuteCandle.open, minuteCandle.close, minuteCandle.volume)));
     }
 }
 
-ChartData2 SchwabDatabank::getChart(std::string symbol)
+void SchwabDatabank::updateLevelOneEquities(const std::string symbol, const LevelOneEquity levelOneE)
+{
+    std::lock_guard<std::mutex> lg(mtx);
+    (void)symbol;
+    (void)levelOneE;
+}
+
+ChartData3 SchwabDatabank::getChart(std::string symbol)
 {
     std::lock_guard<std::mutex> lg(mtx);
     if (minuteCharts.find(symbol) != minuteCharts.end())

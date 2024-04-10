@@ -18,15 +18,16 @@ public:
     SchwabDatabank(std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile = "");
 
     virtual void startParsing() override;
-    virtual ChartData2 getChart(std::string symbol) override;
+    virtual ChartData3 getChart(std::string symbol) override;
 
-private:
-    void parseStreamQueue();
+protected:
+    void parseStreamQueue(unsigned count);
     void updateMinuteCharts(const std::string symbol, const ChartEquity minuteCandle);
+    void updateLevelOneEquities(const std::string symbol, const LevelOneEquity levelOneE);
     std::shared_ptr<DataQueue<std::string>> streamqueue;
     std::string logfile;
     std::mutex mtx;
 
-    std::map<std::string, ChartData2> minuteCharts;
+    std::map<std::string, ChartData3> minuteCharts;
 };
 } // namespace databank
