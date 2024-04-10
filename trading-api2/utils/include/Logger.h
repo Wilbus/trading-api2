@@ -26,6 +26,8 @@ namespace utils {
     utils::Logger::loggerInst(filepath)->log2(true, typeid(this).name(), msg __VA_OPT__(, ) __VA_ARGS__)
 #define coutlog(filepath, msg, ...) \
     utils::Logger::loggerInst(filepath)->coutprint(typeid(this).name(), msg __VA_OPT__(, ) __VA_ARGS__)
+#define errorlogprint(filepath, msg, ...) \
+    utils::Logger::loggerInst(filepath)->error2(true, typeid(this).name(), msg __VA_OPT__(, ) __VA_ARGS__)
 
 class Logger
 {

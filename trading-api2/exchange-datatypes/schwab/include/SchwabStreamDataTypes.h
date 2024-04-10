@@ -160,6 +160,14 @@ struct ChartEquity
     double volume{-1};
     long sequence{-1};
     time_t time; // in ms since epoch
+
+    std::string toString() const
+    {
+        return "symbol: " + symbol + " open: " + std::to_string(open) + " high: " + std::to_string(high) +
+               " low: " + std::to_string(low) + " close: " + std::to_string(close) +
+               " volume: " + std::to_string(volume) + " sequence: " + std::to_string(sequence) +
+               " time: " + std::to_string(time);
+    }
 };
 
 struct SchwabServiceData
