@@ -21,6 +21,7 @@ std::vector<IndicatorValue> TALIB::copyOutToIndicatorValues(
         if (i < outBeg)
         {
             IndicatorValue ivalue;
+            ivalue.isNan = true;
             ivalue.timestamp = mcandles[i].timestamp;
             vals.push_back(ivalue);
         }

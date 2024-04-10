@@ -55,7 +55,7 @@ public:
         indicators[type] = data;
     }
 
-    IndicatorValue getInd(IndicatorType type)
+    IndicatorValue getInd(IndicatorType type) const
     {
         auto it = indicators.find(type);
         if (it == indicators.end())
@@ -64,17 +64,16 @@ public:
             throw std::runtime_error(msg.c_str());
         }
 
-        return std::any_cast<IndicatorValue>(it->second);
+        return it->second;
     }
 
-    template <typename T>
-    T getIndByName(std::string name)
+    IndicatorValue getIndByName(std::string name) const
     {
         for (const auto& it : indicators)
         {
             if (it.first.name == name)
             {
-                return std::any_cast<T>(it.second);
+                return it.second;
             }
         }
         std::string msg = "getIndByName() indicatorname: " + name + " not found in multicandle\n";
@@ -93,6 +92,6 @@ public:
     }
 
 private:
-    std::map<IndicatorType, std::any> indicators;
+    std::map<IndicatorType, IndicatorValue> indicators;
 };
 } // namespace charting
