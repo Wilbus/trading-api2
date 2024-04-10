@@ -10,7 +10,15 @@ ChartData3::ChartData3()
 
 void ChartData3::addMultiCandles(std::vector<MultiCandle> mcandlevec)
 {
+    // sort the vector from least to greatest timestamp just in case we pass something out of order
+    std::sort(mcandlevec.begin(), mcandlevec.end(),
+        [](const MultiCandle& a, const MultiCandle& b) { return a.timestamp < b.timestamp; });
+
     mcandles.insert(mcandles.end(), mcandlevec.begin(), mcandlevec.end());
+
+    // finally, sort the whole mcandle vector after just in case
+    std::sort(mcandles.begin(), mcandles.end(),
+        [](const MultiCandle& a, const MultiCandle& b) { return a.timestamp < b.timestamp; });
 }
 
 void ChartData3::addMultiCandle(MultiCandle mcandle)
@@ -27,7 +35,7 @@ std::vector<MultiCandle> ChartData3::getMultiCandles() const
     return mcandles;
 }
 
-void ChartData3::dumpToCSV(std::string csvfilePath) const
+void ChartData3::dumpToCSV(std::string& csvString) const
 {
     char csvkeybuffer[1024];
 
@@ -35,39 +43,38 @@ void ChartData3::dumpToCSV(std::string csvfilePath) const
 
     auto indicatorKeyVec = mcandles[0].listIndicators();
 
-    std::string ohlcKeys = "timestamp,price_open,price_high,price_low,price_close,volume,";
+    csvString.clear();
+    csvString += "timestamp,price_open,price_high,price_low,price_close,volume,";
 
     for (unsigned i = 0; i < indicatorKeyVec.size(); i++)
     {
         indicatorKeys += indicatorKeyVec[i].name + ",";
     }
 
-    std::string finalCsvKey = ohlcKeys + indicatorKeys + "\n";
-    // std::cout << finalCsvKey;
-    std::sprintf(csvkeybuffer, "%s", finalCsvKey.c_str());
+    csvString += indicatorKeys + "\n";
 
-    auto filewriter = FileWriter(csvfilePath, true, FileExt::CSV, csvkeybuffer);
 
     for (unsigned i = 0; i < mcandles.size(); i++)
     {
-        char databuffer[512]; // might need to increase
+        char databuffer[1024]; // might need to increase
 
-        snprintf(databuffer, 512, "%ld,%.02f,%.02f,%.02f,%.02f,%.09f,", mcandles[i].timestamp, mcandles[i].price_open,
+        snprintf(databuffer, 1024, "%ld,%.02f,%.02f,%.02f,%.02f,%.09f,", mcandles[i].timestamp, mcandles[i].price_open,
             mcandles[i].price_high, mcandles[i].price_low, mcandles[i].price_close, mcandles[i].volume);
-        filewriter.write(databuffer);
+
+        csvString += std::string(databuffer);
 
         for (unsigned j = 0; j < indicatorKeyVec.size(); j++)
         {
-            char indicatorbuffer[128];
+            char indicatorbuffer[1024];
             auto indicatorValue = mcandles.at(i).getIndByName(indicatorKeyVec[j].name);
             if (!indicatorValue.isNan)
-                snprintf(indicatorbuffer, 128, "%.02f,", indicatorValue.value);
+                snprintf(indicatorbuffer, 1024, "%.02f,", indicatorValue.value);
             else
-                snprintf(indicatorbuffer, 128, ",");
+                snprintf(indicatorbuffer, 1024, ",");
 
-            filewriter.write(indicatorbuffer);
+            csvString += std::string(indicatorbuffer);
         }
-        filewriter.write("\n");
+        csvString += "\n";
     }
 }
 

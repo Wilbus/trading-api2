@@ -20,7 +20,7 @@ public:
 
     std::vector<MultiCandle> getMultiCandles() const;
 
-    void dumpToCSV(std::string csvfilePath) const;
+    void dumpToCSV(std::string& csvString) const;
 
     void addIndicator(IndicatorType indicatortype);
 
