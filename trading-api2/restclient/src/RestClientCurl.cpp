@@ -116,10 +116,21 @@ std::string RestClientCurl::getResponse(const std::string path, const std::set<s
         throw std::runtime_error("invalid curlcode");
     }
 
-    code = mycurl_easy_setopt_verbose(curl, true); // TODO: make this configurable
-    if (!checkCURLcode(code))
+    if (debugFileFolder.length() == 0)
     {
-        throw std::runtime_error("invalid curlcode");
+        code = mycurl_easy_setopt_verbose(curl, true); // TODO: make this configurable
+        if (!checkCURLcode(code))
+        {
+            throw std::runtime_error("invalid curlcode");
+        }
+    }
+    else
+    {
+        code = mycurl_easy_setopt_verbose(curl, false); // TODO: make this configurable
+        if (!checkCURLcode(code))
+        {
+            throw std::runtime_error("invalid curlcode");
+        }
     }
 
     code = mycurl_easy_setopt_writedata(curl, &readbuffer);

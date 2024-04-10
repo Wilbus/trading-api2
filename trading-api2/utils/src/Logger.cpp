@@ -30,7 +30,7 @@ Logger* Logger::loggerInst(std::string logFilePath)
 
 void Logger::error(const char* fmt, ...)
 {
-    // std::lock_guard<std::mutex> lg(mtx);
+    std::lock_guard<std::mutex> lg(mtx);
 
     char buffer[1024];
     va_list args;
@@ -46,7 +46,7 @@ void Logger::error(const char* fmt, ...)
 
 void Logger::error2(bool cout, std::string classname, const char* fmt, ...)
 {
-    // std::lock_guard<std::mutex> lg(mtx);
+    std::lock_guard<std::mutex> lg(mtx);
 
     char buffer[1024];
     va_list args;
@@ -65,7 +65,7 @@ void Logger::error2(bool cout, std::string classname, const char* fmt, ...)
 
 void Logger::log(const char* fmt, ...)
 {
-    // std::lock_guard<std::mutex> lg(mtx);
+    std::lock_guard<std::mutex> lg(mtx);
 
     char buffer[1024];
     va_list args;
@@ -82,7 +82,7 @@ void Logger::log(const char* fmt, ...)
 /*SomeClass fmtmessage*/
 void Logger::log2(bool cout, std::string classname, const char* fmt, ...)
 {
-    // std::lock_guard<std::mutex> lg(mtx);
+    std::lock_guard<std::mutex> lg(mtx);
     char buffer[1024];
     va_list args;
     va_start(args, fmt);
@@ -101,7 +101,7 @@ void Logger::log2(bool cout, std::string classname, const char* fmt, ...)
 /*SomeClass fmtmessage*/
 void Logger::logprint(std::string classname, const char* fmt, ...)
 {
-    // std::lock_guard<std::mutex> lg(mtx);
+    std::lock_guard<std::mutex> lg(mtx);
     char buffer[1024];
     va_list args;
     va_start(args, fmt);
@@ -119,7 +119,7 @@ void Logger::logprint(std::string classname, const char* fmt, ...)
 /*SomeClass fmtmessage*/
 void Logger::coutprint(std::string classname, const char* fmt, ...)
 {
-    // std::lock_guard<std::mutex> lg(mtx);
+    std::lock_guard<std::mutex> lg(mtx);
     char buffer[1024];
     va_list args;
     va_start(args, fmt);
@@ -139,7 +139,7 @@ std::string Logger::buildString(bool err, std::string buffer)
     std::string message;
     std::stringstream ss;
     ss << threadId << " "
-       << "<" << timefuncs::getCurrentLocalTimeStrNs(-6) << "> ";
+       << "<" << timefuncs::getCurrentLocalTimeStrNs(timefuncs::getLocalTimezone()) << "> ";
     if (err)
     {
         ss << "ERR, ";

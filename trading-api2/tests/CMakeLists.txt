@@ -1,1 +1,2 @@
 add_subdirectory(endpoint_tests)
+add_subdirectory(databank_runtests)

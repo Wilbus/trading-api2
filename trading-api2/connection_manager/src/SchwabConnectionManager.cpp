@@ -14,11 +14,12 @@ SchwabConnectionManager::SchwabConnectionManager(
     infologprint(logfile, "%s init", __func__);
 }
 // production
-SchwabConnectionManager::SchwabConnectionManager(std::string configfolder)
+SchwabConnectionManager::SchwabConnectionManager(std::string configfolder, std::string logfile)
+    : logfile(logfile)
 {
     infologprint(logfile, "%s init", __func__);
     configs = std::make_shared<SchwabConfigs>(configfolder);
-    sclient = std::make_shared<SchwabClient>(configs, std::make_shared<RestClientCurl>());
+    sclient = std::make_shared<SchwabClient>(configs, std::make_shared<RestClientCurl>(), logfile);
 }
 
 // make this configurable

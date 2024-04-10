@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <mutex>
+#include <thread>
 
 namespace databank {
 
@@ -28,6 +29,7 @@ protected:
     std::string logfile;
     std::mutex mtx;
 
+    std::thread parsingThread;
     std::map<std::string, ChartData3> minuteCharts;
 };
 } // namespace databank

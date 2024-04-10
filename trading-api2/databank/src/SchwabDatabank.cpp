@@ -16,7 +16,7 @@ SchwabDatabank::SchwabDatabank(std::shared_ptr<DataQueue<std::string>> streamque
 void SchwabDatabank::startParsing()
 {
     infologprint(logfile, "%s: start parsing thread", __func__);
-    std::thread parseThread(&SchwabDatabank::parseStreamQueue, this, 0);
+    parsingThread = std::thread(&SchwabDatabank::parseStreamQueue, this, 0);
 }
 
 void SchwabDatabank::parseStreamQueue(unsigned count)
@@ -58,6 +58,9 @@ void SchwabDatabank::updateMinuteCharts(const std::string symbol, const ChartEqu
         errorlogprint(logfile, "%s: negative value in minuteCandle: %s", __func__, minuteCandle.toString().c_str());
         return;
     }
+
+    infologprint(
+        logfile, "%s:ADD symbol: %s, minuteCandle: %s", __func__, symbol.c_str(), minuteCandle.toString().c_str());
 
     uint64_t timestamp =
         static_cast<uint64_t>(minuteCandle.time); // fractional part is lost but that is ok for timestmap

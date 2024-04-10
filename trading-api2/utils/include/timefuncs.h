@@ -28,6 +28,24 @@ static std::string unixTimeToString(std::time_t& t, std::string format)
     return buff.str();
 }
 
+// return true if daylight savings is in effect
+static bool isDaylightSavings()
+{
+    std::time_t t = std::time(nullptr);
+    std::tm tmtime = *std::gmtime(&t);
+    return tmtime.tm_isdst;
+}
+
+// return int value representing the local timezone offset in
+// this seems to reliable and includes daylight savings
+static int getLocalTimezone()
+{
+    time_t t = time(NULL);
+    tm lt;
+    localtime_r(&t, &lt);
+    return lt.tm_gmtoff / 3600;
+}
+
 static std::string getCurrentLocalTimeStrNs(int64_t hours)
 {
     auto t = std::chrono::high_resolution_clock::now();
