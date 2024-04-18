@@ -11,6 +11,8 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} PUBLIC
     trading-api2-databank
     trading-api2-exchange-datatypes-stubfiles
+    trading-api2-database-handlers-mocks
+    trading-api2-logging-mocks
     trading-api2-utils-mocks
     gtest_main
     gmock

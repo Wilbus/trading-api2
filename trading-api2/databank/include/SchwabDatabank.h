@@ -2,6 +2,7 @@
 
 #include "DataQueue.h"
 #include "IDatabank.h"
+#include "IDatabaseHandler.h"
 #include "SchwabStreamDataTypes.h"
 
 #include <memory>
@@ -12,11 +13,13 @@ namespace databank {
 
 using namespace utils;
 using namespace charting;
+using namespace databasehandlers;
 
 class SchwabDatabank : public IDatabank
 {
 public:
-    SchwabDatabank(std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile = "");
+    SchwabDatabank(std::shared_ptr<IDatabaseHandler> dbHandler, std::shared_ptr<DataQueue<std::string>> streamqueue,
+        std::string logfile = "");
 
     virtual void startParsing() override;
     virtual ChartData3 getChart(std::string symbol) override;
@@ -24,9 +27,11 @@ public:
 protected:
     void parseStreamQueue(unsigned count);
     void updateMinuteCharts(const std::string symbol, const ChartEquity minuteCandle);
+    void pushCandleToDb(const std::string symbol, const CandleStick candle);
     void updateLevelOneEquities(const std::string symbol, const LevelOneEquity levelOneE);
     std::shared_ptr<DataQueue<std::string>> streamqueue;
     std::string logfile;
+    std::shared_ptr<IDatabaseHandler> dbHandler;
     std::mutex mtx;
 
     std::thread parsingThread;

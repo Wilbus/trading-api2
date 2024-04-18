@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
     trading-api2-restclient
+    trading-api2-logging-mocks
     trading-api2-utils-mocks
     gtest_main
     gmock

@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "SchwabStreamParser.h"
 #include "SchwabStreamReqGenerator.h"
+#include "timefuncs.h"
 
 #include <iostream>
 #include <sstream>
@@ -85,7 +86,9 @@ void SchwabStreamHandler::onMessageCallback(
     Heartbeat heartbeat = parseHeartbeat(text);
     if (heartbeat.timestamp > 0)
     {
-        infologprint(logfile, "%s: heartbeat timestamp recved: %ld", __func__, heartbeat.timestamp);
+        time_t inSeconds = heartbeat.timestamp / 1000;
+        infologprint(logfile, "%s: heartbeat timestamp recved: %s", __func__,
+            timefuncs::unixTimeToString(inSeconds, "%Y-%m-%dT%H:%M:%S").c_str());
         lastReceivedHeartbeat = heartbeat.timestamp;
     }
     std::vector<Response> responses = schwabStreamParser::parseResponse(text);

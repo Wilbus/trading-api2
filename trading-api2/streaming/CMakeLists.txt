@@ -12,6 +12,7 @@ target_include_directories(trading-api2-streaming PUBLIC
 
 target_link_libraries(${PROJECT_NAME}
     trading-api2-exchange-datatypes
+    trading-api2-logging
     trading-api2-utils
     uWebSockets-v0.14
 )

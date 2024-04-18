@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
     trading-api2-databank
+    trading-api2-database-handlers
     trading-api2-exchange
     trading-api2-restclient
     trading-api2-streaming

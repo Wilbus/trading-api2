@@ -1,14 +1,17 @@
 #include "SchwabDatabank.h"
 
 #include "Logger.h"
+#include "SchwabDatabaseHandler.h"
 #include "SchwabStreamDataParser.h"
 
 namespace databank {
 using namespace schwabStreamParser;
 
-SchwabDatabank::SchwabDatabank(std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile)
+SchwabDatabank::SchwabDatabank(std::shared_ptr<IDatabaseHandler> dbHandler,
+    std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile)
     : streamqueue(streamqueue)
     , logfile(logfile)
+    , dbHandler(dbHandler)
 {
     infologprint(logfile, "%s: init", __func__);
 }
@@ -65,17 +68,24 @@ void SchwabDatabank::updateMinuteCharts(const std::string symbol, const ChartEqu
     uint64_t timestamp =
         static_cast<uint64_t>(minuteCandle.time); // fractional part is lost but that is ok for timestmap
 
+    CandleStick candleStick(
+        timestamp, minuteCandle.low, minuteCandle.high, minuteCandle.open, minuteCandle.close, minuteCandle.volume);
+    pushCandleToDb(symbol, candleStick);
+
     if (minuteCharts.find(symbol) == minuteCharts.end())
     {
         minuteCharts[symbol] = ChartData3();
-        minuteCharts[symbol].addMultiCandle(MultiCandle(CandleStick(timestamp, minuteCandle.low, minuteCandle.high,
-            minuteCandle.open, minuteCandle.close, minuteCandle.volume)));
+        minuteCharts[symbol].addMultiCandle(MultiCandle(candleStick));
     }
     else
     {
-        minuteCharts[symbol].addMultiCandle(MultiCandle(CandleStick(timestamp, minuteCandle.low, minuteCandle.high,
-            minuteCandle.open, minuteCandle.close, minuteCandle.volume)));
+        minuteCharts[symbol].addMultiCandle(MultiCandle(candleStick));
     }
+}
+
+void SchwabDatabank::pushCandleToDb(const std::string symbol, const CandleStick candle)
+{
+    dbHandler->pushCandle(symbol, candle);
 }
 
 void SchwabDatabank::updateLevelOneEquities(const std::string symbol, const LevelOneEquity levelOneE)

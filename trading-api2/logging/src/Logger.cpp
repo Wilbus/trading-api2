@@ -32,7 +32,7 @@ void Logger::error(const char* fmt, ...)
 {
     std::lock_guard<std::mutex> lg(mtx);
 
-    char buffer[1024];
+    char buffer[65536];
     va_list args;
     va_start(args, fmt);
     vsprintf(buffer, fmt, args);
@@ -48,7 +48,7 @@ void Logger::error2(bool cout, std::string classname, const char* fmt, ...)
 {
     std::lock_guard<std::mutex> lg(mtx);
 
-    char buffer[1024];
+    char buffer[65536];
     va_list args;
     va_start(args, fmt);
     vsprintf(buffer, fmt, args);
@@ -67,7 +67,7 @@ void Logger::log(const char* fmt, ...)
 {
     std::lock_guard<std::mutex> lg(mtx);
 
-    char buffer[1024];
+    char buffer[65536];
     va_list args;
     va_start(args, fmt);
     vsprintf(buffer, fmt, args);
@@ -83,7 +83,7 @@ void Logger::log(const char* fmt, ...)
 void Logger::log2(bool cout, std::string classname, const char* fmt, ...)
 {
     std::lock_guard<std::mutex> lg(mtx);
-    char buffer[1024];
+    char buffer[65536];
     va_list args;
     va_start(args, fmt);
     vsprintf(buffer, fmt, args);
@@ -102,7 +102,7 @@ void Logger::log2(bool cout, std::string classname, const char* fmt, ...)
 void Logger::logprint(std::string classname, const char* fmt, ...)
 {
     std::lock_guard<std::mutex> lg(mtx);
-    char buffer[1024];
+    char buffer[65536];
     va_list args;
     va_start(args, fmt);
     vsprintf(buffer, fmt, args);
@@ -120,7 +120,7 @@ void Logger::logprint(std::string classname, const char* fmt, ...)
 void Logger::coutprint(std::string classname, const char* fmt, ...)
 {
     std::lock_guard<std::mutex> lg(mtx);
-    char buffer[1024];
+    char buffer[65536];
     va_list args;
     va_start(args, fmt);
     vsprintf(buffer, fmt, args);

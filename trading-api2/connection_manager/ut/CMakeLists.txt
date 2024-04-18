@@ -14,6 +14,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     trading-api2-exchange-mocks
     trading-api2-restclient-mocks
     trading-api2-configs-mocks
+    trading-api2-logging-mocks
     trading-api2-utils-mocks
     gtest_main
     gmock

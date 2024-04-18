@@ -1,3 +1,4 @@
+#include "DatabaseHandlerMock.h"
 #include "SchwabDatabank.h"
 #include "schwabStreamResponseValues.h"
 
@@ -6,6 +7,7 @@
 #include <thread>
 
 using namespace databank;
+using namespace databasehandlers::mocks;
 
 class SchwabDatabankTest : public ::testing::Test
 {
@@ -13,8 +15,9 @@ public:
     class SchwabDatabankTester : public SchwabDatabank
     {
     public:
-        SchwabDatabankTester(std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile = "")
-            : SchwabDatabank(streamqueue, logfile)
+        SchwabDatabankTester(std::shared_ptr<IDatabaseHandler> dbHandler,
+            std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile = "")
+            : SchwabDatabank(dbHandler, streamqueue, logfile)
         {
         }
 
@@ -26,8 +29,9 @@ public:
 
     SchwabDatabankTest()
     {
+        dbHandler = std::make_shared<DatabaseHandlerMock>();
         streamqueue = std::make_shared<DataQueue<std::string>>();
-        databankTester = std::make_shared<SchwabDatabankTester>(streamqueue);
+        databankTester = std::make_shared<SchwabDatabankTester>(dbHandler, streamqueue);
     }
 
     void pushStreamData(unsigned pushes, std::string data)
@@ -41,10 +45,24 @@ public:
 protected:
     std::shared_ptr<SchwabDatabankTester> databankTester;
     std::shared_ptr<DataQueue<std::string>> streamqueue;
+    std::shared_ptr<DatabaseHandlerMock> dbHandler;
 };
 
 TEST_F(SchwabDatabankTest, testStartParsing)
 {
+    EXPECT_CALL(*dbHandler.get(), pushCandle("TGT", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("NVDA", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("ORCL", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("TSM", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("QQQ", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("MSFT", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("OXY", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("CAVA", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("XOM", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("AMD", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("SPY", testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*dbHandler.get(), pushCandle("DELL", testing::_)).WillRepeatedly(testing::Return());
+
     std::thread pushThread(&SchwabDatabankTest::pushStreamData, this, 10, bigLevelOneDataResponse);
     databankTester->parseStreamQueue(10);
 

@@ -36,7 +36,7 @@ protected:
 TEST_F(TimerTest, timerTest)
 {
     std::function<void()> callback = std::bind(&TimerTest::testCallback, this);
-    size_t waitMs = 5000;
+    size_t waitMs = 1000;
 
     time_t beforeTimer = nowMs();
     TimerTester(waitMs, callback);
