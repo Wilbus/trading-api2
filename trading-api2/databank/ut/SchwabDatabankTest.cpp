@@ -50,6 +50,7 @@ protected:
 
 TEST_F(SchwabDatabankTest, testStartParsing)
 {
+    EXPECT_CALL(*dbHandler.get(), pushJsonData(testing::_)).WillRepeatedly(testing::Return());
     EXPECT_CALL(*dbHandler.get(), pushCandle("TGT", testing::_)).WillRepeatedly(testing::Return());
     EXPECT_CALL(*dbHandler.get(), pushCandle("NVDA", testing::_)).WillRepeatedly(testing::Return());
     EXPECT_CALL(*dbHandler.get(), pushCandle("ORCL", testing::_)).WillRepeatedly(testing::Return());

@@ -58,4 +58,33 @@ TEST_F(InfluxDbTests, PushPullTest)
     EXPECT_EQ(std::get<std::string>(firstResult.at("field2")), "test data");
     EXPECT_EQ(std::get<std::string>(firstResult.at("testfield")), "test field data");
 }
+
+TEST_F(InfluxDbTests, PushPullSpecifiedTimestampTest)
+{
+    influxDbPusher = std::make_shared<InfluxDbPusher>("influxdbtests_rawstring", 1);
+
+    std::string pointName = "testpoints_timestamp";
+    FieldValueMap valueMap;
+    valueMap["field1"] = 1;
+    int64_t timestampMs = 1713398340000;
+
+    for(unsigned i = 0; i < 5; i ++)
+    {
+        influxDbPusher->pushRaw(timestampMs, pointName, valueMap);
+        influxDbPusher->flushBatch();
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    auto fromTimeS = (timestampMs / 1000) - 1;
+    auto toTimeS = fromTimeS + 1;
+    auto fromTimeStr = unixTimeToString(fromTimeS, "%Y-%m-%d %H:%M:%S");
+    auto toTimeStr = unixTimeToString(toTimeS, "%Y-%m-%d %H:%M:%S");
+
+    auto result = influxDbPusher->pullRaw(pointName, fromTimeStr, toTimeStr);
+    EXPECT_EQ(result.size(), 1);
+    auto firstResult = result[0];
+
+    EXPECT_EQ(std::get<double>(firstResult.at("field1")), 1);
+}
 #endif

@@ -30,7 +30,10 @@ void SchwabDatabank::parseStreamQueue(unsigned count)
     {
         if (!streamqueue->isEmpty())
         {
-            SchwabServiceData data = parseServiceData(streamqueue->front());
+            auto jsondata = streamqueue->front();
+            pushJsonDataToDb(jsondata);
+
+            SchwabServiceData data = parseServiceData(jsondata);
             streamqueue->pop();
             pops++;
 
@@ -49,6 +52,11 @@ void SchwabDatabank::parseStreamQueue(unsigned count)
             break;
         }
     }
+}
+
+void SchwabDatabank::pushJsonDataToDb(const std::string jsondata)
+{
+    dbHandler->pushJsonData(jsondata);
 }
 
 void SchwabDatabank::updateMinuteCharts(const std::string symbol, const ChartEquity minuteCandle)

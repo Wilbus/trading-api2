@@ -31,7 +31,7 @@ TEST_F(SchwabDatabaseHandlerTest, pushCandleTest)
     candle.price_low = 4.0;
     candle.price_close = 3.0;
     candle.volume = 5.0;
-    candle.timestamp = 1234;
+    candle.timestamp = 1713398340000;
 
     FieldValueMap expectedValueMap;
     expectedValueMap["open"] = 1.0;
@@ -41,7 +41,7 @@ TEST_F(SchwabDatabaseHandlerTest, pushCandleTest)
     expectedValueMap["volume"] = 5.0;
     expectedValueMap["timestamp"] = static_cast<uint64_t>(1234);
 
-    EXPECT_CALL(InfluxDbPusherMock::inst(), pushRaw("testSymbol", expectedValueMap));
+    EXPECT_CALL(InfluxDbPusherMock::inst(), pushRaw(1713398340000, "testSymbol", expectedValueMap));
 
     dbHandler = std::make_shared<SchwabDatabaseHandler>("testdb");
     dbHandler->pushCandle("testSymbol", candle);

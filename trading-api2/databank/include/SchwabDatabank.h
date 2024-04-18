@@ -26,6 +26,7 @@ public:
 
 protected:
     void parseStreamQueue(unsigned count);
+    void pushJsonDataToDb(const std::string jsondata);
     void updateMinuteCharts(const std::string symbol, const ChartEquity minuteCandle);
     void pushCandleToDb(const std::string symbol, const CandleStick candle);
     void updateLevelOneEquities(const std::string symbol, const LevelOneEquity levelOneE);
