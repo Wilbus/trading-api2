@@ -19,6 +19,11 @@ void ChartData3::addMultiCandles(std::vector<MultiCandle> mcandlevec)
     // finally, sort the whole mcandle vector after just in case
     std::sort(mcandles.begin(), mcandles.end(),
         [](const MultiCandle& a, const MultiCandle& b) { return a.timestamp < b.timestamp; });
+
+    for(const auto& indicatorType : indicatorTypes)
+    {
+        updateIndicatorsData(indicatorType);
+    }
 }
 
 void ChartData3::addMultiCandle(MultiCandle mcandle)
@@ -28,6 +33,11 @@ void ChartData3::addMultiCandle(MultiCandle mcandle)
 
     std::sort(mcandles.begin(), mcandles.end(),
         [](const MultiCandle& a, const MultiCandle& b) { return a.timestamp < b.timestamp; });
+
+    for(const auto& indicatorType : indicatorTypes)
+    {
+        updateIndicatorsData(indicatorType);
+    }
 }
 
 std::vector<MultiCandle> ChartData3::getMultiCandles() const
@@ -78,6 +88,12 @@ void ChartData3::dumpToCSV(std::string& csvString) const
 }
 
 void ChartData3::addIndicator(IndicatorType indicatortype)
+{
+    indicatorTypes.push_back(indicatortype);
+    updateIndicatorsData(indicatortype);
+}
+
+void ChartData3::updateIndicatorsData(IndicatorType indicatortype)
 {
     std::vector<IndicatorValue> indicatorsVec;
     switch (indicatortype.type)
