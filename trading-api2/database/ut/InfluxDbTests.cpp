@@ -15,6 +15,14 @@ public:
     {
     }
 
+    void SetUp()
+    {
+        influxDbPusher = std::make_shared<InfluxDbPusher>(
+        "devtesterv1", "123456789", "192.168.0.130:8086",
+        "dev-testing-v1",
+        "N-q3KQNK6HEmUqj2bDwflK_08BQINRLTLlGsZhBrjQyFIQjVAK9AgCZtDjPEHD7IF7AWh20PPhgwAOaSXxyswQ==", 1);
+    }
+
 protected:
     std::shared_ptr<InfluxDbPusher> influxDbPusher;
 };
@@ -22,11 +30,12 @@ protected:
 // push data at current time, then pull data from some short seconds ago to current time
 //  as of 4/17/2024 this test works. Disable so we don't hit the influxdb server and waste db space when running other
 //  tests
+// as of 5/29/2024 we are now using influxdb 2.0
+
+// data takes a couple seconds to minute to show up in database sometimes
 #if 0
 TEST_F(InfluxDbTests, PushPullTest)
 {
-    influxDbPusher = std::make_shared<InfluxDbPusher>("influxdbtests_rawstring", 1);
-
     std::string pointName = "testpoints6";
     FieldValueMap valueMap;
     valueMap["field1"] = 1;
@@ -43,10 +52,10 @@ TEST_F(InfluxDbTests, PushPullTest)
     influxDbPusher->pushRaw(nowMs, pointName, valueMap);
     influxDbPusher->flushBatch();
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    auto fromTimeS = (utils::nowMs() / 1000) - 1;
-    auto toTimeS = fromTimeS + 1;
+    auto fromTimeS = (nowMs / 1000) - 60;
+    auto toTimeS = fromTimeS + 60;
     auto fromTimeStr = unixTimeToString(fromTimeS, "%Y-%m-%d %H:%M:%S");
     auto toTimeStr = unixTimeToString(toTimeS, "%Y-%m-%d %H:%M:%S");
 
@@ -61,8 +70,6 @@ TEST_F(InfluxDbTests, PushPullTest)
 
 TEST_F(InfluxDbTests, PushPullSpecifiedTimestampTest)
 {
-    influxDbPusher = std::make_shared<InfluxDbPusher>("influxdbtests_rawstring", 1);
-
     std::string pointName = "testpoints_timestamp";
     FieldValueMap valueMap;
     valueMap["field1"] = 1;

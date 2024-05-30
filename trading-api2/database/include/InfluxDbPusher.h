@@ -1,6 +1,7 @@
 #pragma once
 
 #include <InfluxDBFactory.h>
+#include <InfluxDBBuilder.h>
 #include <Logger.h>
 #include <unordered_map>
 
@@ -42,6 +43,8 @@ class InfluxDbPusher
 {
 public:
     InfluxDbPusher(std::string dbname, unsigned batchSize = 100, std::string logfile = "");
+    // as of 5/29/2024 we are now using influxdb 2.0
+    InfluxDbPusher(std::string user, std::string pass, std::string host, std::string dbname, std::string authToken, unsigned batchSize = 100, std::string logfile = "");
 
     void setBatchSize(unsigned size);
 
@@ -57,6 +60,13 @@ public:
         const std::string& pointName, const std::string& fromTime, const std::string& toTime);
 
 private:
+    std::string buildConnectionURI(std::string user, std::string pass, std::string host, std::string dbname)
+    {
+        std::string uri = "http://" + user + ":" + pass + "@" + host + "?db=" + dbname;
+        std::cout << uri << "\n";
+        return uri;
+    }
+
     std::unique_ptr<influxdb::InfluxDB> db;
     std::string logfile;
 };

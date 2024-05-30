@@ -38,7 +38,7 @@ TEST_F(ChartData3Test, testAddMultiCandle)
     EXPECT_EQ(3, mcandles[2].timestamp);
     EXPECT_EQ(4, mcandles[3].timestamp);
 
-    EXPECT_EQ(4, chartData.getBack(0));
+    EXPECT_EQ(4, chartData.getBack(0).timestamp);
 }
 
 TEST_F(ChartData3Test, testAddMultiCandles)

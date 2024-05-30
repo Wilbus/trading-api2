@@ -2,7 +2,7 @@
 
 #include "DataQueue.h"
 
-#include <uWS/uWS.h>
+#include "uWS.h"
 
 #include <set>
 #include <string>

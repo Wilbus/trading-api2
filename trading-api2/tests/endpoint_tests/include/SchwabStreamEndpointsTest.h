@@ -19,9 +19,9 @@ public:
     SchwabStreamEndpointsTest()
     {
         restclient =
-            std::make_shared<RestClientCurl>("/datadisk0/sambashare0/coding/trading-api2-endpoint-test-logs/", logfile);
+            std::make_shared<RestClientCurl>("/home/wilbus/smbshare0/sambashare0/coding/trading-api2-endpoint-test-logs/", logfile);
 
-        configs = std::make_shared<SchwabConfigs>("/datadisk0/sambashare0/coding/configs/");
+        configs = std::make_shared<SchwabConfigs>("/home/wilbus/smbshare0/sambashare0/coding/configs/");
         sclient = std::make_shared<SchwabClient>(configs, restclient, logfile);
         manager = std::make_shared<SchwabConnectionManager>(configs, sclient, logfile);
     }

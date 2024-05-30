@@ -11,16 +11,16 @@ public:
     SchwabEndpointsTest()
     {
         restclient =
-            std::make_shared<RestClientCurl>("/datadisk0/sambashare0/coding/trading-api2-endpoint-test-logs/", logfile);
+            std::make_shared<RestClientCurl>("/home/wilbus/smbshare0/sambashare0/coding/trading-api2-endpoint-test-logs/", logfile);
 
-        configs = std::make_shared<SchwabConfigs>("/datadisk0/sambashare0/coding/configs/");
+        configs = std::make_shared<SchwabConfigs>("/home/wilbus/smbshare0/sambashare0/coding/configs/");
         sclient = std::make_shared<SchwabClient>(configs, restclient, logfile);
     }
 
     std::shared_ptr<RestClientCurl> restclient;
     std::shared_ptr<SchwabConfigs> configs;
     std::shared_ptr<SchwabClient> sclient;
-    std::string logfile = "/datadisk0/sambashare0/coding/trading-api2-endpoint-test-logs/endpointTestLog.txt";
+    std::string logfile = "/home/wilbus/smbshare0/sambashare0/coding/trading-api2-endpoint-test-logs/endpointTestLog.txt";
 };
 
 TEST_F(SchwabEndpointsTest, GetQuotes)

@@ -22,6 +22,23 @@ InfluxDbPusher::InfluxDbPusher(std::string dbname, unsigned batchSize, std::stri
     }
 }
 
+// as of 5/29/2024 we are now using influxdb 2.0
+InfluxDbPusher::InfluxDbPusher(std::string user, std::string pass, std::string host, std::string dbname, std::string authToken, unsigned batchSize, std::string logfile)
+    : db(std::move(influxdb::InfluxDBBuilder::http(buildConnectionURI(user, pass, host, dbname))
+            .setAuthToken(authToken).connect()))
+    , logfile(logfile)
+{
+    try
+    {
+        db->createDatabaseIfNotExists();
+        db->batchOf(batchSize);
+    }
+    catch (const std::exception& e)
+    {
+        errorlogprint(logfile, "%s InfluxDbPusher wasn't initialized! Exception caught: %s", __func__, e.what());
+    }
+}
+
 InfluxDbPusher::~InfluxDbPusher()
 {
     db->flushBatch();

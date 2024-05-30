@@ -10,7 +10,7 @@
 
 namespace schwabErrors {
 
-ErrorSource parseErrorSource(const rapidjson::Value& errSourceObj)
+ErrorSource parseErrorSource(const rapidjson::GenericObject<true, rapidjson::Value>& errSourceObj)
 {
     ErrorSource source;
     if (errSourceObj.HasMember("pointer") && errSourceObj["pointer"].IsArray())

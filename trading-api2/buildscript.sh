@@ -8,8 +8,8 @@ then
     rm -rf output/
     mkdir output/
     cmake -DBUILD_TESTS=$BUILD_TESTS -S . -B output/
-    cmake --build output/ -j 6
+    cmake --build output/ -j 16
 else
     echo "normal build\n"
-    cmake --build output/ -j 6
+    cmake --build output/ -j 16
 fi

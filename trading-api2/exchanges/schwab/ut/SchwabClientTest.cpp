@@ -365,7 +365,7 @@ TEST_F(SchwabClientTest, getPriceHistoryCaughtException)
     /*'https://api.schwabapi.com/marketdata/v1/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate=1710954774000&needExtendedHoursData=true&needPreviousClose=true'*/
     std::string expectedPath =
         "/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
-        "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
+        "1710892800000&needExtendedHoursData=true&needPreviousClose=true";
 
     expectValidAccessToken();
 
@@ -386,7 +386,7 @@ TEST_F(SchwabClientTest, getPriceHistoryNoEndDate)
     /*'https://api.schwabapi.com/marketdata/v1/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate=1710954774000&needExtendedHoursData=true&needPreviousClose=true'*/
     std::string expectedPath =
         "/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
-        "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
+        "1710892800000&needExtendedHoursData=true&needPreviousClose=true";
 
     expectValidAccessToken();
 
@@ -407,7 +407,7 @@ TEST_F(SchwabClientTest, getPriceHistoryErrorResponse)
     /*'https://api.schwabapi.com/marketdata/v1/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate=1710954774000&needExtendedHoursData=true&needPreviousClose=true'*/
     std::string expectedPath =
         "/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
-        "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
+        "1710892800000&needExtendedHoursData=true&needPreviousClose=true";
 
     expectValidAccessToken();
 
@@ -427,7 +427,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDates)
 {
     std::string expectedPath =
         "/pricehistory?symbol=SPY&periodType=year&period=1&frequencyType=daily&frequency=1&startDate="
-        "1710914400000&endDate=1711778400000&needExtendedHoursData=true&needPreviousClose=true";
+        "1710892800000&endDate=1711756800000&needExtendedHoursData=true&needPreviousClose=true";
 
     expectValidAccessToken();
 
@@ -447,7 +447,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDatesMinutes)
 {
     std::string expectedPath =
         "/pricehistory?symbol=AAPL&periodType=day&period=10&frequencyType=minute&frequency=30&startDate="
-        "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
+        "1710892800000&needExtendedHoursData=true&needPreviousClose=true";
 
     expectValidAccessToken();
 
@@ -467,7 +467,7 @@ TEST_F(SchwabClientTest, getPriceHistoryStartAndEndDatesMinutesWithUpdateAccessT
 {
     std::string expectedPath =
         "/pricehistory?symbol=AAPL&periodType=day&period=10&frequencyType=minute&frequency=30&startDate="
-        "1710914400000&needExtendedHoursData=true&needPreviousClose=true";
+        "1710892800000&needExtendedHoursData=true&needPreviousClose=true";
 
     expectExpiredAccessToken();
     expectUpdateAccessTokenWhenInvalid();
