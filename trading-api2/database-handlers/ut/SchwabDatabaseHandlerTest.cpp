@@ -16,11 +16,18 @@ public:
 protected:
     std::shared_ptr<SchwabDatabaseHandler> dbHandler;
     const std::string jsonPointName{"json_data"};
+    InfluxConnectionInfo influxConn{
+        "devtesterv1",
+        "123456789",
+        "192.168.0.130:8086",
+        "dev-testing-v1",
+        "N-q3KQNK6HEmUqj2bDwflK_08BQINRLTLlGsZhBrjQyFIQjVAK9AgCZtDjPEHD7IF7AWh20PPhgwAOaSXxyswQ=="
+    };
 };
 
 TEST_F(SchwabDatabaseHandlerTest, initTest)
 {
-    dbHandler = std::make_shared<SchwabDatabaseHandler>("testdb");
+    dbHandler = std::make_shared<SchwabDatabaseHandler>(influxConn);
 }
 
 TEST_F(SchwabDatabaseHandlerTest, pushCandleTest)
@@ -43,7 +50,7 @@ TEST_F(SchwabDatabaseHandlerTest, pushCandleTest)
 
     EXPECT_CALL(InfluxDbPusherMock::inst(), pushRaw(1713398340000, "testSymbol", expectedValueMap));
 
-    dbHandler = std::make_shared<SchwabDatabaseHandler>("testdb");
+    dbHandler = std::make_shared<SchwabDatabaseHandler>(influxConn);
     dbHandler->pushCandle("testSymbol", candle);
 }
 
@@ -72,7 +79,7 @@ TEST_F(SchwabDatabaseHandlerTest, getCandlesTest)
     EXPECT_CALL(InfluxDbPusherMock::inst(), pullRaw("testSymbol", "2024-04-15 00:00:00", "2024-04-17 00:00:00"))
         .WillOnce(testing::Return(valueMapVec));
 
-    dbHandler = std::make_shared<SchwabDatabaseHandler>("testdb");
+    dbHandler = std::make_shared<SchwabDatabaseHandler>(influxConn);
     auto candles = dbHandler->getCandles("testSymbol", "2024-04-15 00:00:00", "2024-04-17 00:00:00");
 
     ASSERT_EQ(candles.size(), 2);
@@ -93,7 +100,7 @@ TEST_F(SchwabDatabaseHandlerTest, pushJsonDataTest)
 
     EXPECT_CALL(InfluxDbPusherMock::inst(), pushRaw(jsonPointName, expectedValueMap));
 
-    dbHandler = std::make_shared<SchwabDatabaseHandler>("testdb");
+    dbHandler = std::make_shared<SchwabDatabaseHandler>(influxConn);
     dbHandler->pushJsonData(jsonData);
 }
 
@@ -109,7 +116,7 @@ TEST_F(SchwabDatabaseHandlerTest, getJsonDataTest)
     EXPECT_CALL(InfluxDbPusherMock::inst(), pullRaw(jsonPointName, "2024-04-15 00:00:00", "2024-04-17 00:00:00"))
         .WillOnce(testing::Return(valueMapVec));
 
-    dbHandler = std::make_shared<SchwabDatabaseHandler>("testdb");
+    dbHandler = std::make_shared<SchwabDatabaseHandler>(influxConn);
     auto jsonData = dbHandler->getJsonData("2024-04-15 00:00:00", "2024-04-17 00:00:00");
 
     ASSERT_EQ(jsonData.size(), 2);

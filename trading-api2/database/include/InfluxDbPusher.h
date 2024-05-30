@@ -35,6 +35,15 @@ Dbname
     ..etc
 */
 
+struct InfluxConnectionInfo
+{
+    std::string user;
+    std::string pass;
+    std::string host;
+    std::string dbname;
+    std::string authToken;
+};
+
 typedef std::unordered_map<std::string, influxdb::Point::FieldValue>
     // std::variant<int, long long int, std::string, double, bool, unsigned int, unsigned long long int>>
     FieldValueMap;

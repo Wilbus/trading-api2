@@ -32,7 +32,8 @@ void SchwabConfigs::parseAuthConfig()
     FILE* fp = fopen(authConfigPath.c_str(), "rb");
     if (fp == nullptr)
     {
-        throw std::runtime_error("error opening schwab_authentication.json");
+        std::string errmsg = "error opening file " + authConfigPath;
+        throw std::runtime_error(errmsg.c_str());
     }
     char readBuffer[65536];
     rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));

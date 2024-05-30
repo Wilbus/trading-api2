@@ -11,7 +11,7 @@ using namespace database;
 class SchwabDatabaseHandler : public IDatabaseHandler
 {
 public:
-    SchwabDatabaseHandler(const std::string& dbname, const std::string& logfile = "");
+    SchwabDatabaseHandler(const InfluxConnectionInfo& connInfo, const std::string& logfile = "");
     ~SchwabDatabaseHandler();
 
     virtual void pushCandle(const std::string& symbol, const CandleStick& candle) override;
