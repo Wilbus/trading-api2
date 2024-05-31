@@ -68,6 +68,34 @@ struct AuthConfig
     Token refresh_token;
 };
 
+static std::string buildParametersString(const std::vector<uint8_t>& conf)
+{
+    std::string parameters;
+    for(size_t i = 0; i < conf.size(); i++)
+    {
+        parameters += std::to_string(conf[i]);
+        if(i < conf.size() - 1)
+        {
+            parameters += ",";
+        }
+    }
+    return parameters;
+}
+
+static std::string buildParametersString(const std::vector<std::string>& conf)
+{
+    std::string parameters;
+    for(size_t i = 0; i < conf.size(); i++)
+    {
+        parameters += conf[i];
+        if(i < conf.size() - 1)
+        {
+            parameters += ",";
+        }
+    }
+    return parameters;
+}
+
 class ISchwabConfigs
 {
 public:

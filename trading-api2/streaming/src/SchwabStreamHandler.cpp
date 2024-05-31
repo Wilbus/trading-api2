@@ -133,6 +133,7 @@ void SchwabStreamHandler::onMessageCallback(
             // ws->send(requestsIdStrMap.begin()->second.data(), requestsIdStrMap.begin()->second.size(),
             // uWS::OpCode::TEXT);
             ws->send(requestsIdStrMap[currentReqId].data(), requestsIdStrMap[currentReqId].size(), uWS::OpCode::TEXT);
+            infologprint(logfile, "%s: Sent request: %s", __func__, requestsIdStrMap.at(currentReqId).c_str());
             currentReqId += 1;
         }
         //}

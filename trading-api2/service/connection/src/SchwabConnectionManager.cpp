@@ -27,6 +27,7 @@ void SchwabConnectionManager::buildAllRequests()
 {
     infologprint(logfile, "%s building request jsons to send", __func__);
     UserPreferences prefs = sclient->getUserPreferences();
+    auto subscriptions = configs->getSubscribeConfig();
 
     Request loginReq;
     loginReq.serviceType = ServiceType::ADMIN;
@@ -61,8 +62,8 @@ void SchwabConnectionManager::buildAllRequests()
     levelOneActivityReq.commandType = CommandType::SUBS;
     levelOneActivityReq.schwabClientCustomerId = prefs.streamerInfo[0].schwabClientCustomerId;
     levelOneActivityReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
-    levelOneActivityReq.parameters.keys = "QQQ,SPY,MSFT,CAVA,AMD,TSM,NVDA,DELL,TGT,ORCL,OXY,XOM";
-    levelOneActivityReq.parameters.fields = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16";
+    levelOneActivityReq.parameters.keys = buildParametersString(subscriptions.levelOneEquities.symbols);
+    levelOneActivityReq.parameters.fields = buildParametersString(subscriptions.levelOneEquities.fields);
 
     Request chartEquityReq;
     chartEquityReq.serviceType = ServiceType::CHART_EQUITY;
@@ -70,8 +71,8 @@ void SchwabConnectionManager::buildAllRequests()
     chartEquityReq.commandType = CommandType::SUBS;
     chartEquityReq.schwabClientCustomerId = prefs.streamerInfo[0].schwabClientCustomerId;
     chartEquityReq.schwabClientCorrelId = prefs.streamerInfo[0].schwabClientCorrelId;
-    chartEquityReq.parameters.keys = "QQQ,SPY,MSFT,CAVA,AMD,TSM,NVDA,DELL,TGT,ORCL,OXY,XOM";
-    chartEquityReq.parameters.fields = "0,1,2,3,4,5,6,7,8";
+    chartEquityReq.parameters.keys = buildParametersString(subscriptions.chartEquities.symbols);
+    chartEquityReq.parameters.fields = buildParametersString(subscriptions.chartEquities.fields);
 
     Request optionReq;
     optionReq.serviceType = ServiceType::OPTION;
