@@ -1,22 +1,7 @@
 #include "SchwabConfigs.h"
 
-#include "json.h"
-#include "rapidjson/document.h"
-#include "rapidjson/filereadstream.h"
-#include "rapidjson/filewritestream.h"
-#include "rapidjson/stringbuffer.h"
-
-#include <rapidjson/prettywriter.h>
-
 #include <cstdio>
 #include <iostream>
-
-using rapidjson::Document;
-using rapidjson::FileWriteStream;
-using rapidjson::kObjectType;
-using rapidjson::PrettyWriter;
-using rapidjson::StringRef;
-using rapidjson::Value;
 
 namespace configs {
 
@@ -24,11 +9,12 @@ SchwabConfigs::SchwabConfigs(std::string folderPath)
     : folderPath(folderPath)
 {
     parseAuthConfig();
+    parseSubscribeConfig();
 }
 
 void SchwabConfigs::parseAuthConfig()
 {
-    std::string authConfigPath = folderPath + "schwab_authentication.json";
+    std::string authConfigPath = folderPath + authConfigName;
     FILE* fp = fopen(authConfigPath.c_str(), "rb");
     if (fp == nullptr)
     {
@@ -85,6 +71,52 @@ void SchwabConfigs::parseAuthConfig()
     fclose(fp);
 }
 
+void SchwabConfigs::parseSubscribeConfig()
+{
+    std::string subscribeConfigPath = folderPath + subscribeConfigName;
+    FILE* fp = fopen(subscribeConfigPath.c_str(), "rb");
+    if (fp == nullptr)
+    {
+        std::string errmsg = "error opening file " + subscribeConfigPath;
+        throw std::runtime_error(errmsg.c_str());
+    }
+    char readBuffer[1045840]; //1 MB
+    rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+    rapidjson::Document d;
+    d.ParseStream(is);
+
+    if (d.HasMember("levelone_equities") && d["levelone_equities"].IsObject())
+    {
+        cachedSubscriptions.levelOneEquities = parseSubscribeSymbolConf(d["levelone_equities"].GetObject());
+    }
+    if(d.HasMember("chart_equities") && d["chart_equities"].IsObject())
+    {
+        cachedSubscriptions.chartEquities = parseSubscribeSymbolConf(d["chart_equities"]);
+    }
+
+    fclose(fp);
+}
+
+SubscribeSymbolConf SchwabConfigs::parseSubscribeSymbolConf(const rapidjson::Value& value)
+{
+    SubscribeSymbolConf conf;
+    if(value.HasMember("symbols") && value["symbols"].IsArray())
+    {
+        for(auto& symbol : value["symbols"].GetArray())
+        {
+            conf.symbols.push_back(symbol.GetString());
+        }
+    }
+    if(value.HasMember("fields") && value["fields"].IsArray())
+    {
+        for(auto& field : value["fields"].GetArray())
+        {
+            conf.fields.push_back(field.GetInt());
+        }
+    }
+    return conf;
+}
+
 /*SchwabConfigs::~SchwabConfigs()
 {
     //saveAuthConfig();
@@ -116,11 +148,11 @@ void SchwabConfigs::saveAuthConfig()
     d.AddMember("refresh_token", refreshTokenVal, d.GetAllocator());
     d.AddMember("access_token", accessTokenVal, d.GetAllocator());
 
-    std::string authConfigPath = folderPath + "schwab_authentication.json";
+    std::string authConfigPath = folderPath + authConfigName;
     FILE* fp = fopen(authConfigPath.c_str(), "wb");
     if (fp == nullptr)
     {
-        throw std::runtime_error("error opening schwab_authentication.json");
+        throw std::runtime_error("error saving schwab_authentication.json");
     }
     char writeBuffer[65536];
     FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
@@ -210,6 +242,11 @@ bool SchwabConfigs::saveAccessToken(const Token accessToken)
         std::cout << e.what() << '\n';
         return false;
     }
+}
+
+SchwabSubcriptions SchwabConfigs::getSubscribeConfig() const
+{
+    return cachedSubscriptions;
 }
 
 } // namespace configs

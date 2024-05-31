@@ -4,6 +4,8 @@
 
 #include <gmock/gmock.h>
 
+using namespace configs;
+
 class SchwabConfigsMock : public ISchwabConfigs
 {
 public:
@@ -20,4 +22,6 @@ public:
     MOCK_METHOD1(saveAccessToken, bool(const Token));
     MOCK_METHOD0(parseAuthConfig, void());
     MOCK_METHOD0(saveAuthConfig, void());
+    MOCK_METHOD0(parseSubscribeConfig, void());
+    MOCK_CONST_METHOD0(getSubscribeConfig, SchwabSubcriptions());
 };

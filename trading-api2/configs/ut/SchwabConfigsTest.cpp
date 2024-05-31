@@ -30,6 +30,13 @@ public:
         expectedAuthConfig.authorization_code = authCode;
         expectedAuthConfig.refresh_token = refreshToken;
         expectedAuthConfig.access_token = accessToken;
+
+        expectedSubscribeConfig.levelOneEquities = {
+            {"QQQ", "SPY", "TGT"}, {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}
+        };
+        expectedSubscribeConfig.chartEquities = {
+            {"QQQ", "SPY"}, {0,1,2,3,4,5,6,7,8}
+        };
     }
 
     void modifyAuthConfig()
@@ -91,6 +98,8 @@ protected:
     AuthorizationCode newAuthCode;
     Token newRefreshToken;
     Token newAccessToken;
+
+    SchwabSubcriptions expectedSubscribeConfig;
 };
 
 TEST_F(SchwabConfigsTest, readAuthConfig)
@@ -172,4 +181,34 @@ TEST_F(SchwabConfigsTest, modifyAuthConfig)
 
     restoreAuthConfig();
     checkRestoredAuthConfig();
+}
+
+TEST_F(SchwabConfigsTest, getSubscribeConfigTest)
+{
+    std::shared_ptr<SchwabConfigs> conf =
+        std::make_shared<SchwabConfigs>("/home/wilbus/smbshare0/sambashare0/coding/trading-api2/trading-api2/configs/ut/");
+    auto subconf = conf->getSubscribeConfig();
+
+    EXPECT_EQ(subconf.levelOneEquities.symbols.size(), expectedSubscribeConfig.levelOneEquities.symbols.size());
+    EXPECT_EQ(subconf.levelOneEquities.fields.size(), expectedSubscribeConfig.levelOneEquities.fields.size());
+    EXPECT_EQ(subconf.chartEquities.symbols.size(), expectedSubscribeConfig.chartEquities.symbols.size());
+    EXPECT_EQ(subconf.chartEquities.fields.size(), expectedSubscribeConfig.chartEquities.fields.size());
+
+    for(size_t i = 0; i < subconf.levelOneEquities.symbols.size(); i++)
+    {
+        EXPECT_EQ(subconf.levelOneEquities.symbols[i], expectedSubscribeConfig.levelOneEquities.symbols[i]);
+    }
+    for(size_t i = 0; i < subconf.levelOneEquities.fields.size(); i++)
+    {
+        EXPECT_EQ(subconf.levelOneEquities.fields[i], expectedSubscribeConfig.levelOneEquities.fields[i]);
+    }
+
+    for(size_t i = 0; i < subconf.chartEquities.symbols.size(); i++)
+    {
+        EXPECT_EQ(subconf.chartEquities.symbols[i], expectedSubscribeConfig.chartEquities.symbols[i]);
+    }
+    for(size_t i = 0; i < subconf.chartEquities.fields.size(); i++)
+    {
+        EXPECT_EQ(subconf.chartEquities.fields[i], expectedSubscribeConfig.chartEquities.fields[i]);
+    }
 }
