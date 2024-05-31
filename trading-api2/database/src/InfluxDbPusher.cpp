@@ -30,7 +30,7 @@ InfluxDbPusher::InfluxDbPusher(std::string user, std::string pass, std::string h
 {
     try
     {
-        db->createDatabaseIfNotExists();
+        //db->createDatabaseIfNotExists();
         db->batchOf(batchSize);
     }
     catch (const std::exception& e)
