@@ -23,6 +23,7 @@ private:
     InfluxConnectionInfo influxConnectionInfo;
     std::string logFile;
     std::string configFolder;
+    std::shared_ptr<SchwabConfigs> configs;
     std::shared_ptr<SchwabConnectionManager> manager;
     std::shared_ptr<SchwabDatabank> databank;
 };

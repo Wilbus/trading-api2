@@ -51,6 +51,15 @@ struct Token
     }
 };
 
+struct InfluxConnectionConf
+{
+    std::string user;
+    std::string pass;
+    std::string host;
+    std::string dbname;
+    std::string authToken;
+};
+
 // needed for SchwabClientTest
 static bool operator==(const Token& lhs, const Token& rhs)
 {
@@ -120,6 +129,9 @@ public:
 
     virtual void parseSubscribeConfig() = 0;
     virtual SchwabSubcriptions getSubscribeConfig() const = 0;
+
+    virtual void parseInfluxConnectionConfig() = 0;
+    virtual InfluxConnectionConf getInfluxConnectionConfig() const = 0;
 };
 
 class SchwabConfigs : public ISchwabConfigs
@@ -167,14 +179,19 @@ public:
     virtual void parseSubscribeConfig() override;
     virtual SchwabSubcriptions getSubscribeConfig() const override;
 
+    virtual void parseInfluxConnectionConfig() override;
+    virtual InfluxConnectionConf getInfluxConnectionConfig() const override;
+
 private:
     SubscribeSymbolConf parseSubscribeSymbolConf(const rapidjson::Value& value);
 
     std::string authConfigName{"schwab_authentication.json"};
     std::string subscribeConfigName{"schwab_subscription.json"};
+    std::string influxConnectionConfigName{"influx_connection.json"};
     std::string folderPath;
     AuthConfig cachedAuthConfig;
     SchwabSubcriptions cachedSubscriptions;
+    InfluxConnectionConf cachedInfluxConnection;
 };
 
 } // namespace configs

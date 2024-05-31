@@ -37,6 +37,10 @@ public:
         expectedSubscribeConfig.chartEquities = {
             {"QQQ", "SPY"}, {0,1,2,3,4,5,6,7,8}
         };
+
+        expectedInfluxConnectionConf = {
+            "user", "pass", "localhost", "dbname", "token123"
+        };
     }
 
     void modifyAuthConfig()
@@ -100,6 +104,7 @@ protected:
     Token newAccessToken;
 
     SchwabSubcriptions expectedSubscribeConfig;
+    InfluxConnectionConf expectedInfluxConnectionConf;
 };
 
 TEST_F(SchwabConfigsTest, readAuthConfig)
@@ -211,4 +216,17 @@ TEST_F(SchwabConfigsTest, getSubscribeConfigTest)
     {
         EXPECT_EQ(subconf.chartEquities.fields[i], expectedSubscribeConfig.chartEquities.fields[i]);
     }
+}
+
+TEST_F(SchwabConfigsTest, getInfluxConnectionConfTest)
+{
+    std::shared_ptr<SchwabConfigs> conf =
+        std::make_shared<SchwabConfigs>("/home/wilbus/smbshare0/sambashare0/coding/trading-api2/trading-api2/configs/ut/");
+    auto influxconf = conf->getInfluxConnectionConfig();
+
+    EXPECT_EQ(influxconf.user, expectedInfluxConnectionConf.user);
+    EXPECT_EQ(influxconf.pass, expectedInfluxConnectionConf.pass);
+    EXPECT_EQ(influxconf.host, expectedInfluxConnectionConf.host);
+    EXPECT_EQ(influxconf.dbname, expectedInfluxConnectionConf.dbname);
+    EXPECT_EQ(influxconf.authToken, expectedInfluxConnectionConf.authToken);
 }

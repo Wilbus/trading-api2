@@ -4,22 +4,19 @@ namespace tradingservice
 {
 
 TradingService::TradingService(std::string configFolder, std::string logFile)
-    : influxConnectionInfo{
-        "devtesterv1",
-        "123456789",
-        "192.168.0.130:8086",
-        "dev-testing-v1",
-        "N-q3KQNK6HEmUqj2bDwflK_08BQINRLTLlGsZhBrjQyFIQjVAK9AgCZtDjPEHD7IF7AWh20PPhgwAOaSXxyswQ=="}
-    , logFile(logFile)
+    : logFile(logFile)
     , configFolder(configFolder)
-    , manager(std::make_shared<SchwabConnectionManager>(configFolder, logFile))
-
+    , configs(std::make_shared<SchwabConfigs>(configFolder))
 {
     infologprint(logFile, "%s: init", __func__);
 }
 
 void TradingService::start()
 {
+    auto influxConf = configs->getInfluxConnectionConfig();
+    influxConnectionInfo = InfluxConnectionInfo{influxConf.user, influxConf.pass, influxConf.host, influxConf.dbname, influxConf.authToken};
+
+    manager = std::make_shared<SchwabConnectionManager>(configFolder, logFile);
     manager->buildAllRequests();
     manager->startThreadFuncThread();
 

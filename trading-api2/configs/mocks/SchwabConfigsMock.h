@@ -24,4 +24,6 @@ public:
     MOCK_METHOD0(saveAuthConfig, void());
     MOCK_METHOD0(parseSubscribeConfig, void());
     MOCK_CONST_METHOD0(getSubscribeConfig, SchwabSubcriptions());
+    MOCK_METHOD0(parseInfluxConnectionConfig, void());
+    MOCK_CONST_METHOD0(getInfluxConnectionConfig, InfluxConnectionConf());
 };

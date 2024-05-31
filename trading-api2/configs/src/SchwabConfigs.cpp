@@ -10,6 +10,7 @@ SchwabConfigs::SchwabConfigs(std::string folderPath)
 {
     parseAuthConfig();
     parseSubscribeConfig();
+    parseInfluxConnectionConfig();
 }
 
 void SchwabConfigs::parseAuthConfig()
@@ -115,6 +116,49 @@ SubscribeSymbolConf SchwabConfigs::parseSubscribeSymbolConf(const rapidjson::Val
         }
     }
     return conf;
+}
+
+void SchwabConfigs::parseInfluxConnectionConfig()
+{
+    std::string influxConnectionConfigPath = folderPath + influxConnectionConfigName;
+    FILE* fp = fopen(influxConnectionConfigPath.c_str(), "rb");
+    if (fp == nullptr)
+    {
+        std::string errmsg = "error opening file " + influxConnectionConfigPath;
+        throw std::runtime_error(errmsg.c_str());
+    }
+    char readBuffer[65536];
+    rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+    rapidjson::Document d;
+    d.ParseStream(is);
+
+    if(d.HasMember("user") && d["user"].IsString())
+    {
+        PARSE_STRING(cachedInfluxConnection.user, "user", d);
+    }
+    if(d.HasMember("pass") && d["pass"].IsString())
+    {
+        PARSE_STRING(cachedInfluxConnection.pass, "pass", d);
+    }
+    if(d.HasMember("host") && d["host"].IsString())
+    {
+        PARSE_STRING(cachedInfluxConnection.host, "host", d);
+    }
+    if(d.HasMember("dbname") && d["dbname"].IsString())
+    {
+        PARSE_STRING(cachedInfluxConnection.dbname, "dbname", d);
+    }
+    if(d.HasMember("authToken") && d["authToken"].IsString())
+    {
+        PARSE_STRING(cachedInfluxConnection.authToken, "authToken", d);
+    }
+
+    fclose(fp);
+}
+
+InfluxConnectionConf SchwabConfigs::getInfluxConnectionConfig() const
+{
+    return cachedInfluxConnection;
 }
 
 /*SchwabConfigs::~SchwabConfigs()
