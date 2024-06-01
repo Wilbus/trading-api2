@@ -3,6 +3,7 @@
 #include "SchwabConnectionManager.h"
 #include "SchwabDatabank.h"
 #include "SchwabDatabaseHandler.h"
+#include "SchwabClient.h"
 #include "Logger.h"
 
 namespace tradingservice
