@@ -20,12 +20,14 @@ public:
     void start();
 
 private:
-    InfluxConnectionInfo influxConnectionInfo;
     std::string logFile;
     std::string configFolder;
     std::shared_ptr<SchwabConfigs> configs;
+    std::shared_ptr<SchwabClient> sClient;
     std::shared_ptr<SchwabConnectionManager> manager;
+    InfluxConnectionInfo influxConnectionInfo;
     std::shared_ptr<SchwabDatabank> databank;
+    std::set<std::string> chartSymbols;
 };
 
 } // namespace tradingservice
