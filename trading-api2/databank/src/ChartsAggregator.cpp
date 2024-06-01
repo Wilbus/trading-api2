@@ -28,6 +28,11 @@ ChartData3 ChartsAggregator::getChartData(std::string symbol, Timeframe timefram
     return charts.at(symbol).at(timeframe);
 }
 
+ChartTimeframesMap ChartsAggregator::getTimeframeCharts(std::string symbol) const
+{
+    return charts.at(symbol);
+}
+
 void ChartsAggregator::initializeMinuteChart(std::string symbol, ChartData3 chart)
 {
     charts[symbol][Timeframe::MINUTE] = chart;

@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "AggregateTypes.h"
 #include "ChartData3.h"
 #include <set>
 #include <map>
@@ -25,16 +24,6 @@ enum Timeframe
     DAILY = 28800
 };
 
-struct MultiTimeframeChartData3
-{
-    ChartData3 daily;
-    ChartData3 hourly;
-    ChartData3 thirty;
-    ChartData3 fifteen;
-    ChartData3 five;
-    ChartData3 minute;
-};
-
 typedef std::map<Timeframe, ChartData3> ChartTimeframesMap;
 
 class ChartsAggregator
@@ -48,6 +37,7 @@ public:
     void addMinuteCandle(std::string symbol, CandleStick candle);
     ChartData3 getChartData(std::string symbol, Timeframe timeframe) const;
     void initializeMinuteChart(std::string symbol, ChartData3 chart);
+    ChartTimeframesMap getTimeframeCharts(std::string symbol) const;
 
 private:
     void aggregateChartData(std::string symbol, Timeframe alignedOn);

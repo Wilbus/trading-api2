@@ -22,7 +22,7 @@ public:
         std::string logfile = "");
 
     virtual void startParsing() override;
-    virtual ChartData3 getChart(std::string symbol) override;
+    virtual ChartTimeframesMap getChart(std::string symbol) override;
 
 protected:
     void parseStreamQueue(unsigned count);
@@ -36,6 +36,6 @@ protected:
     std::mutex mtx;
 
     std::thread parsingThread;
-    std::map<std::string, ChartData3> minuteCharts;
+    std::shared_ptr<ChartsAggregator> chartsAggregator;
 };
 } // namespace databank

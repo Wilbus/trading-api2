@@ -12,6 +12,7 @@ SchwabDatabank::SchwabDatabank(std::shared_ptr<IDatabaseHandler> dbHandler,
     : streamqueue(streamqueue)
     , logfile(logfile)
     , dbHandler(dbHandler)
+    , chartsAggregator(std::make_shared<ChartsAggregator>())
 {
     infologprint(logfile, "%s: init", __func__);
 }
@@ -80,15 +81,7 @@ void SchwabDatabank::updateMinuteCharts(const std::string symbol, const ChartEqu
         timestamp, minuteCandle.low, minuteCandle.high, minuteCandle.open, minuteCandle.close, minuteCandle.volume);
     pushCandleToDb(symbol, candleStick);
 
-    if (minuteCharts.find(symbol) == minuteCharts.end())
-    {
-        minuteCharts[symbol] = ChartData3();
-        minuteCharts[symbol].addMultiCandle(MultiCandle(candleStick));
-    }
-    else
-    {
-        minuteCharts[symbol].addMultiCandle(MultiCandle(candleStick));
-    }
+    chartsAggregator->addMinuteCandle(symbol, candleStick);
 }
 
 void SchwabDatabank::pushCandleToDb(const std::string symbol, const CandleStick candle)
@@ -103,13 +96,9 @@ void SchwabDatabank::updateLevelOneEquities(const std::string symbol, const Leve
     (void)levelOneE;
 }
 
-ChartData3 SchwabDatabank::getChart(std::string symbol)
+ChartTimeframesMap SchwabDatabank::getChart(std::string symbol)
 {
     std::lock_guard<std::mutex> lg(mtx);
-    if (minuteCharts.find(symbol) != minuteCharts.end())
-    {
-        return minuteCharts.at(symbol);
-    }
-    throw std::runtime_error("symbol for chart not found");
+    return chartsAggregator->getTimeframeCharts(symbol);
 }
 } // namespace databank

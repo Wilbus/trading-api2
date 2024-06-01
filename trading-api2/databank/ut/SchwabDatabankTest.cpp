@@ -69,6 +69,7 @@ TEST_F(SchwabDatabankTest, testStartParsing)
 
     pushThread.join();
 
-    EXPECT_EQ(databankTester->getChart("DELL").getMultiCandles().size(), 10);
-    EXPECT_EQ(databankTester->getChart("SPY").getMultiCandles().size(), 10);
+    EXPECT_EQ(databankTester->getChart("DELL").at(Timeframe::MINUTE).getMultiCandles().size(), 10);
+    EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::MINUTE).getMultiCandles().size(), 10);
+    EXPECT_EQ(databankTester->getChart("TGT").at(Timeframe::MINUTE).getMultiCandles().size(), 10);
 }
