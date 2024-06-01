@@ -81,7 +81,7 @@ void SchwabConfigs::parseSubscribeConfig()
         std::string errmsg = "error opening file " + subscribeConfigPath;
         throw std::runtime_error(errmsg.c_str());
     }
-    char readBuffer[1045840]; //1 MB
+    char readBuffer[1045840]; // 1 MB
     rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
     rapidjson::Document d;
     d.ParseStream(is);
@@ -90,7 +90,7 @@ void SchwabConfigs::parseSubscribeConfig()
     {
         cachedSubscriptions.levelOneEquities = parseSubscribeSymbolConf(d["levelone_equities"].GetObject());
     }
-    if(d.HasMember("chart_equities") && d["chart_equities"].IsObject())
+    if (d.HasMember("chart_equities") && d["chart_equities"].IsObject())
     {
         cachedSubscriptions.chartEquities = parseSubscribeSymbolConf(d["chart_equities"]);
     }
@@ -101,16 +101,16 @@ void SchwabConfigs::parseSubscribeConfig()
 SubscribeSymbolConf SchwabConfigs::parseSubscribeSymbolConf(const rapidjson::Value& value)
 {
     SubscribeSymbolConf conf;
-    if(value.HasMember("symbols") && value["symbols"].IsArray())
+    if (value.HasMember("symbols") && value["symbols"].IsArray())
     {
-        for(auto& symbol : value["symbols"].GetArray())
+        for (auto& symbol : value["symbols"].GetArray())
         {
             conf.symbols.push_back(symbol.GetString());
         }
     }
-    if(value.HasMember("fields") && value["fields"].IsArray())
+    if (value.HasMember("fields") && value["fields"].IsArray())
     {
-        for(auto& field : value["fields"].GetArray())
+        for (auto& field : value["fields"].GetArray())
         {
             conf.fields.push_back(field.GetInt());
         }
@@ -132,23 +132,23 @@ void SchwabConfigs::parseInfluxConnectionConfig()
     rapidjson::Document d;
     d.ParseStream(is);
 
-    if(d.HasMember("user") && d["user"].IsString())
+    if (d.HasMember("user") && d["user"].IsString())
     {
         PARSE_STRING(cachedInfluxConnection.user, "user", d);
     }
-    if(d.HasMember("pass") && d["pass"].IsString())
+    if (d.HasMember("pass") && d["pass"].IsString())
     {
         PARSE_STRING(cachedInfluxConnection.pass, "pass", d);
     }
-    if(d.HasMember("host") && d["host"].IsString())
+    if (d.HasMember("host") && d["host"].IsString())
     {
         PARSE_STRING(cachedInfluxConnection.host, "host", d);
     }
-    if(d.HasMember("dbname") && d["dbname"].IsString())
+    if (d.HasMember("dbname") && d["dbname"].IsString())
     {
         PARSE_STRING(cachedInfluxConnection.dbname, "dbname", d);
     }
-    if(d.HasMember("authToken") && d["authToken"].IsString())
+    if (d.HasMember("authToken") && d["authToken"].IsString())
     {
         PARSE_STRING(cachedInfluxConnection.authToken, "authToken", d);
     }

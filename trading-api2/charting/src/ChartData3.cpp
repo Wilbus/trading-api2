@@ -20,7 +20,7 @@ void ChartData3::addMultiCandles(std::vector<MultiCandle> mcandlevec)
     std::sort(mcandles.begin(), mcandles.end(),
         [](const MultiCandle& a, const MultiCandle& b) { return a.timestamp < b.timestamp; });
 
-    for(const auto& indicatorType : indicatorTypes)
+    for (const auto& indicatorType : indicatorTypes)
     {
         updateIndicatorsData(indicatorType);
     }
@@ -34,7 +34,7 @@ void ChartData3::addMultiCandle(MultiCandle mcandle)
     std::sort(mcandles.begin(), mcandles.end(),
         [](const MultiCandle& a, const MultiCandle& b) { return a.timestamp < b.timestamp; });
 
-    for(const auto& indicatorType : indicatorTypes)
+    for (const auto& indicatorType : indicatorTypes)
     {
         updateIndicatorsData(indicatorType);
     }

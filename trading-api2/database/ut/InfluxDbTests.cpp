@@ -17,10 +17,9 @@ public:
 
     void SetUp()
     {
-        influxDbPusher = std::make_shared<InfluxDbPusher>(
-        "devtesterv1", "123456789", "192.168.0.130:8086",
-        "dev-testing-v1",
-        "N-q3KQNK6HEmUqj2bDwflK_08BQINRLTLlGsZhBrjQyFIQjVAK9AgCZtDjPEHD7IF7AWh20PPhgwAOaSXxyswQ==", 1);
+        influxDbPusher =
+            std::make_shared<InfluxDbPusher>("devtesterv1", "123456789", "192.168.0.130:8086", "dev-testing-v1",
+                "N-q3KQNK6HEmUqj2bDwflK_08BQINRLTLlGsZhBrjQyFIQjVAK9AgCZtDjPEHD7IF7AWh20PPhgwAOaSXxyswQ==", 1);
     }
 
 protected:

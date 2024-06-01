@@ -1,7 +1,7 @@
 #pragma once
 
-#include <InfluxDBFactory.h>
 #include <InfluxDBBuilder.h>
+#include <InfluxDBFactory.h>
 #include <Logger.h>
 #include <unordered_map>
 
@@ -53,7 +53,8 @@ class InfluxDbPusher
 public:
     InfluxDbPusher(std::string dbname, unsigned batchSize = 100, std::string logfile = "");
     // as of 5/29/2024 we are now using influxdb 2.0
-    InfluxDbPusher(std::string user, std::string pass, std::string host, std::string dbname, std::string authToken, unsigned batchSize = 100, std::string logfile = "");
+    InfluxDbPusher(std::string user, std::string pass, std::string host, std::string dbname, std::string authToken,
+        unsigned batchSize = 100, std::string logfile = "");
 
     void setBatchSize(unsigned size);
 

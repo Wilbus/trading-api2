@@ -16,13 +16,8 @@ public:
 protected:
     std::shared_ptr<SchwabDatabaseHandler> dbHandler;
     const std::string jsonPointName{"json_data"};
-    InfluxConnectionInfo influxConn{
-        "devtesterv1",
-        "123456789",
-        "192.168.0.130:8086",
-        "dev-testing-v1",
-        "N-q3KQNK6HEmUqj2bDwflK_08BQINRLTLlGsZhBrjQyFIQjVAK9AgCZtDjPEHD7IF7AWh20PPhgwAOaSXxyswQ=="
-    };
+    InfluxConnectionInfo influxConn{"devtesterv1", "123456789", "192.168.0.130:8086", "dev-testing-v1",
+        "N-q3KQNK6HEmUqj2bDwflK_08BQINRLTLlGsZhBrjQyFIQjVAK9AgCZtDjPEHD7IF7AWh20PPhgwAOaSXxyswQ=="};
 };
 
 TEST_F(SchwabDatabaseHandlerTest, initTest)

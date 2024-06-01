@@ -20,8 +20,11 @@ public:
 
     std::vector<MultiCandle> getMultiCandles() const;
 
-    size_t getSize() const { return mcandles.size(); }
-    MultiCandle getBack(size_t index) const 
+    size_t getSize() const
+    {
+        return mcandles.size();
+    }
+    MultiCandle getBack(size_t index) const
     {
         if (index >= mcandles.size())
         {
@@ -29,7 +32,6 @@ public:
         }
         return mcandles.at(mcandles.size() - 1 - index);
     }
-
 
     MultiCandle getFront(size_t index) const
     {

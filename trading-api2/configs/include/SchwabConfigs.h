@@ -80,10 +80,10 @@ struct AuthConfig
 static std::string buildParametersString(const std::vector<uint8_t>& conf)
 {
     std::string parameters;
-    for(size_t i = 0; i < conf.size(); i++)
+    for (size_t i = 0; i < conf.size(); i++)
     {
         parameters += std::to_string(conf[i]);
-        if(i < conf.size() - 1)
+        if (i < conf.size() - 1)
         {
             parameters += ",";
         }
@@ -94,10 +94,10 @@ static std::string buildParametersString(const std::vector<uint8_t>& conf)
 static std::string buildParametersString(const std::vector<std::string>& conf)
 {
     std::string parameters;
-    for(size_t i = 0; i < conf.size(); i++)
+    for (size_t i = 0; i < conf.size(); i++)
     {
         parameters += conf[i];
-        if(i < conf.size() - 1)
+        if (i < conf.size() - 1)
         {
             parameters += ",";
         }

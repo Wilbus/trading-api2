@@ -7,8 +7,7 @@
 namespace databank {
 using namespace schwabStreamParser;
 
-SchwabDatabank::SchwabDatabank(std::shared_ptr<ISchwabClient> sClient,
-    std::shared_ptr<IDatabaseHandler> dbHandler,
+SchwabDatabank::SchwabDatabank(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabaseHandler> dbHandler,
     std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile)
     : streamqueue(streamqueue)
     , logfile(logfile)
@@ -104,8 +103,8 @@ ChartTimeframesMap SchwabDatabank::getChart(std::string symbol)
     return chartsAggregator->getTimeframeCharts(symbol);
 }
 
-std::vector<CandleStick> SchwabDatabank::getCandlesFromDb(const std::string& symbol, const std::string& fromTime,
-    const std::string& toTime)
+std::vector<CandleStick> SchwabDatabank::getCandlesFromDb(
+    const std::string& symbol, const std::string& fromTime, const std::string& toTime)
 {
     return dbHandler->getCandles(symbol, fromTime, toTime);
 }
@@ -115,33 +114,39 @@ std::vector<std::string> SchwabDatabank::getJsonDataFromDb(const std::string& fr
     return dbHandler->getJsonData(fromTime, toTime);
 }
 
-std::vector<CandleStick> SchwabDatabank::getCandlesFromClient(const std::string& symbol, const Timeframe timeframe, 
-    const std::string& fromTime, const std::string& toTime)
+std::vector<CandleStick> SchwabDatabank::getCandlesFromClient(
+    const std::string& symbol, const Timeframe timeframe, const std::string& fromTime, const std::string& toTime)
 {
     PriceHistory priceHistory;
-    switch(timeframe)
+    switch (timeframe)
     {
         case Timeframe::MINUTE:
-            priceHistory = sClient->getPriceHistory(symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 1, fromTime, toTime, true);
+            priceHistory = sClient->getPriceHistory(
+                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 1, fromTime, toTime, true);
             break;
         case Timeframe::FIVE:
-            priceHistory = sClient->getPriceHistory(symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 5, fromTime, toTime, true);
+            priceHistory = sClient->getPriceHistory(
+                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 5, fromTime, toTime, true);
             break;
         case Timeframe::FIFTEEN:
-            priceHistory = sClient->getPriceHistory(symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 15, fromTime, toTime, true);
+            priceHistory = sClient->getPriceHistory(
+                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 15, fromTime, toTime, true);
             break;
         case Timeframe::THIRTY:
-            priceHistory = sClient->getPriceHistory(symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 30, fromTime, toTime, true);
+            priceHistory = sClient->getPriceHistory(
+                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 30, fromTime, toTime, true);
             break;
         case Timeframe::DAILY:
-            priceHistory = sClient->getPriceHistory(symbol, PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY, 1, fromTime, toTime);
+            priceHistory = sClient->getPriceHistory(
+                symbol, PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY, 1, fromTime, toTime);
             break;
     }
 
     std::vector<CandleStick> candleSticks;
-    for(const auto& candle : priceHistory.candles)
+    for (const auto& candle : priceHistory.candles)
     {
-        candleSticks.push_back(CandleStick(candle.datetime, candle.low, candle.high, candle.open, candle.close, candle.volume));
+        candleSticks.push_back(
+            CandleStick(candle.datetime, candle.low, candle.high, candle.open, candle.close, candle.volume));
     }
 
     return candleSticks;

@@ -1,13 +1,12 @@
 #pragma once
 
+#include "Logger.h"
+#include "SchwabClient.h"
 #include "SchwabConnectionManager.h"
 #include "SchwabDatabank.h"
 #include "SchwabDatabaseHandler.h"
-#include "SchwabClient.h"
-#include "Logger.h"
 
-namespace tradingservice
-{
+namespace tradingservice {
 
 using namespace databank;
 using namespace databasehandlers;
@@ -29,4 +28,4 @@ private:
     std::shared_ptr<SchwabDatabank> databank;
 };
 
-}
+} // namespace tradingservice

@@ -6,8 +6,8 @@ namespace databasehandlers {
 
 SchwabDatabaseHandler::SchwabDatabaseHandler(const InfluxConnectionInfo& connInfo, const std::string& logfile)
     : logfile(logfile)
-    , influxDbPusher(new InfluxDbPusher(connInfo.user, connInfo.pass, connInfo.host,
-        connInfo.dbname, connInfo.authToken, 1, logfile))
+    , influxDbPusher(new InfluxDbPusher(
+          connInfo.user, connInfo.pass, connInfo.host, connInfo.dbname, connInfo.authToken, 1, logfile))
 {
     infologprint(logfile, "%s", __func__);
 }

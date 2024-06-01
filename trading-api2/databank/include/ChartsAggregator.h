@@ -1,11 +1,11 @@
 #pragma once
 
 #include "ChartData3.h"
-#include <set>
-#include <map>
 
-namespace databank
-{
+#include <map>
+#include <set>
+
+namespace databank {
 
 using namespace utils;
 using namespace charting;
@@ -18,7 +18,7 @@ enum Timeframe
     THIRTY = 1800,
     HOURLY = 3600,
 
-    /*DAILY doesn't work at the moment. 
+    /*DAILY doesn't work at the moment.
     This is a special case because we only have 8 hours in a trading session day
     and we need to align the candles to the trading session from 8:30am to 3:00pm*/
     DAILY = 28800
@@ -29,7 +29,6 @@ typedef std::map<Timeframe, ChartData3> ChartTimeframesMap;
 class ChartsAggregator
 {
 public:
-    
     ChartsAggregator();
     ChartsAggregator(std::map<std::string, ChartTimeframesMap> charts);
 
@@ -47,4 +46,4 @@ private:
     std::map<std::string, ChartTimeframesMap> charts;
 };
 
-}
+} // namespace databank

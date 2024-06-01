@@ -113,14 +113,14 @@ enum CurlHttpVersions
     MYCURL_HTTP_VERSION_2TLS = CURL_HTTP_VERSION_2TLS, /* use version 2 for HTTPS, version 1.1 for HTTP */
     MYCURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE = CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE, /* please use HTTP 2 without HTTP/1.1
                                            Upgrade */
-    MYCURL_HTTP_VERSION_3 = CURL_HTTP_VERSION_3         /* Use HTTP/3, fallback to HTTP/2 or HTTP/1 if
-                                        needed. For HTTPS only. For HTTP, this option
-                                        makes libcurl return error. */
-    //MYCURL_HTTP_VERSION_3ONLY = CURL_HTTP_VERSION_3ONLY, /* Use HTTP/3 without fallback. For HTTPS
-                                    //only. For HTTP, this makes libcurl
-                                    //return error. */
+    MYCURL_HTTP_VERSION_3 = CURL_HTTP_VERSION_3 /* Use HTTP/3, fallback to HTTP/2 or HTTP/1 if
+                                needed. For HTTPS only. For HTTP, this option
+                                makes libcurl return error. */
+    // MYCURL_HTTP_VERSION_3ONLY = CURL_HTTP_VERSION_3ONLY, /* Use HTTP/3 without fallback. For HTTPS
+    // only. For HTTP, this makes libcurl
+    // return error. */
 
-    //MYCURL_HTTP_VERSION_LAST = CURL_HTTP_VERSION_LAST /* *ILLEGAL* http version */
+    // MYCURL_HTTP_VERSION_LAST = CURL_HTTP_VERSION_LAST /* *ILLEGAL* http version */
 };
 
 CURLcode mycurl_global_init(long flags); // MUST call this at the very beginning or valgrind will throw errors

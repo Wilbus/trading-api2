@@ -17,8 +17,8 @@ public:
     {
     public:
         SchwabDatabankTester(std::shared_ptr<ISchwabClient> sClientMock,
-            std::shared_ptr<IDatabaseHandler> dbHandlerMockMock,
-            std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile = "")
+            std::shared_ptr<IDatabaseHandler> dbHandlerMockMock, std::shared_ptr<DataQueue<std::string>> streamqueue,
+            std::string logfile = "")
             : SchwabDatabank(sClientMock, dbHandlerMockMock, streamqueue, logfile)
         {
         }
@@ -80,8 +80,10 @@ TEST_F(SchwabDatabankTest, testStartParsing)
 
 TEST_F(SchwabDatabankTest, getCandlesFromDbTest)
 {
-    EXPECT_CALL(*dbHandlerMock.get(), getCandles("TGT", "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z")).WillOnce(testing::Return(std::vector<CandleStick>()));
-    EXPECT_CALL(*dbHandlerMock.get(), getCandles("AMZN", "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z")).WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("TGT", "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z"))
+        .WillOnce(testing::Return(std::vector<CandleStick>()));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("AMZN", "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z"))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
 
     EXPECT_EQ(databankTester->getCandlesFromDb("TGT", "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z").size(), 0);
     EXPECT_EQ(databankTester->getCandlesFromDb("AMZN", "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z").size(), 1);
@@ -89,8 +91,10 @@ TEST_F(SchwabDatabankTest, getCandlesFromDbTest)
 
 TEST_F(SchwabDatabankTest, getJsonDataFromDb)
 {
-    EXPECT_CALL(*dbHandlerMock.get(), getJsonData("2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z")).WillOnce(testing::Return(std::vector<std::string>()));
-    EXPECT_CALL(*dbHandlerMock.get(), getJsonData("2021-01-01 00:00:00Z", "2021-01-02 00:00:00Z")).WillOnce(testing::Return(std::vector<std::string>{"data"}));
+    EXPECT_CALL(*dbHandlerMock.get(), getJsonData("2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z"))
+        .WillOnce(testing::Return(std::vector<std::string>()));
+    EXPECT_CALL(*dbHandlerMock.get(), getJsonData("2021-01-01 00:00:00Z", "2021-01-02 00:00:00Z"))
+        .WillOnce(testing::Return(std::vector<std::string>{"data"}));
 
     EXPECT_EQ(databankTester->getJsonDataFromDb("2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z").size(), 0);
     EXPECT_EQ(databankTester->getJsonDataFromDb("2021-01-01 00:00:00Z", "2021-01-02 00:00:00Z").size(), 1);
@@ -98,29 +102,53 @@ TEST_F(SchwabDatabankTest, getJsonDataFromDb)
 
 TEST_F(SchwabDatabankTest, getCandlesFromClientTest)
 {
-    EXPECT_CALL(*sClientMock.get(), getPriceHistory("AMZN", PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 1, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z", true, false))
+    EXPECT_CALL(
+        *sClientMock.get(), getPriceHistory("AMZN", PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 1,
+                                "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z", true, false))
         .WillOnce(testing::Return(PriceHistory{"AMZN", false, 0, 0, std::vector<Candle>{Candle()}}));
 
-    EXPECT_EQ(databankTester->getCandlesFromClient("AMZN", Timeframe::MINUTE, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z").size(), 1);
+    EXPECT_EQ(
+        databankTester->getCandlesFromClient("AMZN", Timeframe::MINUTE, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z")
+            .size(),
+        1);
 
-    EXPECT_CALL(*sClientMock.get(), getPriceHistory("AMZN", PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 5, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z", true, false))
+    EXPECT_CALL(
+        *sClientMock.get(), getPriceHistory("AMZN", PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 5,
+                                "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z", true, false))
         .WillOnce(testing::Return(PriceHistory{"AMZN", false, 0, 0, std::vector<Candle>{Candle()}}));
 
-    EXPECT_EQ(databankTester->getCandlesFromClient("AMZN", Timeframe::FIVE, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z").size(), 1);
+    EXPECT_EQ(
+        databankTester->getCandlesFromClient("AMZN", Timeframe::FIVE, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z")
+            .size(),
+        1);
 
-    EXPECT_CALL(*sClientMock.get(), getPriceHistory("AMZN", PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 15, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z", true, false))
+    EXPECT_CALL(
+        *sClientMock.get(), getPriceHistory("AMZN", PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 15,
+                                "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z", true, false))
         .WillOnce(testing::Return(PriceHistory{"AMZN", false, 0, 0, std::vector<Candle>{Candle()}}));
 
-    EXPECT_EQ(databankTester->getCandlesFromClient("AMZN", Timeframe::FIFTEEN, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z").size(), 1);
+    EXPECT_EQ(
+        databankTester->getCandlesFromClient("AMZN", Timeframe::FIFTEEN, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z")
+            .size(),
+        1);
 
-    EXPECT_CALL(*sClientMock.get(), getPriceHistory("AMZN", PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 30, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z", true, false))
+    EXPECT_CALL(
+        *sClientMock.get(), getPriceHistory("AMZN", PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 30,
+                                "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z", true, false))
         .WillOnce(testing::Return(PriceHistory{"AMZN", false, 0, 0, std::vector<Candle>{Candle()}}));
 
-    EXPECT_EQ(databankTester->getCandlesFromClient("AMZN", Timeframe::THIRTY, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z").size(), 1);
+    EXPECT_EQ(
+        databankTester->getCandlesFromClient("AMZN", Timeframe::THIRTY, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z")
+            .size(),
+        1);
 
-    EXPECT_CALL(*sClientMock.get(), getPriceHistory("AMZN", PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY, 1, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z", false, false))
+    EXPECT_CALL(
+        *sClientMock.get(), getPriceHistory("AMZN", PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY, 1,
+                                "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z", false, false))
         .WillOnce(testing::Return(PriceHistory{"AMZN", false, 0, 0, std::vector<Candle>{Candle()}}));
 
-    EXPECT_EQ(databankTester->getCandlesFromClient("AMZN", Timeframe::DAILY, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z").size(), 1);
-
+    EXPECT_EQ(
+        databankTester->getCandlesFromClient("AMZN", Timeframe::DAILY, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z")
+            .size(),
+        1);
 }

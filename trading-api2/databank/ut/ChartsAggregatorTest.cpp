@@ -14,7 +14,6 @@ public:
 
     void SetUp() override
     {
-
     }
 
 protected:
@@ -25,9 +24,9 @@ protected:
 TEST_F(ChartsAggregatorTest, addAndAggregateChartsTest)
 {
     ChartData3 minuteChartForFive;
-    //five minutes chart
-        //3000 seconds -> 10 5 minute candles
-    for(size_t i = 0; i < 3000 * 1000; i += 300 * 1000)
+    // five minutes chart
+    // 3000 seconds -> 10 5 minute candles
+    for (size_t i = 0; i < 3000 * 1000; i += 300 * 1000)
     {
         CandleStick candle;
         candle.price_open = i * 2 / 1000;
@@ -40,7 +39,7 @@ TEST_F(ChartsAggregatorTest, addAndAggregateChartsTest)
     }
 
     chartsAggregator->addChart("TGT", minuteChartForFive, Timeframe::FIVE);
-    
+
     CandleStick candle0;
     candle0.price_open = 0;
     candle0.price_close = 5;
@@ -53,7 +52,7 @@ TEST_F(ChartsAggregatorTest, addAndAggregateChartsTest)
     EXPECT_EQ(chartsAggregator->getChartData("TGT", Timeframe::FIVE).getBack(0).price_open, 5400);
     EXPECT_EQ(chartsAggregator->getChartData("TGT", Timeframe::FIVE).getBack(0).price_close, 8100);
 
-    for(size_t i = 1; i < 6; i++)
+    for (size_t i = 1; i < 6; i++)
     {
         CandleStick candle;
         candle.price_open = i;

@@ -1,7 +1,6 @@
 #include "ChartsAggregator.h"
 
-namespace databank
-{
+namespace databank {
 
 ChartsAggregator::ChartsAggregator()
 {
@@ -14,7 +13,7 @@ ChartsAggregator::ChartsAggregator(std::map<std::string, ChartTimeframesMap> cha
 
 void ChartsAggregator::addMinuteCandle(std::string symbol, CandleStick candle)
 {
-    //charts[symbol].minute.addMultiCandle(MultiCandle{candle});
+    // charts[symbol].minute.addMultiCandle(MultiCandle{candle});
     charts[symbol][Timeframe::MINUTE].addMultiCandle(MultiCandle{candle});
     aggregateChartData(symbol, FIVE);
     aggregateChartData(symbol, FIFTEEN);
@@ -48,7 +47,7 @@ std::vector<MultiCandle> ChartsAggregator::getLastNMinutes(std::string symbol, i
     try
     {
         std::vector<MultiCandle> minutes;
-        for(int i = n; i > 0; i--)
+        for (int i = n; i > 0; i--)
         {
             auto minute = charts.at(symbol).at(Timeframe::MINUTE).getBack(i);
             minutes.push_back(minute);
@@ -56,42 +55,43 @@ std::vector<MultiCandle> ChartsAggregator::getLastNMinutes(std::string symbol, i
 
         return minutes;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
-        //std::cerr << e.what() << '\n';
+        // std::cerr << e.what() << '\n';
         return {};
     }
 }
 
-//assuming timestamps in charts are already aligned to minutes
-//previousFive is the last five minute candle
-//we have added a minute candle, so now we need to check if we have received enough data to create a new candle aligned to timeframe
+// assuming timestamps in charts are already aligned to minutes
+// previousFive is the last five minute candle
+// we have added a minute candle, so now we need to check if we have received enough data to create a new candle aligned
+// to timeframe
 void ChartsAggregator::aggregateChartData(std::string symbol, Timeframe alignedOn)
 {
     size_t numberOfMinutes = alignedOn / 60;
     auto lastNMinutes = getLastNMinutes(symbol, numberOfMinutes);
-    if(lastNMinutes.size() < numberOfMinutes)
+    if (lastNMinutes.size() < numberOfMinutes)
     {
         return;
     }
 
-    //if((lastNMinutes.back().timestamp - lastNMinutes.front().timestamp) % (alignedOn - 60) == 0)
-    //Timestamps in ms!!!
-    if(lastNMinutes.front().timestamp != 0 && (lastNMinutes.front().timestamp / 1000) % (alignedOn) == 0)
+    // if((lastNMinutes.back().timestamp - lastNMinutes.front().timestamp) % (alignedOn - 60) == 0)
+    // Timestamps in ms!!!
+    if (lastNMinutes.front().timestamp != 0 && (lastNMinutes.front().timestamp / 1000) % (alignedOn) == 0)
     {
-        //calculate the new five minute candle
+        // calculate the new five minute candle
         double open = lastNMinutes.front().price_open;
         double close = lastNMinutes.back().price_close;
         double high = std::numeric_limits<double>::min();
         double low = std::numeric_limits<double>::max();
         double volume = 0;
-        for(auto minute : lastNMinutes)
+        for (auto minute : lastNMinutes)
         {
-            if(minute.price_high > high)
+            if (minute.price_high > high)
             {
                 high = minute.price_high;
             }
-            if(minute.price_low < low)
+            if (minute.price_low < low)
             {
                 low = minute.price_low;
             }
@@ -100,9 +100,9 @@ void ChartsAggregator::aggregateChartData(std::string symbol, Timeframe alignedO
         uint64_t timestamp = lastNMinutes.front().timestamp;
 
         CandleStick nextAggregateCandle(timestamp, low, high, open, close, volume);
-        //charts.at(symbol).five.addMultiCandle(MultiCandle(nextAggregateCandle));
+        // charts.at(symbol).five.addMultiCandle(MultiCandle(nextAggregateCandle));
         charts[symbol][alignedOn].addMultiCandle(MultiCandle(nextAggregateCandle));
-        //charts.at(symbol).at(alignedOn).addMultiCandle(MultiCandle(nextAggregateCandle));
+        // charts.at(symbol).at(alignedOn).addMultiCandle(MultiCandle(nextAggregateCandle));
     }
 }
 

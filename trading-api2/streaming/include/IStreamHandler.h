@@ -1,7 +1,6 @@
 #pragma once
 
 #include "DataQueue.h"
-
 #include "uWS.h"
 
 #include <set>
