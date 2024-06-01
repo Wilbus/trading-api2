@@ -21,5 +21,5 @@ target_link_libraries(${PROJECT_NAME}
 
 
 if(BUILD_TESTS)
-    #add_subdirectory(tests)
+    add_subdirectory(system-tests)
 endif(BUILD_TESTS)
