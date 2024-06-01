@@ -26,6 +26,8 @@ enum Timeframe
 
 typedef std::map<Timeframe, ChartData3> ChartTimeframesMap;
 
+/*Keeps track of different timeframe charts
+ Only updates by minute candles, and will update other timeframes accordingly*/
 class ChartsAggregator
 {
 public:

@@ -8,6 +8,7 @@ using namespace charting;
 class IDatabank
 {
 public:
+    virtual void initializeData(std::set<std::string> symbols) = 0;
     virtual void startParsing() = 0;
     virtual ChartTimeframesMap getChart(std::string symbol) = 0;
     virtual std::vector<CandleStick> getCandlesFromDb(

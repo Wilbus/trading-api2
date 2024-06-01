@@ -3,9 +3,13 @@
 #include "Logger.h"
 #include "SchwabDatabaseHandler.h"
 #include "SchwabStreamDataParser.h"
+#include "SystemTimer.h"
+#include "timefuncs.h"
 
 namespace databank {
 using namespace schwabStreamParser;
+using namespace utils;
+using namespace timefuncs;
 
 SchwabDatabank::SchwabDatabank(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabaseHandler> dbHandler,
     std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile)
@@ -16,6 +20,62 @@ SchwabDatabank::SchwabDatabank(std::shared_ptr<ISchwabClient> sClient, std::shar
     , sClient(sClient)
 {
     infologprint(logfile, "%s: init", __func__);
+}
+
+void SchwabDatabank::initializeData(std::set<std::string> symbols)
+{
+    infologprint(logfile, "%s: initialize data", __func__);
+
+    time_t currS = nowMs() / 1000;
+    std::string currTimeStr = unixTimeToString(currS, "%Y-%m-%d");
+
+    time_t oneYearAgoMs = currS - 31536000; // 1000 * 60 * 60 * 24 * 365
+    std::string oneYearAgoStr = unixTimeToString(oneYearAgoMs, "%Y-%m-%d");
+
+    time_t oneMonthAgoMs = currS - 2592000; // 1000 * 60 * 60 * 24 * 30
+    std::string oneMonthAgoStr = unixTimeToString(oneMonthAgoMs, "%Y-%m-%d");
+
+    time_t oneWeekAgoMs = currS - 604800; // 1000 * 60 * 60 * 24 * 7
+    std::string oneWeekAgoStr = unixTimeToString(oneWeekAgoMs, "%Y-%m-%d");
+
+    for (const auto& symbol : symbols)
+    {
+        // year daily
+        auto candleSticks = getCandlesFromClient(symbol, Timeframe::DAILY, oneYearAgoStr, currTimeStr);
+        ChartData3 dailyChart;
+        for (const auto& candleStick : candleSticks)
+        {
+            dailyChart.addMultiCandle(candleStick);
+        }
+        chartsAggregator->addChart(symbol, dailyChart, Timeframe::DAILY);
+
+        // thirty min month ago
+        candleSticks = getCandlesFromClient(symbol, Timeframe::THIRTY, oneMonthAgoStr, currTimeStr);
+        ChartData3 thirtyChart;
+        for (const auto& candleStick : candleSticks)
+        {
+            thirtyChart.addMultiCandle(candleStick);
+        }
+        chartsAggregator->addChart(symbol, thirtyChart, Timeframe::THIRTY);
+
+        // 5min week ago
+        candleSticks = getCandlesFromClient(symbol, Timeframe::FIVE, oneWeekAgoStr, currTimeStr);
+        ChartData3 fiveChart;
+        for (const auto& candleStick : candleSticks)
+        {
+            fiveChart.addMultiCandle(candleStick);
+        }
+        chartsAggregator->addChart(symbol, fiveChart, Timeframe::FIVE);
+
+        // minute week ago
+        candleSticks = getCandlesFromClient(symbol, Timeframe::MINUTE, oneWeekAgoStr, currTimeStr);
+        ChartData3 minuteChart;
+        for (const auto& candleStick : candleSticks)
+        {
+            minuteChart.addMultiCandle(candleStick);
+        }
+        chartsAggregator->addChart(symbol, minuteChart, Timeframe::MINUTE);
+    }
 }
 
 void SchwabDatabank::startParsing()
@@ -114,6 +174,7 @@ std::vector<std::string> SchwabDatabank::getJsonDataFromDb(const std::string& fr
     return dbHandler->getJsonData(fromTime, toTime);
 }
 
+/*if fromTime is not specified, SchwabClient api will use fromTime = toTime - period*/
 std::vector<CandleStick> SchwabDatabank::getCandlesFromClient(
     const std::string& symbol, const Timeframe timeframe, const std::string& fromTime, const std::string& toTime)
 {
@@ -122,23 +183,27 @@ std::vector<CandleStick> SchwabDatabank::getCandlesFromClient(
     {
         case Timeframe::MINUTE:
             priceHistory = sClient->getPriceHistory(
-                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 1, fromTime, toTime, true);
+                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::MINUTE, 1, fromTime, toTime, true);
             break;
         case Timeframe::FIVE:
             priceHistory = sClient->getPriceHistory(
-                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 5, fromTime, toTime, true);
+                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::MINUTE, 5, fromTime, toTime, true);
             break;
         case Timeframe::FIFTEEN:
             priceHistory = sClient->getPriceHistory(
-                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 15, fromTime, toTime, true);
+                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::MINUTE, 15, fromTime, toTime, true);
             break;
         case Timeframe::THIRTY:
             priceHistory = sClient->getPriceHistory(
-                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::DAILY, 30, fromTime, toTime, true);
+                symbol, PriceHistoryPeriodType::DAY, 10, PriceHistoryTimeFreq::MINUTE, 30, fromTime, toTime, true);
             break;
         case Timeframe::DAILY:
             priceHistory = sClient->getPriceHistory(
                 symbol, PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY, 1, fromTime, toTime);
+            break;
+        case Timeframe::HOURLY:
+        default:
+            errorlogprint(logfile, "%s: invalid timeframe", __func__);
             break;
     }
 

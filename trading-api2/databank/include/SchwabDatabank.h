@@ -22,6 +22,7 @@ public:
     SchwabDatabank(std::shared_ptr<ISchwabClient> sclient, std::shared_ptr<IDatabaseHandler> dbHandler,
         std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile = "");
 
+    virtual void initializeData(std::set<std::string> symbols) override;
     virtual void startParsing() override;
     virtual ChartTimeframesMap getChart(std::string symbol) override;
     virtual std::vector<CandleStick> getCandlesFromDb(
