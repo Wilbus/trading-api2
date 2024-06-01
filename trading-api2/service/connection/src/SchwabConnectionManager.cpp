@@ -4,16 +4,18 @@
 
 #include <chrono>
 
-// testing
 SchwabConnectionManager::SchwabConnectionManager(
-    std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient, std::string logfile)
+    std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient,
+    std::shared_ptr<DataQueue<std::string>> repliesQue, std::string logfile)
     : configs(configs)
     , sclient(sclient)
+    , repliesQue(repliesQue)
     , logfile(logfile)
 {
     infologprint(logfile, "%s init", __func__);
+    buildAllRequests();
 }
-// production
+
 SchwabConnectionManager::SchwabConnectionManager(std::string configfolder, std::string logfile)
     : logfile(logfile)
 {
@@ -93,7 +95,7 @@ void SchwabConnectionManager::buildAllRequests()
     // requestsMap[4] = optionReq;
 
     streamer.reset();
-    streamer = std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", requestsMap);
+    streamer = std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", requestsMap, repliesQue, logfile);
 }
 
 void SchwabConnectionManager::connectAndRunStream()

@@ -20,7 +20,8 @@ using utils::DataQueue;
 class SchwabStreamHandler : public IStreamHandler
 {
 public:
-    SchwabStreamHandler(std::string url, SchwabRequestsIdMap requestsIdMap, std::string logfile = "");
+    SchwabStreamHandler(std::string url, SchwabRequestsIdMap requestsIdMap,
+        std::shared_ptr<DataQueue<std::string>> repliesQue, std::string logfile = "");
     ~SchwabStreamHandler();
 
     virtual void run() override;

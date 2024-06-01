@@ -11,14 +11,15 @@
 namespace streamer {
 using namespace schwabStreamParser;
 // TODO: consider moving callback functions outside of this class to for example SchwabConnection class
-SchwabStreamHandler::SchwabStreamHandler(std::string url, SchwabRequestsIdMap requestsIdMap, std::string logfile)
+SchwabStreamHandler::SchwabStreamHandler(
+    std::string url, SchwabRequestsIdMap requestsIdMap, std::shared_ptr<DataQueue<std::string>> repliesQue, std::string logfile)
     : group(hub.createGroup<uWS::CLIENT>())
     , streamUrl(url)
     , logfile(logfile)
     , requestsIdMap(requestsIdMap)
+    , repliesQue(repliesQue)
 {
     infologprint(logfile, "%s init", __func__);
-    repliesQue = std::make_shared<DataQueue<std::string>>();
     for (const auto& [id, req] : requestsIdMap)
     {
         requestsIdStrMap[id] = schwabStreamReq::buildRequestString(req);
