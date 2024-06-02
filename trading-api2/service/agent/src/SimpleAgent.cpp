@@ -34,6 +34,10 @@ void SimpleAgent::startAgent()
     // agentThread.join();
 }
 
+void SimpleAgent::startBackTest(const ChartTimeframesMap& timeframesChart)
+{
+}
+
 void SimpleAgent::fillIndicators(const std::string& symbol, ChartTimeframesMap& timeframeCharts)
 {
     // std::cout << "SimpleAgent::fillIndicators" << std::endl;
