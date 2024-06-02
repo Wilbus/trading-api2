@@ -22,6 +22,8 @@ public:
 
     std::vector<IndicatorValue> copyOutToIndicatorValues(
         const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx, TA_Integer outBeg, TA_Real out[]);
+    std::vector<IndicatorValue> copyOutToIndicatorValues(
+        const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx, TA_Integer outBeg, TA_Integer out[]);
 
     std::vector<IndicatorValue> SMA(const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx, int periods);
     std::vector<IndicatorValue> EMA(
@@ -30,5 +32,7 @@ public:
         int endIdx, int periods, double devUp, double devDown);
     std::vector<IndicatorValue> ADX(const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx, int periods);
     std::vector<IndicatorValue> RSI(const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx, int periods);
+    std::vector<IndicatorValue> CDL3WHITESOLDIERS(const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx);
+    std::vector<IndicatorValue> CDL3BLACKCROWS(const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx);
 };
 } // namespace ta_lib_wrapper

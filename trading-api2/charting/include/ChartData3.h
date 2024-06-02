@@ -55,6 +55,8 @@ private:
     std::vector<IndicatorValue> calculateStochasticMomentum(
         int64_t highlowPeriods, int64_t emaPeriods, int64_t firstLevel, int64_t secondLevel);
     std::vector<IndicatorValue> calculateEMA(unsigned periods, unsigned smoothing);
+    std::vector<IndicatorValue> calculate3WhiteSoldiers();
+    std::vector<IndicatorValue> calculate3BlackCrows();
 
     std::vector<MultiCandle> mcandles;
     std::vector<IndicatorType> indicatorTypes;

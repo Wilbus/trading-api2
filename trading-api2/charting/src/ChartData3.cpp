@@ -132,6 +132,14 @@ void ChartData3::updateIndicatorsData(IndicatorType indicatortype)
             // auto level = std::stoi(indicatortype.params[0]);
             break;
         }
+        case THREEWHITESOLDIERS: {
+            indicatorsVec = calculate3WhiteSoldiers();
+            break;
+        }
+        case THREEBLACKCROWS: {
+            indicatorsVec = calculate3BlackCrows();
+            break;
+        }
         case LIMITBUY:
         case LIMITSELL:
         case STOPLIMIT:
@@ -199,6 +207,18 @@ std::vector<IndicatorValue> ChartData3::calculateEMA(unsigned periods, unsigned 
 {
     TALIB talib;
     return talib.EMA(mcandles, 0, mcandles.size() - 1, periods, 2);
+}
+
+std::vector<IndicatorValue> ChartData3::calculate3WhiteSoldiers()
+{
+    TALIB talib;
+    return talib.CDL3WHITESOLDIERS(mcandles, 0, mcandles.size() - 1);
+}
+
+std::vector<IndicatorValue> ChartData3::calculate3BlackCrows()
+{
+    TALIB talib;
+    return talib.CDL3BLACKCROWS(mcandles, 0, mcandles.size() - 1);
 }
 
 } // namespace charting

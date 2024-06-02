@@ -33,6 +33,8 @@ enum IndicatorTypes : unsigned int
     STOCHLOWER,
     ADX,
     RSI,
+    THREEWHITESOLDIERS,
+    THREEBLACKCROWS,
 
     LIMITBUY,
     LIMITSELL,
