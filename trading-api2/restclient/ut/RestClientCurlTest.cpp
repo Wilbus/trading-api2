@@ -181,7 +181,7 @@ TEST_F(RestClientCurlTest, getResponseSetOpt_WriteData_Failed)
     // EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl,
     // _)).WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_stderr(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
-    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true))
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, false))
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, _))
         .WillOnce(Return(CURLcode::CURLE_WRITE_ERROR));
@@ -208,7 +208,7 @@ TEST_F(RestClientCurlTest, getResponseEasyPerform_Failed)
     // EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl,
     // _)).WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_stderr(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
-    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true))
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, false))
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, client->getReadBufferPtr()))
         .WillOnce(Return(CURLcode::CURLE_OK));
@@ -238,7 +238,7 @@ TEST_F(RestClientCurlTest, getResponseTest)
     // EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_debugfunction(curl,
     // _)).WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_stderr(curl, _)).WillOnce(Return(CURLcode::CURLE_OK));
-    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, true))
+    EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_verbose(curl, false))
         .WillOnce(Return(CURLcode::CURLE_OK));
     EXPECT_CALL(CurlWrapperFuncsMock::inst(), mycurl_easy_setopt_writedata(curl, client->getReadBufferPtr()))
         .WillOnce(Return(CURLcode::CURLE_OK));
