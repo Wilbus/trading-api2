@@ -5,6 +5,7 @@
 #include "SchwabConnectionManager.h"
 #include "SchwabDatabank.h"
 #include "SchwabDatabaseHandler.h"
+#include "SimpleAgent.h"
 
 namespace tradingservice {
 
@@ -29,6 +30,8 @@ private:
     InfluxConnectionInfo influxConnectionInfo;
     std::shared_ptr<SchwabDatabank> databank;
     std::set<std::string> chartSymbols;
+
+    std::shared_ptr<SimpleAgent> agent;
 };
 
 } // namespace tradingservice
