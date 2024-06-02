@@ -1,18 +1,19 @@
 #include "SimpleAgent.h"
 
 SimpleAgent::SimpleAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabank> databank,
-    std::set<std::string> symbols, std::string logFile)
+    std::set<std::string> symbols, std::string agentName, std::string logFile)
     : sClient(sClient)
     , databank(databank)
     , symbols(symbols)
     , logFile(logFile)
+    , agentName(agentName)
 {
     infologprint(logFile, "%s: init", __func__);
 }
 
 void SimpleAgent::startAgent()
 {
-    infologprint(logFile, "%s: starting SimpleAgent", __func__);
+    infologprint(logFile, "%s: starting %s", __func__, agentName.c_str());
     agentThread = std::thread([this]() {
         while (true)
         {

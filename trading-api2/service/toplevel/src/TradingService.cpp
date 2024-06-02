@@ -30,8 +30,8 @@ TradingService::TradingService(std::string configFolder, std::string logFile)
 
     databank->initializeData(chartSymbols);
 
-    agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, logFile));
-    agents.push_back(std::make_shared<TestAgent>(sClient, databank, chartSymbols, logFile));
+    agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, "simpleAgent", logFile));
+    agents.push_back(std::make_shared<TestAgent>(sClient, databank, chartSymbols, "testAgent", logFile));
 }
 
 void TradingService::start()

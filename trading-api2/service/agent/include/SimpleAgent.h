@@ -11,7 +11,7 @@ class SimpleAgent : public IAgent
 {
 public:
     SimpleAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabank> databank,
-        std::set<std::string> symbols, std::string logFile = "");
+        std::set<std::string> symbols, std::string agentName, std::string logFile = "");
     virtual void startAgent() override;
     virtual void waitForAgent() override
     {
@@ -33,6 +33,7 @@ protected:
     std::string logFile;
     std::thread agentThread;
     bool inPosition{false};
+    std::string agentName;
 
 private:
     bool threeConsecutiveDailyCloseAboveAllSmas{false};

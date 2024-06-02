@@ -1,8 +1,8 @@
 #include "TestAgent.h"
 
 TestAgent::TestAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabank> databank,
-    std::set<std::string> symbols, std::string logFile)
-    : SimpleAgent(sClient, databank, symbols, logFile)
+    std::set<std::string> symbols, std::string agentName, std::string logFile)
+    : SimpleAgent(sClient, databank, symbols, agentName, logFile)
 {
 }
 
