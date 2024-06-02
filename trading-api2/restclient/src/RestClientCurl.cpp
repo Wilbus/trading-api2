@@ -118,11 +118,11 @@ std::string RestClientCurl::getResponse(const std::string path, const std::set<s
 
     if (debugFileFolder.length() == 0)
     {
-        code = mycurl_easy_setopt_verbose(curl, true); // TODO: make this configurable
+        /*code = mycurl_easy_setopt_verbose(curl, true); // TODO: make this configurable
         if (!checkCURLcode(code))
         {
             throw std::runtime_error("invalid curlcode");
-        }
+        }*/
     }
     else
     {
