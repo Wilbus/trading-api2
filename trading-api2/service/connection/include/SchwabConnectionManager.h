@@ -13,8 +13,7 @@ using namespace streamer;
 class SchwabConnectionManager
 {
 public:
-    SchwabConnectionManager(
-        std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient,
+    SchwabConnectionManager(std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient,
         std::shared_ptr<DataQueue<std::string>> repliesQue, std::string logfile = "");
     SchwabConnectionManager(std::string configfolder, std::string logfile = "");
 

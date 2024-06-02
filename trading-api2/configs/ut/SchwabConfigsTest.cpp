@@ -67,8 +67,8 @@ public:
 
     void checkRestoredAuthConfig()
     {
-        std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
-            "/home/wilbus/trading-api2/trading-api2/configs/ut//");
+        std::shared_ptr<SchwabConfigs> conf =
+            std::make_shared<SchwabConfigs>("/home/wilbus/trading-api2/trading-api2/configs/ut//");
         EXPECT_EQ(conf->getAppKey(), expectedAuthConfig.app_key);
         EXPECT_EQ(conf->getAppSecret(), expectedAuthConfig.app_secret);
         EXPECT_EQ(conf->getRedirectUri(), expectedAuthConfig.redirect_uri);
@@ -104,8 +104,8 @@ protected:
 
 TEST_F(SchwabConfigsTest, readAuthConfig)
 {
-    std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
-        "/home/wilbus/trading-api2/trading-api2/configs/ut//");
+    std::shared_ptr<SchwabConfigs> conf =
+        std::make_shared<SchwabConfigs>("/home/wilbus/trading-api2/trading-api2/configs/ut//");
     auto authconf = conf->getAuthConfig();
 
     EXPECT_EQ(authconf.app_key, expectedAuthConfig.app_key);
@@ -126,8 +126,8 @@ TEST_F(SchwabConfigsTest, readAuthConfig)
 
 TEST_F(SchwabConfigsTest, getAuthConfigValues)
 {
-    std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
-        "/home/wilbus/trading-api2/trading-api2/configs/ut//");
+    std::shared_ptr<SchwabConfigs> conf =
+        std::make_shared<SchwabConfigs>("/home/wilbus/trading-api2/trading-api2/configs/ut//");
 
     EXPECT_EQ(conf->getAppKey(), expectedAuthConfig.app_key);
     EXPECT_EQ(conf->getAppSecret(), expectedAuthConfig.app_secret);
@@ -150,16 +150,16 @@ TEST_F(SchwabConfigsTest, getAuthConfigValues)
 
 TEST_F(SchwabConfigsTest, saveAuthConfig)
 {
-    std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
-        "/home/wilbus/trading-api2/trading-api2/configs/ut//");
+    std::shared_ptr<SchwabConfigs> conf =
+        std::make_shared<SchwabConfigs>("/home/wilbus/trading-api2/trading-api2/configs/ut//");
     EXPECT_NO_THROW(conf->saveAuthConfig());
 }
 
 TEST_F(SchwabConfigsTest, modifyAuthConfig)
 {
     modifyAuthConfig();
-    std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
-        "/home/wilbus/trading-api2/trading-api2/configs/ut//");
+    std::shared_ptr<SchwabConfigs> conf =
+        std::make_shared<SchwabConfigs>("/home/wilbus/trading-api2/trading-api2/configs/ut//");
 
     EXPECT_EQ(conf->getAppKey(), expectedAuthConfig.app_key);
     EXPECT_EQ(conf->getAppSecret(), expectedAuthConfig.app_secret);
@@ -185,8 +185,8 @@ TEST_F(SchwabConfigsTest, modifyAuthConfig)
 
 TEST_F(SchwabConfigsTest, getSubscribeConfigTest)
 {
-    std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
-        "/home/wilbus/trading-api2/trading-api2/configs/ut//");
+    std::shared_ptr<SchwabConfigs> conf =
+        std::make_shared<SchwabConfigs>("/home/wilbus/trading-api2/trading-api2/configs/ut//");
     auto subconf = conf->getSubscribeConfig();
 
     EXPECT_EQ(subconf.levelOneEquities.symbols.size(), expectedSubscribeConfig.levelOneEquities.symbols.size());
@@ -215,8 +215,8 @@ TEST_F(SchwabConfigsTest, getSubscribeConfigTest)
 
 TEST_F(SchwabConfigsTest, getInfluxConnectionConfTest)
 {
-    std::shared_ptr<SchwabConfigs> conf = std::make_shared<SchwabConfigs>(
-        "/home/wilbus/trading-api2/trading-api2/configs/ut//");
+    std::shared_ptr<SchwabConfigs> conf =
+        std::make_shared<SchwabConfigs>("/home/wilbus/trading-api2/trading-api2/configs/ut//");
     auto influxconf = conf->getInfluxConnectionConfig();
 
     EXPECT_EQ(influxconf.user, expectedInfluxConnectionConf.user);

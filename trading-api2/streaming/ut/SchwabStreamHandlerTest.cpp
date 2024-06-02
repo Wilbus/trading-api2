@@ -17,7 +17,8 @@ public:
     class SchwabStreamHandlerTestWrapper : public SchwabStreamHandler
     {
     public:
-        SchwabStreamHandlerTestWrapper(std::string url, SchwabRequestsIdMap map, std::shared_ptr<DataQueue<std::string>> repliesQue)
+        SchwabStreamHandlerTestWrapper(
+            std::string url, SchwabRequestsIdMap map, std::shared_ptr<DataQueue<std::string>> repliesQue)
             : SchwabStreamHandler(url, map, repliesQue)
         {
         }
@@ -60,7 +61,8 @@ public:
 TEST_F(SchwabStreamHandlerTest, noLoginRequestOnConnectionThrows)
 {
     SchwabRequestsIdMap map;
-    std::shared_ptr<SchwabStreamHandler> handler = std::make_shared<SchwabStreamHandler>("wss://stream.com", map, repliesQue);
+    std::shared_ptr<SchwabStreamHandler> handler =
+        std::make_shared<SchwabStreamHandler>("wss://stream.com", map, repliesQue);
 
     EXPECT_THROW(handler->onConnectionCallback(someWebSocketInstance, {}), std::runtime_error);
 }
@@ -80,7 +82,8 @@ TEST_F(SchwabStreamHandlerTest, loginRequestOnConnection)
 
     map[0] = req;
 
-    SchwabStreamHandlerTestWrapper handlerTestWrapper = SchwabStreamHandlerTestWrapper("wss://stream.com", map, repliesQue);
+    SchwabStreamHandlerTestWrapper handlerTestWrapper =
+        SchwabStreamHandlerTestWrapper("wss://stream.com", map, repliesQue);
 
     EXPECT_CALL(WebSocketMock<uWS::CLIENT>::inst(),
         send(handlerTestWrapper.getRequestDataPtr(0), handlerTestWrapper.getRequestDataSize(0), uWS::OpCode::TEXT));
@@ -104,7 +107,8 @@ TEST_F(SchwabStreamHandlerTest, onMessageLoginFailedResponse)
 
     map[0] = req;
 
-    SchwabStreamHandlerTestWrapper handlerTestWrapper = SchwabStreamHandlerTestWrapper("wss://stream.com", map, repliesQue);
+    SchwabStreamHandlerTestWrapper handlerTestWrapper =
+        SchwabStreamHandlerTestWrapper("wss://stream.com", map, repliesQue);
 
     EXPECT_THROW(handlerTestWrapper.onMessageCallback(
                      someWebSocketInstance, loginDeniedResponse.data(), loginDeniedResponse.size(), uWS::OpCode::TEXT),
@@ -175,7 +179,8 @@ TEST_F(SchwabStreamHandlerTest, onMessageResponse)
     // map[3] = chartEquityReq;
     // map[4] = optionReq;
 
-    SchwabStreamHandlerTestWrapper handlerTestWrapper = SchwabStreamHandlerTestWrapper("wss://stream.com", map, repliesQue);
+    SchwabStreamHandlerTestWrapper handlerTestWrapper =
+        SchwabStreamHandlerTestWrapper("wss://stream.com", map, repliesQue);
 
     EXPECT_CALL(WebSocketMock<uWS::CLIENT>::inst(),
         send(handlerTestWrapper.getRequestDataAtCurrentId(), handlerTestWrapper.getRequestDataSizeAtCurrentId(),

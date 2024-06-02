@@ -19,7 +19,7 @@ public:
     {
         configs = std::make_shared<SchwabConfigs>(configsPath);
 
-        sClient = std::make_shared<SchwabClient>(configs, std::make_shared<RestClientCurl>(), "logfile");
+        sClient = std::make_shared<SchwabClient>(configs, std::make_shared<RestClientCurl>());
 
         streamqueue = std::make_shared<DataQueue<std::string>>();
 

@@ -55,7 +55,8 @@ std::vector<IndicatorValue> TALIB::SMA(const std::vector<MultiCandle>& mcandles,
 
     if (retCode != 0)
     {
-        throw std::runtime_error("Error calculating SMA");
+        std::string errMsg = "Error calculating SMA, retCode: " + std::to_string(retCode);
+        throw std::runtime_error(errMsg.c_str());
     }
 
     return copyOutToIndicatorValues(mcandles, startIdx, endIdx, outBeg, out);
@@ -83,7 +84,8 @@ std::vector<IndicatorValue> TALIB::ADX(const std::vector<MultiCandle>& mcandles,
         startIdx, endIdx, &highPrices[0], &lowPrices[0], &closePrices[0], periods, &outBeg, &outNbElement, &out[0]);
     if (retCode != 0)
     {
-        throw std::runtime_error("Error calculating ADX");
+        std::string errMsg = "Error calculating ADX, retCode: " + std::to_string(retCode);
+        throw std::runtime_error(errMsg.c_str());
     }
 
     return copyOutToIndicatorValues(mcandles, startIdx, endIdx, outBeg, out);
@@ -108,7 +110,8 @@ std::vector<IndicatorValue> TALIB::EMA(
 
     if (retCode != 0)
     {
-        throw std::runtime_error("Error calculating EMA");
+        std::string errMsg = "Error calculating EMA, retCode: " + std::to_string(retCode);
+        throw std::runtime_error(errMsg.c_str());
     }
 
     return copyOutToIndicatorValues(mcandles, startIdx, endIdx, outBeg, out);
@@ -135,7 +138,8 @@ std::vector<IndicatorValue> TALIB::BB(const std::vector<MultiCandle>& mcandles, 
         &outNbElement, &outUpper[0], &outMid[0], &outLower[0]);
     if (retCode != 0)
     {
-        throw std::runtime_error("Error calculating BB");
+        std::string errMsg = "Error calculating BB, retCode: " + std::to_string(retCode);
+        throw std::runtime_error(errMsg.c_str());
     }
 
     switch (bbtype)
@@ -175,7 +179,8 @@ std::vector<IndicatorValue> TALIB::RSI(const std::vector<MultiCandle>& mcandles,
     auto retCode = TA_RSI(startIdx, endIdx, &closePrices[0], periods, &outBeg, &outNbElement, &out[0]);
     if (retCode != 0)
     {
-        throw std::runtime_error("Error calculating BB");
+        std::string errMsg = "Error calculating RSI, retCode: " + std::to_string(retCode);
+        throw std::runtime_error(errMsg.c_str());
     }
 
     return copyOutToIndicatorValues(mcandles, startIdx, endIdx, outBeg, out);

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "IDatabank.h"
 #include "Logger.h"
 #include "SchwabClient.h"
-#include "IDatabank.h"
 
 using namespace databank;
 
@@ -12,8 +12,14 @@ public:
     SimpleAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabank> databank,
         std::set<std::string> symbols, std::string logFile = "");
     void startAgent();
-    void waitForAgent() { agentThread.join(); }
-    bool InPostion() { return inPosition; }
+    void waitForAgent()
+    {
+        agentThread.join();
+    }
+    bool InPostion()
+    {
+        return inPosition;
+    }
 
 private:
     void checkEnterTrade(const std::string& symbol, const ChartTimeframesMap& timeframeCharts);

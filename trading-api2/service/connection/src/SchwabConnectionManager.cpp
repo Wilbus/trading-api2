@@ -4,9 +4,8 @@
 
 #include <chrono>
 
-SchwabConnectionManager::SchwabConnectionManager(
-    std::shared_ptr<ISchwabConfigs> configs, std::shared_ptr<ISchwabClient> sclient,
-    std::shared_ptr<DataQueue<std::string>> repliesQue, std::string logfile)
+SchwabConnectionManager::SchwabConnectionManager(std::shared_ptr<ISchwabConfigs> configs,
+    std::shared_ptr<ISchwabClient> sclient, std::shared_ptr<DataQueue<std::string>> repliesQue, std::string logfile)
     : configs(configs)
     , sclient(sclient)
     , repliesQue(repliesQue)
@@ -95,7 +94,8 @@ void SchwabConnectionManager::buildAllRequests()
     // requestsMap[4] = optionReq;
 
     streamer.reset();
-    streamer = std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", requestsMap, repliesQue, logfile);
+    streamer =
+        std::make_shared<SchwabStreamHandler>("wss://streamer-api.schwab.com/ws", requestsMap, repliesQue, logfile);
 }
 
 void SchwabConnectionManager::connectAndRunStream()

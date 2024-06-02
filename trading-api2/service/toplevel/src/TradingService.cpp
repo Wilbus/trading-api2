@@ -16,11 +16,11 @@ TradingService::TradingService(std::string configFolder, std::string logFile)
     influxConnectionInfo = InfluxConnectionInfo{
         influxConf.user, influxConf.pass, influxConf.host, influxConf.dbname, influxConf.authToken};
 
-    databank = std::make_shared<SchwabDatabank>(sClient, std::make_shared<SchwabDatabaseHandler>(influxConnectionInfo),
-        repliesQueue, logFile);
+    databank = std::make_shared<SchwabDatabank>(
+        sClient, std::make_shared<SchwabDatabaseHandler>(influxConnectionInfo), repliesQueue, logFile);
 
     auto subConf = configs->getSubscribeConfig();
-    for(const auto& symbol : subConf.chartEquities.symbols)
+    for (const auto& symbol : subConf.chartEquities.symbols)
     {
         chartSymbols.insert(symbol);
     }
