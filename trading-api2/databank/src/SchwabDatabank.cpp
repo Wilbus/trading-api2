@@ -140,9 +140,16 @@ void SchwabDatabank::updateMinuteCharts(const std::string symbol, const ChartEqu
 
     CandleStick candleStick(
         timestamp, minuteCandle.low, minuteCandle.high, minuteCandle.open, minuteCandle.close, minuteCandle.volume);
-    pushCandleToDb(symbol, candleStick);
+    pushCandleToDb(symbol, Timeframe::MINUTE, candleStick);
 
     chartsAggregator->addMinuteCandle(symbol, candleStick);
+}
+
+void SchwabDatabank::pushCandleToDb(const std::string symbol, const Timeframe& timeframe, const CandleStick candle)
+{
+    //dbHandler->pushCandle(symbol, candle);
+    std::string symbolAndTimeframe = symbol + "_" + timeFrameStrings.at(timeframe);
+    dbHandler->pushCandle(symbolAndTimeframe, candle);
 }
 
 void SchwabDatabank::pushCandleToDb(const std::string symbol, const CandleStick candle)
@@ -164,9 +171,10 @@ ChartTimeframesMap SchwabDatabank::getChart(std::string symbol)
 }
 
 std::vector<CandleStick> SchwabDatabank::getCandlesFromDb(
-    const std::string& symbol, const std::string& fromTime, const std::string& toTime)
+    const std::string& symbol, const Timeframe& timeframe, const std::string& fromTime, const std::string& toTime)
 {
-    return dbHandler->getCandles(symbol, fromTime, toTime);
+    std::string symbolAndTimeframe = symbol + "_" + timeFrameStrings.at(timeframe);
+    return dbHandler->getCandles(symbolAndTimeframe, fromTime, toTime);
 }
 
 std::vector<std::string> SchwabDatabank::getJsonDataFromDb(const std::string& fromTime, const std::string& toTime)

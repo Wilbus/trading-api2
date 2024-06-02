@@ -26,10 +26,11 @@ public:
     virtual void startParsing() override;
     virtual ChartTimeframesMap getChart(std::string symbol) override;
     virtual std::vector<CandleStick> getCandlesFromDb(
-        const std::string& symbol, const std::string& fromTime, const std::string& toTime) override;
+        const std::string& symbol, const Timeframe& timeframe, const std::string& fromTime, const std::string& toTime) override;
     virtual std::vector<std::string> getJsonDataFromDb(const std::string& fromTime, const std::string& toTime) override;
     virtual std::vector<CandleStick> getCandlesFromClient(const std::string& symbol, const Timeframe timeframe,
         const std::string& fromTime, const std::string& toTime) override;
+    virtual void pushCandleToDb(const std::string symbol, const Timeframe& timeframe, const CandleStick candle) override;
 
 protected:
     void parseStreamQueue(unsigned count);
