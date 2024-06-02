@@ -27,7 +27,7 @@ TradingService::TradingService(std::string configFolder, std::string logFile)
 
     databank->initializeData(chartSymbols);
 
-    agent = std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, logFile);
+    agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, logFile));
 }
 
 void TradingService::start()
@@ -35,10 +35,16 @@ void TradingService::start()
     manager->startThreadFuncThread();
 
     databank->startParsing();
-    agent->startAgent();
+    for(auto& agent : agents)
+    {
+        agent->startAgent();
+    }
 
     manager->reconnectingStreamThread.join();
-    agent->waitForAgent();
+    for(auto& agent : agents)
+    {
+        agent->waitForAgent();
+    }
 }
 
 } // namespace tradingservice

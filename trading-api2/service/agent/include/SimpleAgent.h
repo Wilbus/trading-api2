@@ -1,22 +1,23 @@
 #pragma once
 
+#include "IAgent.h"
 #include "IDatabank.h"
 #include "Logger.h"
 #include "SchwabClient.h"
 
 using namespace databank;
 
-class SimpleAgent
+class SimpleAgent : public IAgent
 {
 public:
     SimpleAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabank> databank,
         std::set<std::string> symbols, std::string logFile = "");
-    void startAgent();
-    void waitForAgent()
+    virtual void startAgent() override;
+    virtual void waitForAgent() override
     {
         agentThread.join();
     }
-    bool InPostion()
+    virtual bool InPostion() override
     {
         return inPosition;
     }

@@ -76,7 +76,7 @@ void SimpleAgent::startAgent()
 
 void SimpleAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframesMap& timeframeCharts)
 {
-    std::cout << "test0\n";
+    //std::cout << "test0\n";
     auto dailyChart = timeframeCharts.at(Timeframe::DAILY);
     auto thirtyChart = timeframeCharts.at(Timeframe::THIRTY);
     auto fiveChart = timeframeCharts.at(Timeframe::FIVE);
@@ -117,7 +117,7 @@ void SimpleAgent::checkEnterTrade(const std::string& symbol, const ChartTimefram
 
 void SimpleAgent::checkExitTrade(const std::string& symbol, const ChartTimeframesMap& timeframeCharts)
 {
-    std::cout << "test0\n";
+    //std::cout << "test0\n";
     auto dailyChart = timeframeCharts.at(Timeframe::DAILY);
     auto thirtyChart = timeframeCharts.at(Timeframe::THIRTY);
     auto fiveChart = timeframeCharts.at(Timeframe::FIVE);

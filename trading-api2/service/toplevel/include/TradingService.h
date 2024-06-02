@@ -31,7 +31,7 @@ private:
     std::shared_ptr<SchwabDatabank> databank;
     std::set<std::string> chartSymbols;
 
-    std::shared_ptr<SimpleAgent> agent;
+    std::vector<std::shared_ptr<IAgent>> agents;
 };
 
 } // namespace tradingservice

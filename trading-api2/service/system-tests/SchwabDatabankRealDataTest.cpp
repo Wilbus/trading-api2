@@ -35,6 +35,56 @@ public:
     {
     }
 
+    void applyIndicators(ChartTimeframesMap& timeframeCharts)
+    {
+        timeframeCharts.at(Timeframe::MINUTE)
+            .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
+        timeframeCharts.at(Timeframe::MINUTE)
+            .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
+        timeframeCharts.at(Timeframe::MINUTE)
+            .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
+        timeframeCharts.at(Timeframe::MINUTE)
+            .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
+        timeframeCharts.at(Timeframe::MINUTE)
+            .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
+
+        timeframeCharts.at(Timeframe::FIVE)
+            .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
+        timeframeCharts.at(Timeframe::FIVE)
+            .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
+        timeframeCharts.at(Timeframe::FIVE)
+            .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
+        timeframeCharts.at(Timeframe::FIVE)
+            .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
+        timeframeCharts.at(Timeframe::FIVE)
+            .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
+
+        timeframeCharts.at(Timeframe::THIRTY)
+            .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
+        timeframeCharts.at(Timeframe::THIRTY)
+            .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
+        timeframeCharts.at(Timeframe::THIRTY)
+            .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
+        timeframeCharts.at(Timeframe::THIRTY)
+            .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
+        timeframeCharts.at(Timeframe::THIRTY)
+            .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
+
+        timeframeCharts.at(Timeframe::DAILY)
+            .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
+        timeframeCharts.at(Timeframe::DAILY)
+            .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
+        timeframeCharts.at(Timeframe::DAILY)
+            .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
+        timeframeCharts.at(Timeframe::DAILY)
+            .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
+        timeframeCharts.at(Timeframe::DAILY)
+            .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
+    
+        std::cout << timeframeCharts.at(Timeframe::MINUTE).getBack(0).getIndByName("sma5").value << std::endl;
+    
+    }
+
 protected:
     std::string configsPath{"/home/wilbus/smbshare0/sambashare0/coding/configs/"};
     InfluxConnectionInfo influxConnectionInfo;
@@ -45,7 +95,7 @@ protected:
     std::shared_ptr<DataQueue<std::string>> streamqueue;
 };
 
-TEST_F(SchwabDatabankRealDataTest, getCandlesFromClientTest)
+TEST_F(SchwabDatabankRealDataTest, getCandlesFromClientTestAndApplyIndicators)
 {
     time_t currS = nowMs() / 1000;
     std::string currTimeStr = unixTimeToString(currS, "%Y-%m-%d");
@@ -66,7 +116,7 @@ TEST_F(SchwabDatabankRealDataTest, getCandlesFromClientTest)
 
     for (const auto& symbol : symbols)
     {
-        auto chart = databank->getChart("AAPL");
+        auto chart = databank->getChart(symbol);
         time_t frontTimestamp = chart[Timeframe::DAILY].getMultiCandles().front().timestamp / 1000;
         time_t backTimestamp = chart[Timeframe::DAILY].getMultiCandles().back().timestamp / 1000;
         std::printf("symbol: %s, year daily chart size: %lu, first timestamp: %s, last timestamp: %s\n", symbol.c_str(),
@@ -94,5 +144,7 @@ TEST_F(SchwabDatabankRealDataTest, getCandlesFromClientTest)
             chart[Timeframe::MINUTE].getMultiCandles().size(),
             unixTimeToString(frontTimestamp, "%Y-%m-%d %H:%M:%S").c_str(),
             unixTimeToString(backTimestamp, "%Y-%m-%d %H:%M:%S").c_str());
+        
+        applyIndicators(chart);
     }
 }
