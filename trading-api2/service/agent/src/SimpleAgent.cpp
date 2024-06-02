@@ -1,4 +1,5 @@
 #include "SimpleAgent.h"
+#include <queue>
 
 SimpleAgent::SimpleAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabank> databank,
     std::set<std::string> symbols, std::string agentName, std::string logFile)
@@ -34,8 +35,41 @@ void SimpleAgent::startAgent()
     // agentThread.join();
 }
 
-void SimpleAgent::startBackTest(const ChartTimeframesMap& timeframesChart)
+void SimpleAgent::startBackTest()
 {
+    infologprint(logFile, "%s: starting %s backtest", __func__, agentName.c_str());
+
+    for (const auto& symbol : symbols)
+    {
+        /*for now, only supports backtesting on one timeframe*/
+        ChartTimeframesMap timeframeCharts;
+        this->fillIndicators(symbol, timeframeCharts);
+
+        for(size_t i = 0; i < timeframeCharts.at(Timeframe::MINUTE).getMultiCandles().size(); i++)
+        {
+            auto mcandles = timeframeCharts.at(Timeframe::MINUTE).getMultiCandles();
+            if(!inPosition)
+            {
+                //check if we should enter trade
+                if(!mcandles[i - 1].getIndByName("sma5").isNan &&
+                    mcandles[i - 1].price_close > mcandles[i].getIndByName("sma5").value)
+                {
+                    infologprint(logFile, "%s: buy %s at %.02f", __func__, symbol.c_str(), mcandles[i].price_close);
+                    inPosition = true;
+                }
+            }
+            else
+            {
+                //check if we should exit trade
+                if(!mcandles[i - 1].getIndByName("sma5").isNan &&
+                    mcandles[i - 1].price_close < mcandles[i].getIndByName("sma5").value)
+                {
+                    infologprint(logFile, "%s: sell %s at %.02f", __func__, symbol.c_str(), mcandles[i].price_close);
+                    inPosition = false;
+                }
+            }
+        }
+    }
 }
 
 void SimpleAgent::fillIndicators(const std::string& symbol, ChartTimeframesMap& timeframeCharts)

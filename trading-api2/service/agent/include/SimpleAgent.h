@@ -13,7 +13,7 @@ public:
     SimpleAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabank> databank,
         std::set<std::string> symbols, std::string agentName, std::string logFile = "");
     virtual void startAgent() override;
-    virtual void startBackTest(const ChartTimeframesMap& timeframesChart) override;
+    virtual void startBackTest() override;
     virtual void waitForAgent() override
     {
         agentThread.join();

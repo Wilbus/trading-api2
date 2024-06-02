@@ -5,9 +5,10 @@
 
 namespace tradingservice {
 
-TradingService::TradingService(std::string configFolder, std::string logFile)
+TradingService::TradingService(std::string configFolder, bool isBacktest, std::string logFile)
     : logFile(logFile)
     , configFolder(configFolder)
+    , isBacktest(isBacktest)
     , repliesQueue(std::make_shared<DataQueue<std::string>>())
     , configs(std::make_shared<SchwabConfigs>(configFolder))
     , sClient(std::make_shared<SchwabClient>(configs, std::make_shared<RestClientCurl>(), logFile))
@@ -36,6 +37,18 @@ TradingService::TradingService(std::string configFolder, std::string logFile)
 
 void TradingService::start()
 {
+    if(!isBacktest)
+    {
+        startTrading();
+    }
+    else
+    {
+        startBacktest();
+    }
+}
+
+void TradingService::startTrading()
+{
     manager->startThreadFuncThread();
 
     databank->startParsing();
@@ -48,6 +61,14 @@ void TradingService::start()
     for (auto& agent : agents)
     {
         agent->waitForAgent();
+    }
+}
+
+void TradingService::startBacktest()
+{
+    for (auto& agent : agents)
+    {
+        agent->startBackTest();
     }
 }
 

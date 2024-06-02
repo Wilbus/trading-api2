@@ -16,13 +16,17 @@ using namespace streamer;
 class TradingService
 {
 public:
-    TradingService(std::string configFolder, std::string logFile);
+    TradingService(std::string configFolder, bool isBacktest, std::string logFile);
 
     void start();
 
 private:
+    void startTrading();
+    void startBacktest();
+
     std::string logFile;
     std::string configFolder;
+    bool isBacktest;
     std::shared_ptr<DataQueue<std::string>> repliesQueue;
     std::shared_ptr<SchwabConfigs> configs;
     std::shared_ptr<SchwabClient> sClient;
