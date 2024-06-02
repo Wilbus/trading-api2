@@ -1,5 +1,8 @@
 #include "TradingService.h"
 
+#include "SimpleAgent.h"
+#include "TestAgent.h"
+
 namespace tradingservice {
 
 TradingService::TradingService(std::string configFolder, std::string logFile)
@@ -28,6 +31,7 @@ TradingService::TradingService(std::string configFolder, std::string logFile)
     databank->initializeData(chartSymbols);
 
     agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, logFile));
+    agents.push_back(std::make_shared<TestAgent>(sClient, databank, chartSymbols, logFile));
 }
 
 void TradingService::start()
@@ -35,13 +39,13 @@ void TradingService::start()
     manager->startThreadFuncThread();
 
     databank->startParsing();
-    for(auto& agent : agents)
+    for (auto& agent : agents)
     {
         agent->startAgent();
     }
 
     manager->reconnectingStreamThread.join();
-    for(auto& agent : agents)
+    for (auto& agent : agents)
     {
         agent->waitForAgent();
     }

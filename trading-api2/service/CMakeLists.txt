@@ -5,6 +5,7 @@ add_library(${PROJECT_NAME} SHARED
     ${CMAKE_CURRENT_LIST_DIR}/toplevel/src/TradingService.cpp
     ${CMAKE_CURRENT_LIST_DIR}/connection/src/SchwabConnectionManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/agent/src/SimpleAgent.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/agent/src/TestAgent.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

@@ -1,11 +1,11 @@
 #pragma once
 
+#include "IAgent.h"
 #include "Logger.h"
 #include "SchwabClient.h"
 #include "SchwabConnectionManager.h"
 #include "SchwabDatabank.h"
 #include "SchwabDatabaseHandler.h"
-#include "SimpleAgent.h"
 
 namespace tradingservice {
 

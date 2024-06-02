@@ -18,50 +18,9 @@ void SimpleAgent::startAgent()
         {
             for (const auto& symbol : symbols)
             {
-                auto timeframeCharts = databank->getChart(symbol);
-                timeframeCharts.at(Timeframe::MINUTE)
-                    .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
-                timeframeCharts.at(Timeframe::MINUTE)
-                    .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
-                timeframeCharts.at(Timeframe::MINUTE)
-                    .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
-                timeframeCharts.at(Timeframe::MINUTE)
-                    .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
-                timeframeCharts.at(Timeframe::MINUTE)
-                    .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
+                ChartTimeframesMap timeframeCharts;
 
-                timeframeCharts.at(Timeframe::FIVE)
-                    .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
-                timeframeCharts.at(Timeframe::FIVE)
-                    .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
-                timeframeCharts.at(Timeframe::FIVE)
-                    .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
-                timeframeCharts.at(Timeframe::FIVE)
-                    .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
-                timeframeCharts.at(Timeframe::FIVE)
-                    .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
-
-                timeframeCharts.at(Timeframe::THIRTY)
-                    .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
-                timeframeCharts.at(Timeframe::THIRTY)
-                    .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
-                timeframeCharts.at(Timeframe::THIRTY)
-                    .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
-                timeframeCharts.at(Timeframe::THIRTY)
-                    .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
-                timeframeCharts.at(Timeframe::THIRTY)
-                    .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
-
-                timeframeCharts.at(Timeframe::DAILY)
-                    .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
-                timeframeCharts.at(Timeframe::DAILY)
-                    .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
-                timeframeCharts.at(Timeframe::DAILY)
-                    .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
-                timeframeCharts.at(Timeframe::DAILY)
-                    .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
-                timeframeCharts.at(Timeframe::DAILY)
-                    .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
+                this->fillIndicators(symbol, timeframeCharts);
 
                 if (!this->InPostion())
                     this->checkEnterTrade(symbol, timeframeCharts);
@@ -74,9 +33,58 @@ void SimpleAgent::startAgent()
     // agentThread.join();
 }
 
+void SimpleAgent::fillIndicators(const std::string& symbol, ChartTimeframesMap& timeframeCharts)
+{
+    // std::cout << "SimpleAgent::fillIndicators" << std::endl;
+    timeframeCharts = databank->getChart(symbol);
+    timeframeCharts.at(Timeframe::MINUTE)
+        .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
+    timeframeCharts.at(Timeframe::MINUTE)
+        .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
+    timeframeCharts.at(Timeframe::MINUTE)
+        .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
+    timeframeCharts.at(Timeframe::MINUTE)
+        .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
+    timeframeCharts.at(Timeframe::MINUTE)
+        .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
+
+    timeframeCharts.at(Timeframe::FIVE)
+        .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
+    timeframeCharts.at(Timeframe::FIVE)
+        .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
+    timeframeCharts.at(Timeframe::FIVE)
+        .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
+    timeframeCharts.at(Timeframe::FIVE)
+        .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
+    timeframeCharts.at(Timeframe::FIVE)
+        .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
+
+    timeframeCharts.at(Timeframe::THIRTY)
+        .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
+    timeframeCharts.at(Timeframe::THIRTY)
+        .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
+    timeframeCharts.at(Timeframe::THIRTY)
+        .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
+    timeframeCharts.at(Timeframe::THIRTY)
+        .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
+    timeframeCharts.at(Timeframe::THIRTY)
+        .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
+
+    timeframeCharts.at(Timeframe::DAILY)
+        .addIndicator(IndicatorType{"sma5", IndicatorTypes::SMA, std::vector<std::string>{"9"}});
+    timeframeCharts.at(Timeframe::DAILY)
+        .addIndicator(IndicatorType{"sma50", IndicatorTypes::SMA, std::vector<std::string>{"50"}});
+    timeframeCharts.at(Timeframe::DAILY)
+        .addIndicator(IndicatorType{"bbup21", IndicatorTypes::BBUP, std::vector<std::string>{"21"}});
+    timeframeCharts.at(Timeframe::DAILY)
+        .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
+    timeframeCharts.at(Timeframe::DAILY)
+        .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
+}
+
 void SimpleAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframesMap& timeframeCharts)
 {
-    //std::cout << "test0\n";
+    // std::cout << "test0\n";
     auto dailyChart = timeframeCharts.at(Timeframe::DAILY);
     auto thirtyChart = timeframeCharts.at(Timeframe::THIRTY);
     auto fiveChart = timeframeCharts.at(Timeframe::FIVE);
@@ -117,7 +125,7 @@ void SimpleAgent::checkEnterTrade(const std::string& symbol, const ChartTimefram
 
 void SimpleAgent::checkExitTrade(const std::string& symbol, const ChartTimeframesMap& timeframeCharts)
 {
-    //std::cout << "test0\n";
+    // std::cout << "test0\n";
     auto dailyChart = timeframeCharts.at(Timeframe::DAILY);
     auto thirtyChart = timeframeCharts.at(Timeframe::THIRTY);
     auto fiveChart = timeframeCharts.at(Timeframe::FIVE);

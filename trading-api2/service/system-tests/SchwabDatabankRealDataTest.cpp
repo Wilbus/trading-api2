@@ -80,9 +80,8 @@ public:
             .addIndicator(IndicatorType{"bbmid21", IndicatorTypes::BBMID, std::vector<std::string>{"21"}});
         timeframeCharts.at(Timeframe::DAILY)
             .addIndicator(IndicatorType{"bbdown21", IndicatorTypes::BBDOWN, std::vector<std::string>{"21"}});
-    
+
         std::cout << timeframeCharts.at(Timeframe::MINUTE).getBack(0).getIndByName("sma5").value << std::endl;
-    
     }
 
 protected:
@@ -144,7 +143,7 @@ TEST_F(SchwabDatabankRealDataTest, getCandlesFromClientTestAndApplyIndicators)
             chart[Timeframe::MINUTE].getMultiCandles().size(),
             unixTimeToString(frontTimestamp, "%Y-%m-%d %H:%M:%S").c_str(),
             unixTimeToString(backTimestamp, "%Y-%m-%d %H:%M:%S").c_str());
-        
+
         applyIndicators(chart);
     }
 }
