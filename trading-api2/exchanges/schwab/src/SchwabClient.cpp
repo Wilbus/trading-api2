@@ -347,7 +347,9 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
             logErrorResponse(errorResp);
             return {};
         }
-        return parsePriceHistory(resp);
+        PriceHistory priceHistory = parsePriceHistory(resp);
+        infologprint(logfile, "%s: received %lu candles", __func__, priceHistory.candles.size());
+        return priceHistory;
     }
     catch (std::exception& e)
     {
