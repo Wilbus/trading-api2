@@ -87,6 +87,56 @@ std::vector<IndicatorValue> TALIB::SMA(const std::vector<MultiCandle>& mcandles,
     return copyOutToIndicatorValues(mcandles, startIdx, endIdx, outBeg, out);
 }
 
+std::vector<IndicatorValue> TALIB::MACD(const std::vector<MultiCandle>& mcandles, IndicatorTypes macdType,  int startIdx, int endIdx, int fastPeriods,
+    int slowPeriods, int smoothing)
+{
+    TA_Real closePrices[endIdx - startIdx + 1];
+    TA_Real outMACD[endIdx - startIdx + 1];
+    TA_Real outMACDSignal[endIdx - startIdx + 1];
+    TA_Real outMACDHist[endIdx - startIdx + 1];
+    TA_Integer outBeg;
+    TA_Integer outNbElement;
+
+    unsigned idx = 0;
+    for (const auto& candle : mcandles)
+    {
+        closePrices[idx] = candle.price_close;
+        idx++;
+    }
+
+    auto retCode = TA_MACD(
+        startIdx, endIdx, &closePrices[0], fastPeriods, slowPeriods, smoothing, &outBeg, &outNbElement, &outMACD[0],
+        &outMACDSignal[0], &outMACDHist[0]);
+    if (retCode != 0)
+    {
+        std::string errMsg = "Error calculating MACD, retCode: " + std::to_string(retCode);
+        throw std::runtime_error(errMsg.c_str());
+    }
+
+    switch(macdType)
+    {
+        case IndicatorTypes::MACDSIGNAL:
+        {
+            return copyOutToIndicatorValues(mcandles, startIdx, endIdx, outBeg, outMACDSignal);
+            break;
+        }
+        case IndicatorTypes::MACDHIST:
+        {
+            return copyOutToIndicatorValues(mcandles, startIdx, endIdx, outBeg, outMACDHist);
+            break;
+        }
+        case IndicatorTypes::MACD:
+        {
+            return copyOutToIndicatorValues(mcandles, startIdx, endIdx, outBeg, outMACD);
+            break;
+        }
+        default:
+        {
+            throw std::runtime_error("Invalid macdType given");
+        }
+    }
+}
+
 std::vector<IndicatorValue> TALIB::ADX(const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx, int periods)
 {
     TA_Real closePrices[endIdx - startIdx + 1];

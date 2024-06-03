@@ -120,6 +120,13 @@ void ChartData3::updateIndicatorsData(IndicatorType indicatortype)
             indicatorsVec = calculateEMA(periods, smoothing);
             break;
         }
+        case MACD:{
+            auto fastPeriods = std::stoi(indicatortype.params[0]);
+            auto slowPeriods = std::stoi(indicatortype.params[1]);
+            auto smoothing = std::stoi(indicatortype.params[2]);
+            indicatorsVec = calculateMACD(fastPeriods, indicatortype.type, slowPeriods, smoothing);
+            break;
+        }
         case STOCH: {
             // auto periods = std::stoi(indicatortype.params[0]);
             break;
@@ -201,6 +208,12 @@ std::vector<IndicatorValue> ChartData3::calculateBB(unsigned periods, IndicatorT
 {
     TALIB talib;
     return talib.BB(mcandles, bbtype, 0, mcandles.size() - 1, periods, 2.0, 2.0);
+}
+
+std::vector<IndicatorValue> ChartData3::calculateMACD(unsigned fastPeriods, IndicatorTypes macdType, unsigned slowPeriods, unsigned smoothing)
+{
+    TALIB talib;
+    return talib.MACD(mcandles, macdType, 0, mcandles.size() - 1, fastPeriods, slowPeriods, smoothing);
 }
 
 std::vector<IndicatorValue> ChartData3::calculateEMA(unsigned periods, unsigned smoothing)

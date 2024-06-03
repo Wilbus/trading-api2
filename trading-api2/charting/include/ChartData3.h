@@ -52,6 +52,7 @@ private:
 
     std::vector<IndicatorValue> calculateSMA(unsigned periods);
     std::vector<IndicatorValue> calculateBB(unsigned periods, IndicatorTypes bbtype);
+    std::vector<IndicatorValue> calculateMACD(unsigned fastPeriods, IndicatorTypes macdType, unsigned slowPeriods, unsigned smoothing);
     std::vector<IndicatorValue> calculateStochasticMomentum(
         int64_t highlowPeriods, int64_t emaPeriods, int64_t firstLevel, int64_t secondLevel);
     std::vector<IndicatorValue> calculateEMA(unsigned periods, unsigned smoothing);
