@@ -120,7 +120,9 @@ void ChartData3::updateIndicatorsData(IndicatorType indicatortype)
             indicatorsVec = calculateEMA(periods, smoothing);
             break;
         }
-        case MACD:{
+        case MACDSIGNAL:
+        case MACDHIST:
+        case MACD: {
             auto fastPeriods = std::stoi(indicatortype.params[0]);
             auto slowPeriods = std::stoi(indicatortype.params[1]);
             auto smoothing = std::stoi(indicatortype.params[2]);

@@ -52,6 +52,10 @@ void TradingService::setup()
     }
     else
     {
+        if(initializeFromTime.empty() || initializeToTime.empty())
+        {
+            throw std::runtime_error("initializeFromTime and initializeToTime must be set for backtest");
+        }
         databank->initializeDataFromDb(chartSymbols, initializeFromTime, initializeToTime);
     }
 

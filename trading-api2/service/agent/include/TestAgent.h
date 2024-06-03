@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "SchwabClient.h"
 #include "SimpleAgent.h"
+#include <queue>
 
 class TestAgent : public SimpleAgent
 {
@@ -16,4 +17,14 @@ protected:
     void fillIndicators(const std::string& symbol, ChartTimeframesMap& timeframeCharts) override;
 
 private:
+    std::queue<std::string> buySignalsQueue;
+    std::queue<std::string> sellSignalsQueue;
+    std::string lowWentUnder_bbmid50SignalName{"lowWentUnder_bbmid50"};
+    std::string macdHistCrossedOver0SignalName{"macdHistCrossedOver0"};
+    std::string macdHistCrossedUnder0SignalName{"macdHistCrossedUnder0"};
+    std::string closeCrossedUnderSma9SignalName{"closeCrossedUnderSma9"};
+    bool lowWentUnder_bbmid50{false};
+    bool macdHistCrossedOver0{false};
+    bool macdHistCrossedUnder0{false};
+    bool closeCrossedUnderSma9{false};
 };
