@@ -26,8 +26,8 @@ public:
         const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx, TA_Integer outBeg, TA_Integer out[]);
 
     std::vector<IndicatorValue> SMA(const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx, int periods);
-    std::vector<IndicatorValue> MACD(const std::vector<MultiCandle>& mcandles, IndicatorTypes macdType, int startIdx, int endIdx, int fastPeriods,
-        int slowPeriods, int smoothing);
+    std::vector<IndicatorValue> MACD(const std::vector<MultiCandle>& mcandles, IndicatorTypes macdType, int startIdx,
+        int endIdx, int fastPeriods, int slowPeriods, int smoothing);
     std::vector<IndicatorValue> EMA(
         const std::vector<MultiCandle>& mcandles, int startIdx, int endIdx, int periods, int smoothing);
     std::vector<IndicatorValue> BB(const std::vector<MultiCandle>& mcandles, IndicatorTypes bbtype, int startIdx,

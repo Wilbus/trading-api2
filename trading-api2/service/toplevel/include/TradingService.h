@@ -17,7 +17,8 @@ class TradingService
 {
 public:
     TradingService(std::string configFolder, bool isBacktest, std::string logFile);
-    TradingService(std::string configFolder, bool isBacktest, std::string initializeFromTime, std::string initializeToTime, std::string logFile);
+    TradingService(std::string configFolder, bool isBacktest, std::string initializeFromTime,
+        std::string initializeToTime, std::string logFile);
 
     void setup();
     void start();

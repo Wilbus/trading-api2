@@ -1,6 +1,6 @@
+#include "RestClientCurl.h"
 #include "SchwabDatabank.h"
 #include "SchwabDatabaseHandler.h"
-#include "RestClientCurl.h"
 
 using namespace database;
 using namespace databank;
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 
     std::shared_ptr<SchwabConfigs> configs =
         std::make_shared<SchwabConfigs>("/home/wilbus/smbshare0/sambashare0/coding/configs/");
-    
+
     auto influxConf = configs->getInfluxConnectionConfig();
     InfluxConnectionInfo influxConnectionInfo = InfluxConnectionInfo{
         influxConf.user, influxConf.pass, influxConf.host, influxConf.dbname, influxConf.authToken};
@@ -56,5 +56,4 @@ int main(int argc, char** argv)
     {
         pushDataToDb(databank, symbol);
     }
-
 }

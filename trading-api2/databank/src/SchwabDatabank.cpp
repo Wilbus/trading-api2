@@ -80,14 +80,14 @@ void SchwabDatabank::initializeData(std::set<std::string> symbols)
 
 void SchwabDatabank::initializeDataFromDb(std::set<std::string> symbols, std::string fromTime, std::string toTime)
 {
-    for(const auto& symbol : symbols)
+    for (const auto& symbol : symbols)
     {
-        for(const auto& [timeframe, timeframeStr] : timeFrameStrings)
+        for (const auto& [timeframe, timeframeStr] : timeFrameStrings)
         {
             std::string symbolAndTimeframe = symbol + "_" + timeframeStr;
             auto candleSticks = dbHandler->getCandles(symbolAndTimeframe, fromTime, toTime);
             ChartData3 chart;
-            for(const auto& candle : candleSticks)
+            for (const auto& candle : candleSticks)
             {
                 chart.addMultiCandle(candle);
             }
@@ -165,7 +165,7 @@ void SchwabDatabank::updateMinuteCharts(const std::string symbol, const ChartEqu
 
 void SchwabDatabank::pushCandleToDb(const std::string symbol, const Timeframe& timeframe, const CandleStick candle)
 {
-    //dbHandler->pushCandle(symbol, candle);
+    // dbHandler->pushCandle(symbol, candle);
     std::string symbolAndTimeframe = symbol + "_" + timeFrameStrings.at(timeframe);
     dbHandler->pushCandle(symbolAndTimeframe, candle);
 }

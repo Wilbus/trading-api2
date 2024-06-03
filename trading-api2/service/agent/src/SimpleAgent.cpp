@@ -1,4 +1,5 @@
 #include "SimpleAgent.h"
+
 #include <queue>
 
 SimpleAgent::SimpleAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabank> databank,
@@ -45,13 +46,13 @@ void SimpleAgent::startBackTest()
         ChartTimeframesMap timeframeCharts;
         this->fillIndicators(symbol, timeframeCharts);
 
-        for(size_t i = 0; i < timeframeCharts.at(Timeframe::MINUTE).getMultiCandles().size(); i++)
+        for (size_t i = 0; i < timeframeCharts.at(Timeframe::MINUTE).getMultiCandles().size(); i++)
         {
             auto mcandles = timeframeCharts.at(Timeframe::MINUTE).getMultiCandles();
-            if(!inPosition)
+            if (!inPosition)
             {
-                //check if we should enter trade
-                if(!mcandles[i - 1].getIndByName("sma5").isNan &&
+                // check if we should enter trade
+                if (!mcandles[i - 1].getIndByName("sma5").isNan &&
                     mcandles[i - 1].price_close > mcandles[i].getIndByName("sma5").value)
                 {
                     infologprint(logFile, "%s: buy %s at %.02f", __func__, symbol.c_str(), mcandles[i].price_close);
@@ -60,8 +61,8 @@ void SimpleAgent::startBackTest()
             }
             else
             {
-                //check if we should exit trade
-                if(!mcandles[i - 1].getIndByName("sma5").isNan &&
+                // check if we should exit trade
+                if (!mcandles[i - 1].getIndByName("sma5").isNan &&
                     mcandles[i - 1].price_close < mcandles[i].getIndByName("sma5").value)
                 {
                     infologprint(logFile, "%s: sell %s at %.02f", __func__, symbol.c_str(), mcandles[i].price_close);

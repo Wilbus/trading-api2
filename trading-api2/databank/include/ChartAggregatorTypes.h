@@ -21,14 +21,9 @@ enum Timeframe
     DAILY = 28800
 };
 
-static const std::map<Timeframe, std::string> timeFrameStrings = {
-    {Timeframe::MINUTE, "minute"},
-    {Timeframe::FIVE, "five"},
-    {Timeframe::FIFTEEN, "fifteen"},
-    {Timeframe::THIRTY, "thirty"},
-    {Timeframe::HOURLY, "hourly"},
-    {Timeframe::DAILY, "daily"}
-};
+static const std::map<Timeframe, std::string> timeFrameStrings = {{Timeframe::MINUTE, "minute"},
+    {Timeframe::FIVE, "five"}, {Timeframe::FIFTEEN, "fifteen"}, {Timeframe::THIRTY, "thirty"},
+    {Timeframe::HOURLY, "hourly"}, {Timeframe::DAILY, "daily"}};
 
 typedef std::map<Timeframe, ChartData3> ChartTimeframesMap;
 } // namespace databank

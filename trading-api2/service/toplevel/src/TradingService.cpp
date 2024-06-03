@@ -17,7 +17,8 @@ TradingService::TradingService(std::string configFolder, bool isBacktest, std::s
     infologprint(logFile, "%s: init", __func__);
 }
 
-TradingService::TradingService(std::string configFolder, bool isBacktest, std::string initializeFromTime, std::string intializeToTime, std::string logFile)
+TradingService::TradingService(std::string configFolder, bool isBacktest, std::string initializeFromTime,
+    std::string intializeToTime, std::string logFile)
     : logFile(logFile)
     , configFolder(configFolder)
     , isBacktest(isBacktest)
@@ -46,13 +47,13 @@ void TradingService::setup()
         chartSymbols.insert(symbol);
     }
 
-    if(!isBacktest)
+    if (!isBacktest)
     {
         databank->initializeData(chartSymbols);
     }
     else
     {
-        if(initializeFromTime.empty() || initializeToTime.empty())
+        if (initializeFromTime.empty() || initializeToTime.empty())
         {
             throw std::runtime_error("initializeFromTime and initializeToTime must be set for backtest");
         }
@@ -65,7 +66,7 @@ void TradingService::setup()
 
 void TradingService::start()
 {
-    if(!isBacktest)
+    if (!isBacktest)
     {
         startTrading();
     }

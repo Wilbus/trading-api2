@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "SchwabClient.h"
 #include "SimpleAgent.h"
+
 #include <queue>
 
 class TestAgent : public SimpleAgent

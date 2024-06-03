@@ -99,8 +99,13 @@ TEST_F(SchwabDatabankTest, getCandlesFromDbTest)
     EXPECT_CALL(*dbHandlerMock.get(), getCandles("AMZN_minute", "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z"))
         .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
 
-    EXPECT_EQ(databankTester->getCandlesFromDb("TGT", Timeframe::MINUTE, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z").size(), 0);
-    EXPECT_EQ(databankTester->getCandlesFromDb("AMZN", Timeframe::MINUTE, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z").size(), 1);
+    EXPECT_EQ(databankTester->getCandlesFromDb("TGT", Timeframe::MINUTE, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z")
+                  .size(),
+        0);
+    EXPECT_EQ(
+        databankTester->getCandlesFromDb("AMZN", Timeframe::MINUTE, "2021-01-01 00:00:00Z", "2021-01-01 00:00:00Z")
+            .size(),
+        1);
 }
 
 TEST_F(SchwabDatabankTest, getJsonDataFromDb)
@@ -253,7 +258,7 @@ TEST_F(SchwabDatabankTest, initializeFromDbTest)
         .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
     EXPECT_CALL(*dbHandlerMock.get(), getCandles("SPY_daily", fromTime, toTime))
         .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
-    
+
     EXPECT_NO_THROW(databankTester->initializeDataFromDb(std::set<std::string>{"SPY", "QQQ"}, fromTime, toTime));
 
     EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::MINUTE).getMultiCandles().size(), 1);

@@ -212,7 +212,8 @@ std::vector<IndicatorValue> ChartData3::calculateBB(unsigned periods, IndicatorT
     return talib.BB(mcandles, bbtype, 0, mcandles.size() - 1, periods, 2.0, 2.0);
 }
 
-std::vector<IndicatorValue> ChartData3::calculateMACD(unsigned fastPeriods, IndicatorTypes macdType, unsigned slowPeriods, unsigned smoothing)
+std::vector<IndicatorValue> ChartData3::calculateMACD(
+    unsigned fastPeriods, IndicatorTypes macdType, unsigned slowPeriods, unsigned smoothing)
 {
     TALIB talib;
     return talib.MACD(mcandles, macdType, 0, mcandles.size() - 1, fastPeriods, slowPeriods, smoothing);

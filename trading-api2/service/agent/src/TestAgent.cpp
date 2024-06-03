@@ -60,28 +60,28 @@ void TestAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframes
             timeframeCharts.at(Timeframe::DAILY).getBack(0).getIndByName("3blackcrows").value);
     }
 
-    if(timeframeCharts.at(Timeframe::FIVE).getBack(0).price_low <=
+    if (timeframeCharts.at(Timeframe::FIVE).getBack(0).price_low <=
         timeframeCharts.at(Timeframe::FIVE).getBack(0).getIndByName("bbdown50").value)
     {
-        if(buySignalsQueue.front() == lowWentUnder_bbmid50SignalName)
+        if (buySignalsQueue.front() == lowWentUnder_bbmid50SignalName)
         {
             infologprint(logFile, "%s: %s: low went under bbdown50", __func__, symbol.c_str());
             buySignalsQueue.pop();
         }
-        //infologprint(logFile, "%s: %s: low went under bbdown50", __func__, symbol.c_str());
-        //lowWentUnder_bbmid50 = true;
+        // infologprint(logFile, "%s: %s: low went under bbdown50", __func__, symbol.c_str());
+        // lowWentUnder_bbmid50 = true;
     }
 
-    if(timeframeCharts.at(Timeframe::FIVE).getBack(0).getIndByName("macdhist").value > 0 &&
+    if (timeframeCharts.at(Timeframe::FIVE).getBack(0).getIndByName("macdhist").value > 0 &&
         timeframeCharts.at(Timeframe::FIVE).getBack(1).getIndByName("macdhist").value < 0)
     {
-        if(buySignalsQueue.front() == macdHistCrossedOver0SignalName)
+        if (buySignalsQueue.front() == macdHistCrossedOver0SignalName)
         {
             infologprint(logFile, "%s: %s: macdhist crossed over 0", __func__, symbol.c_str());
             buySignalsQueue.pop();
         }
-        //infologprint(logFile, "%s: %s: macdhist crossed over 0", __func__, symbol.c_str());
-        //macdHistCrossedOver0 = true;
+        // infologprint(logFile, "%s: %s: macdhist crossed over 0", __func__, symbol.c_str());
+        // macdHistCrossedOver0 = true;
     }
 
     /*if(lowWentUnder_bbmid50 && macdHistCrossedOver0)
@@ -95,7 +95,7 @@ void TestAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframes
         lowWentUnder_bbmid50 = false;
         macdHistCrossedOver0 = false;
     }*/
-    if(buySignalsQueue.empty())
+    if (buySignalsQueue.empty())
     {
         auto lastMinClose = timeframeCharts.at(Timeframe::MINUTE).getBack(0).price_close;
         infologprint(logFile, "%s: received all signals in order to buy", __func__);
@@ -103,7 +103,7 @@ void TestAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframes
         infologprint(logFile, "%s: %s: last minute close: %.02f", __func__, symbol.c_str(), lastMinClose);
         inPosition = true;
 
-        //reset buy signals
+        // reset buy signals
         buySignalsQueue.push(lowWentUnder_bbmid50SignalName);
         buySignalsQueue.push(macdHistCrossedOver0SignalName);
     }
@@ -111,19 +111,19 @@ void TestAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframes
 
 void TestAgent::checkExitTrade(const std::string& symbol, const ChartTimeframesMap& timeframeCharts)
 {
-    if(timeframeCharts.at(Timeframe::FIVE).getBack(0).price_close < 
+    if (timeframeCharts.at(Timeframe::FIVE).getBack(0).price_close <
         timeframeCharts.at(Timeframe::FIVE).getBack(0).getIndByName("sma5").value)
     {
-        if(sellSignalsQueue.front() == closeCrossedUnderSma9SignalName)
+        if (sellSignalsQueue.front() == closeCrossedUnderSma9SignalName)
         {
             infologprint(logFile, "%s: %s: close crossed under sma5", __func__, symbol.c_str());
             sellSignalsQueue.pop();
         }
-        //infologprint(logFile, "%s: %s: close crossed under sma5", __func__, symbol.c_str());
-        //closeCrossedUnderSma9 = true;
+        // infologprint(logFile, "%s: %s: close crossed under sma5", __func__, symbol.c_str());
+        // closeCrossedUnderSma9 = true;
     }
 
-    if(sellSignalsQueue.empty())
+    if (sellSignalsQueue.empty())
     {
         auto lastMinClose = timeframeCharts.at(Timeframe::MINUTE).getBack(0).price_close;
         infologprint(logFile, "%s: received all signals in order to sell", __func__);
@@ -131,7 +131,7 @@ void TestAgent::checkExitTrade(const std::string& symbol, const ChartTimeframesM
         infologprint(logFile, "%s: %s: last minute close: %.02f", __func__, symbol.c_str(), lastMinClose);
         inPosition = false;
 
-        //reset sell signals
+        // reset sell signals
         sellSignalsQueue.push(closeCrossedUnderSma9SignalName);
     }
 
