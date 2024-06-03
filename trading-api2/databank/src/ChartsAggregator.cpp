@@ -2,11 +2,12 @@
 
 namespace databank {
 
-ChartsAggregator::ChartsAggregator()
+ChartsAggregator::ChartsAggregator(std::string logfile)
 {
 }
 
-ChartsAggregator::ChartsAggregator(std::map<std::string, ChartTimeframesMap> charts)
+ChartsAggregator::ChartsAggregator(std::map<std::string, ChartTimeframesMap> charts, std::string logfile)
+    : logfile(logfile)
 {
     this->charts = charts;
 }
@@ -102,6 +103,7 @@ void ChartsAggregator::aggregateChartData(std::string symbol, Timeframe alignedO
         CandleStick nextAggregateCandle(timestamp, low, high, open, close, volume);
         // charts.at(symbol).five.addMultiCandle(MultiCandle(nextAggregateCandle));
         charts[symbol][alignedOn].addMultiCandle(MultiCandle(nextAggregateCandle));
+        infologprint(logfile, "%s: %s: added new candle in %d timeframe, timestamp = %lu", __func__, symbol.c_str(), alignedOn, timestamp);
         // charts.at(symbol).at(alignedOn).addMultiCandle(MultiCandle(nextAggregateCandle));
     }
 }

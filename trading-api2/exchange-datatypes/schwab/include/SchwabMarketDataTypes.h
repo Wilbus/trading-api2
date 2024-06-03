@@ -379,4 +379,62 @@ struct OptionChain
     OptionContractMap callExpDateMap;
     OptionContractMap putExpDateMap;
 };
+#if 0
+enum MarketType : uint8_t
+{
+    //EQUITY = 0,
+    OPTION,
+    BOND,
+    FUTURE,
+    FOREX
+};
+
+enum MarketSessionHourTypes : uint8_t
+{
+    PRE_MARKET = 0,
+    REGULAR_MARKET,
+    POST_MARKET
+};
+
+static const std::map<std::string, MarketSessionHourTypes> stringToMarketSessionHourTypesMap =
+{
+    {"preMarket", MarketSessionHourTypes::PRE_MARKET},
+    {"regularMarket", MarketSessionHourTypes::REGULAR_MARKET},
+    {"postMarket", MarketSessionHourTypes::POST_MARKET}
+};
+
+static const std::map<MarketType, std::string> marketTypeToStringMap =
+{
+    {MarketType::EQUITY, "equity"},
+    {MarketType::OPTION, "option"},
+    {MarketType::BOND, "bond"},
+    {MarketType::FUTURE, "future"},
+    {MarketType::FOREX, "forex"}
+};
+
+static const std::map<std::string, MarketType> stringToMarketTypeMap =
+{
+    {"equity", MarketType::EQUITY},
+    {"option", MarketType::OPTION},
+    {"bond", MarketType::BOND},
+    {"future", MarketType::FUTURE},
+    {"forex", MarketType::FOREX}
+};
+
+struct MarketSessionHours
+{
+    std::string start;
+    std::string end;
+};
+
+struct MarketHours
+{
+    MarketType marketType;
+    std::string date;
+    std::string productSymbol;
+    std::string productName;
+    bool isOpen;
+    std::map<MarketSessionHourTypes, MarketSessionHours> sessionHours;
+};
+#endif
 }

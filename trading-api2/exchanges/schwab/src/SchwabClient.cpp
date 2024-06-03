@@ -358,6 +358,51 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
     }
 }
 
+PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPeriodType periodType, unsigned periodAmount,
+        PriceHistoryTimeFreq timeFreq, unsigned freqAmount, uint64_t startDate, uint64_t endDate,
+        bool extendedHours, bool needPreviousClose)
+{
+    try
+    {
+        infologprint(logfile,
+            "%s: request price history for: symbol=%s, periodType=%d, periodAmount=%u, timeFreq=%d,"
+            "freqAmount=%u, startDate=%lu, endDate=%lu, extendedHours=%d, needPreviousClose=%d",
+            __func__, symbol.c_str(), static_cast<int>(periodType), periodAmount, static_cast<int>(timeFreq),
+            freqAmount, startDate, endDate, extendedHours, needPreviousClose);
+
+        std::string path = "/pricehistory?symbol=" + symbol + "&periodType=" + priceHistoryPeriodMap.at(periodType) +
+                           "&period=" + std::to_string(periodAmount) +
+                           "&frequencyType=" + priceHistoryTimeFreqMap.at(timeFreq) +
+                           "&frequency=" + std::to_string(freqAmount) + "&startDate=" + std::to_string(startDate);
+
+        path += "&endDate=" + std::to_string(endDate);
+
+        path += "&needExtendedHoursData=" + booleanString.at(extendedHours) +
+                "&needPreviousClose=" + booleanString.at(needPreviousClose);
+
+        if (!checkAccessToken())
+        {
+            updateAccessToken(config->getRefreshToken().token);
+        }
+        setMarketDataEndpoint();
+        auto resp = restClient->getResponse(path, headers());
+        auto errorResp = checkErrors(resp);
+        if (errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return {};
+        }
+        PriceHistory priceHistory = parsePriceHistory(resp);
+        infologprint(logfile, "%s: received %lu candles", __func__, priceHistory.candles.size());
+        return priceHistory;
+    }
+    catch (std::exception& e)
+    {
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
+        return {};
+    }
+}
+
 // TODO: add UT for this
 std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
 {
@@ -416,4 +461,42 @@ UserPreferences SchwabClient::getUserPreferences()
         return {};
     }
 }
+#if 0
+//https://api.schwabapi.com/marketdata/v1
+// /markets?markets=equity&markets=option&markets=bond&markets=future&markets=forex&date=2024-06-04
+std::vector<MarketHours> SchwabClient::getMarketHours(std::set<MarketType> marketType, std::string date)
+{
+    try
+    {
+        infologprint(logfile, "%s: requesting market hours for: %s, date: %s", __func__, marketTypeMap.at(marketType),
+            date.c_str());
+
+        std::string path = "/markets?";
+        for(const auto& market : marketType)
+        {
+            path += "markets=" + marketTypeToStringMap.at(market) + "&";
+        }
+        path += "date=" + date;
+
+        if (!checkAccessToken())
+        {
+            updateAccessToken(config->getRefreshToken().token);
+        }
+        setMarketDataEndpoint();
+        auto resp = restClient->getResponse(path, headers());
+        auto errorResp = checkErrors(resp);
+        if (errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return {};
+        }
+        return parseMarketHours(resp);
+    }
+    catch (const std::exception& e)
+    {
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
+        return {};
+    }
+}
+#endif
 } // namespace restclient

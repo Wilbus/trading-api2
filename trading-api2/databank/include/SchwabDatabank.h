@@ -31,6 +31,8 @@ public:
     virtual std::vector<std::string> getJsonDataFromDb(const std::string& fromTime, const std::string& toTime) override;
     virtual std::vector<CandleStick> getCandlesFromClient(const std::string& symbol, const Timeframe timeframe,
         const std::string& fromTime, const std::string& toTime) override;
+    virtual std::vector<CandleStick> getCandlesFromClient(const std::string& symbol, const Timeframe timeframe,
+        const uint64_t& fromTime, const uint64_t& toTime) override;
     virtual void pushCandleToDb(
         const std::string symbol, const Timeframe& timeframe, const CandleStick candle) override;
 

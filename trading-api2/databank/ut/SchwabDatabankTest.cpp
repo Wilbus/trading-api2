@@ -57,13 +57,9 @@ protected:
     std::shared_ptr<DataQueue<std::string>> streamqueue;
     std::shared_ptr<DatabaseHandlerMock> dbHandlerMock;
     time_t mockCurrTimeMs{1717216292000}; // Sat, 01 Jun 2024 04:31:32 GMT
-    std::string mockCurrTimeStr{"2024-06-01"};
-    time_t mockCurrTimeMsYearAgo{1689052292000}; // Sun, 01 Jun 2023 04:31:32 GMT
-    std::string mockCurrTimeStrYearAgo{"2023-06-01"};
+    time_t mockCurrTimeMsYearAgo{1685680292000}; // Sun, 01 Jun 2023 04:31:32 GMT
     time_t mockCurrTimeMsMonthAgo{1714624292000}; // Fri, 01 Jun 2023 04:31:32 GMT
-    std::string mockCurrTimeStrMonthAgo{"2023-05-01"};
     time_t mockCurrTimeMsWeekAgo{1716611492000}; // Fri, 25 May 2024 04:31:32 GMT
-    std::string mockCurrTimeStrWeekAgo{"2024-05-25"};
 };
 
 TEST_F(SchwabDatabankTest, testStartParsing)
@@ -187,31 +183,31 @@ TEST_F(SchwabDatabankTest, initializeDataTest)
     mockedQQQHistory.candles.push_back(Candle());
 
     EXPECT_CALL(*sClientMock.get(), getPriceHistory("SPY", PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY,
-                                        1, "2023-06-02", "2024-06-01", false, false))
+                                        1, mockCurrTimeMsYearAgo, mockCurrTimeMs, false, false))
         .WillOnce(testing::Return(mockedSPYHistory));
     EXPECT_CALL(*sClientMock.get(), getPriceHistory("QQQ", PriceHistoryPeriodType::YEAR, 1, PriceHistoryTimeFreq::DAILY,
-                                        1, "2023-06-02", "2024-06-01", false, false))
+                                        1, mockCurrTimeMsYearAgo, mockCurrTimeMs, false, false))
         .WillOnce(testing::Return(mockedQQQHistory));
 
     EXPECT_CALL(*sClientMock.get(), getPriceHistory("SPY", PriceHistoryPeriodType::DAY, 10,
-                                        PriceHistoryTimeFreq::MINUTE, 30, "2024-05-02", "2024-06-01", true, false))
+                                        PriceHistoryTimeFreq::MINUTE, 30, mockCurrTimeMsMonthAgo, mockCurrTimeMs + 86400000, true, false))
         .WillOnce(testing::Return(mockedSPYHistory));
     EXPECT_CALL(*sClientMock.get(), getPriceHistory("QQQ", PriceHistoryPeriodType::DAY, 10,
-                                        PriceHistoryTimeFreq::MINUTE, 30, "2024-05-02", "2024-06-01", true, false))
+                                        PriceHistoryTimeFreq::MINUTE, 30, mockCurrTimeMsMonthAgo, mockCurrTimeMs + 86400000, true, false))
         .WillOnce(testing::Return(mockedQQQHistory));
 
     EXPECT_CALL(*sClientMock.get(), getPriceHistory("SPY", PriceHistoryPeriodType::DAY, 10,
-                                        PriceHistoryTimeFreq::MINUTE, 5, "2024-05-25", "2024-06-01", true, false))
+                                        PriceHistoryTimeFreq::MINUTE, 5, mockCurrTimeMsWeekAgo, mockCurrTimeMs + 86400000, true, false))
         .WillOnce(testing::Return(mockedSPYHistory));
     EXPECT_CALL(*sClientMock.get(), getPriceHistory("QQQ", PriceHistoryPeriodType::DAY, 10,
-                                        PriceHistoryTimeFreq::MINUTE, 5, "2024-05-25", "2024-06-01", true, false))
+                                        PriceHistoryTimeFreq::MINUTE, 5, mockCurrTimeMsWeekAgo, mockCurrTimeMs + 86400000, true, false))
         .WillOnce(testing::Return(mockedQQQHistory));
 
     EXPECT_CALL(*sClientMock.get(), getPriceHistory("SPY", PriceHistoryPeriodType::DAY, 10,
-                                        PriceHistoryTimeFreq::MINUTE, 1, "2024-05-25", "2024-06-01", true, false))
+                                        PriceHistoryTimeFreq::MINUTE, 1, mockCurrTimeMsWeekAgo, mockCurrTimeMs + 86400000, true, false))
         .WillOnce(testing::Return(mockedSPYHistory));
     EXPECT_CALL(*sClientMock.get(), getPriceHistory("QQQ", PriceHistoryPeriodType::DAY, 10,
-                                        PriceHistoryTimeFreq::MINUTE, 1, "2024-05-25", "2024-06-01", true, false))
+                                        PriceHistoryTimeFreq::MINUTE, 1, mockCurrTimeMsWeekAgo, mockCurrTimeMs + 86400000, true, false))
         .WillOnce(testing::Return(mockedQQQHistory));
 
     EXPECT_NO_THROW(databankTester->initializeData(std::set<std::string>{"SPY", "QQQ"}));

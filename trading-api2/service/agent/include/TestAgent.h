@@ -11,6 +11,8 @@ class TestAgent : public SimpleAgent
 public:
     TestAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDatabank> databank,
         std::set<std::string> symbols, std::string agentName, std::string logFile = "");
+    
+    virtual void startAgent() override;
 
 protected:
     void checkEnterTrade(const std::string& symbol, const ChartTimeframesMap& timeframeCharts) override;

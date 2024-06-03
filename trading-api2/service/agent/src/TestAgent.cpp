@@ -14,6 +14,29 @@ TestAgent::TestAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr<IDa
     sellSignalsQueue.push(closeCrossedUnderSma9SignalName);
 }
 
+void TestAgent::startAgent()
+{
+    infologprint(logFile, "%s: starting %s", __func__, agentName.c_str());
+    agentThread = std::thread([this]() {
+        while (true)
+        {
+            for (const auto& symbol : symbols)
+            {
+                ChartTimeframesMap timeframeCharts;
+
+                this->fillIndicators(symbol, timeframeCharts);
+
+                if (!this->InPostion())
+                    this->checkEnterTrade(symbol, timeframeCharts);
+                else
+                    this->checkExitTrade(symbol, timeframeCharts);
+            }
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+    });
+    // agentThread.join();
+}
+
 void TestAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframesMap& timeframeCharts)
 {
     if (timeframeCharts.at(Timeframe::MINUTE).getBack(0).getIndByName("3whitesolders").value > 50)
@@ -66,6 +89,9 @@ void TestAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframes
         if (buySignalsQueue.front() == lowWentUnder_bbmid50SignalName)
         {
             infologprint(logFile, "%s: %s: low went under bbdown50", __func__, symbol.c_str());
+            auto low = timeframeCharts.at(Timeframe::FIVE).getBack(0).price_low;
+            auto bbdown50 = timeframeCharts.at(Timeframe::FIVE).getBack(0).getIndByName("bbdown50").value;
+            infologprint(logFile, "%s: %s: low: %.02f, bbdown50: %.02f", __func__, symbol.c_str(), low, bbdown50);
             buySignalsQueue.pop();
         }
         // infologprint(logFile, "%s: %s: low went under bbdown50", __func__, symbol.c_str());
@@ -78,6 +104,8 @@ void TestAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframes
         if (buySignalsQueue.front() == macdHistCrossedOver0SignalName)
         {
             infologprint(logFile, "%s: %s: macdhist crossed over 0", __func__, symbol.c_str());
+            auto macdhist = timeframeCharts.at(Timeframe::FIVE).getBack(0).getIndByName("macdhist").value;
+            infologprint(logFile, "%s: %s: macdhist: %.02f", __func__, symbol.c_str(), macdhist);
             buySignalsQueue.pop();
         }
         // infologprint(logFile, "%s: %s: macdhist crossed over 0", __func__, symbol.c_str());
@@ -117,6 +145,9 @@ void TestAgent::checkExitTrade(const std::string& symbol, const ChartTimeframesM
         if (sellSignalsQueue.front() == closeCrossedUnderSma9SignalName)
         {
             infologprint(logFile, "%s: %s: close crossed under sma5", __func__, symbol.c_str());
+            auto close = timeframeCharts.at(Timeframe::FIVE).getBack(0).price_close;
+            auto sma5 = timeframeCharts.at(Timeframe::FIVE).getBack(0).getIndByName("sma5").value;
+            infologprint(logFile, "%s: %s: close: %.02f, sma5: %.02f", __func__, symbol.c_str(), close, sma5);
             sellSignalsQueue.pop();
         }
         // infologprint(logFile, "%s: %s: close crossed under sma5", __func__, symbol.c_str());

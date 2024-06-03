@@ -333,5 +333,90 @@ OptionChain parseOptionChain(std::string jsonstring)
 
     return optionChain;
 }
+#if 0
+std::vector<MarketHours> parseMarketHours(std::string jsonstring)
+{
+    rapidjson::Document d;
+    d.Parse(jsonstring.c_str());
+    rapidjson::StringBuffer s;
 
+    std::vector<MarketHours> marketHoursVec;
+
+    if(!d.IsObject())
+    {
+        return {};
+    }
+
+    for (rapidjson::Value::ConstMemberIterator hoursObj = d.MemberBegin();
+         hoursObj != d.MemberEnd();
+         ++hoursObj)
+    {
+        if(hoursObj->name.GetType() != rapidjson::kStringType)
+        {
+            throw std::runtime_error("market hours key is not a string");
+        }
+        if(hoursObj->value.GetType() != rapidjson::kObjectType)
+        {
+            throw std::runtime_error("market hours value is not an object");
+        }
+
+
+        auto hoursObjValue = hoursObj->value.GetObject();
+        for(rapidjson::Value::ConstMemberIterator specificMarketTypeHours = hoursObjValue.MemberBegin();
+            specificMarketTypeHours != hoursObjValue.MemberEnd();
+            ++specificMarketTypeHours)
+        {
+            if(specificMarketTypeHours->name.GetType() != rapidjson::kStringType)
+            {
+                throw std::runtime_error("specific market hours key is not a string");
+            }
+            if(specificMarketTypeHours->value.GetType() != rapidjson::kObjectType)
+            {
+                throw std::runtime_error("specific market hours value is not an object");
+            }
+
+            MarketHours marketHour;
+            marketHour.marketType = stringToMarketTypeMap.at(hoursObj->name.GetString());
+            PARSE_STRING(marketHour.date, "date", specificMarketTypeHours->value);
+            PARSE_STRING(marketHour.productSymbol, "product", specificMarketTypeHours->value);
+            PARSE_STRING(marketHour.productName, "productName", specificMarketTypeHours->value);
+            PARSE_STRING(marketHour.isOpen, "isOpen", specificMarketTypeHours->value);
+
+            if(specificMarketTypeHours->value.HasMember("sessionHours") && specificMarketTypeHours->value["sessionHours"].IsObject())
+            {
+                auto sessionHours = specificMarketTypeHours->value["sessionHours"].GetObject();
+                for(rapidjson::Value::ConstMemberIterator session = sessionHours.MemberBegin();
+                    session != sessionHours.MemberEnd();
+                    ++session)
+                {
+                    if(session->name.GetType() != rapidjson::kStringType)
+                    {
+                        throw std::runtime_error("session hours key is not a string");
+                    }
+                    if(session->value.GetType() != rapidjson::kArrayType)
+                    {
+                        throw std::runtime_error("session hours value is not an array");
+                    }
+
+                    MarketSessionHours marketSessionHours;
+                    //assuming only one start/end per marketsession type
+                    for(const auto& sessionTimes : session->value.GetArray())
+                    {
+                        // marketSessionHours.start = sessionTimes["start"].GetString();
+                        PARSE_STRING(marketSessionHours.start, "start", sessionTimes);
+                        // marketSessionHours.end = sessionTimes["end"].GetString();
+                        PARSE_STRING(marketSessionHours.end, "end", sessionTimes);
+                        marketHour.sessionHours[stringToMarketSessionHourTypesMap.at(session->name.GetString())]
+                            = marketSessionHours;
+                        break;
+                    }
+                }
+            }
+            marketHoursVec.push_back(marketHour);
+        }
+    }
+
+    return marketHoursVec;
+}
+#endif
 } // namespace schwabMarketData

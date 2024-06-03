@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ChartAggregatorTypes.h"
-
+#include "Logger.h"
 #include <set>
 
 namespace databank {
@@ -13,8 +13,8 @@ using namespace utils;
 class ChartsAggregator
 {
 public:
-    ChartsAggregator();
-    ChartsAggregator(std::map<std::string, ChartTimeframesMap> charts);
+    ChartsAggregator(std::string logfile = "");
+    ChartsAggregator(std::map<std::string, ChartTimeframesMap> charts, std::string logfile = "");
 
     void addChart(std::string symbol, ChartData3 chart, Timeframe timeframe);
     void addMinuteCandle(std::string symbol, CandleStick candle);
@@ -27,6 +27,7 @@ private:
 
     std::vector<MultiCandle> getLastNMinutes(std::string symbol, int n);
 
+    std::string logfile;
     std::map<std::string, ChartTimeframesMap> charts;
 };
 
