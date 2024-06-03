@@ -16,7 +16,6 @@ target_link_libraries(${PROJECT_NAME}
     trading-api2-exchange-datatypes
 )
 
-if(BUILD_TESTS)
-    add_subdirectory(schwab/mocks)
-    add_subdirectory(schwab/ut)
-endif(BUILD_TESTS)
+
+add_subdirectory(schwab/mocks)
+add_subdirectory(schwab/ut)

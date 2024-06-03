@@ -19,7 +19,6 @@ target_link_libraries(${PROJECT_NAME}
 
 #add_subdirectory(uWebSockets-v0.14)
 
-if(BUILD_TESTS)
-    add_subdirectory(mocks)
-    add_subdirectory(ut)
-endif(BUILD_TESTS)
+
+add_subdirectory(mocks)
+add_subdirectory(ut)

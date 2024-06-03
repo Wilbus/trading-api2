@@ -18,7 +18,6 @@ target_link_libraries(${PROJECT_NAME}
     InfluxData::InfluxDB
 )
 
-if(BUILD_TESTS)
-    add_subdirectory(mocks)
-    add_subdirectory(ut)
-endif(BUILD_TESTS)
+
+add_subdirectory(mocks)
+add_subdirectory(ut)

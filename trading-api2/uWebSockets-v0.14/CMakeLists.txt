@@ -26,6 +26,4 @@ target_link_libraries(${PROJECT_NAME} OpenSSL::Crypto)
 target_link_libraries(${PROJECT_NAME} OpenSSL::SSL)
 target_link_libraries(${PROJECT_NAME} ZLIB::ZLIB)
 
-if(BUILD_TESTS)
-    add_subdirectory(mocks)
-endif(BUILD_TESTS)
+add_subdirectory(mocks)

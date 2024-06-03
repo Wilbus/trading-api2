@@ -16,6 +16,5 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 target_link_libraries(${PROJECT_NAME} trading-api2-utils)
 target_link_libraries(${PROJECT_NAME} libta_lib.so)
 
-if(BUILD_TESTS)
-    add_subdirectory(ut)
-endif()
+
+add_subdirectory(ut)

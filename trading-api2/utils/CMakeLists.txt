@@ -21,7 +21,5 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wfatal-errors -Wun
 target_link_libraries(${PROJECT_NAME} CURL::libcurl)
 
 
-if(BUILD_TESTS)
-    add_subdirectory(mocks)
-    add_subdirectory(ut)
-endif(BUILD_TESTS)
+add_subdirectory(mocks)
+add_subdirectory(ut)

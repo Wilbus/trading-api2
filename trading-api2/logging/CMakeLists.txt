@@ -15,6 +15,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wfatal-errors -Wunused-parameter -Wunused-variable -Wno-unused-function -DLOG_FORMAT_VERIFICATION)
 
-if(BUILD_TESTS)
-    add_subdirectory(mocks)
-endif(BUILD_TESTS)
+
+add_subdirectory(mocks)
