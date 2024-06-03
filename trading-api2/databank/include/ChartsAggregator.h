@@ -2,6 +2,7 @@
 
 #include "ChartAggregatorTypes.h"
 #include "Logger.h"
+
 #include <set>
 
 namespace databank {

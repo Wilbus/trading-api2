@@ -76,7 +76,7 @@ public:
         PriceHistoryTimeFreq timeFreq, unsigned freqAmount, uint64_t startDate, uint64_t endDate,
         bool extendedHours = false, bool needPreviousClose = false) = 0;
 
-    //virtual std::vector<MarketHours> getMarketHours(std::set<MarketType> marketType, std::string date) = 0;
+    // virtual std::vector<MarketHours> getMarketHours(std::set<MarketType> marketType, std::string date) = 0;
 
     virtual std::vector<AccountNumbers> getAccountNumbers() = 0;
     virtual UserPreferences getUserPreferences() = 0;
@@ -113,8 +113,8 @@ public:
         PriceHistoryTimeFreq timeFreq, unsigned freqAmount, uint64_t startDate, uint64_t endDate,
         bool extendedHours = false, bool needPreviousClose = false) override;
 
-    //date format yyyy-MM-dd
-    //virtual std::vector<MarketHours> getMarketHours(std::set<MarketType> marketType, std::string date) override;
+    // date format yyyy-MM-dd
+    // virtual std::vector<MarketHours> getMarketHours(std::set<MarketType> marketType, std::string date) override;
 
     virtual std::vector<AccountNumbers> getAccountNumbers() override;
     virtual UserPreferences getUserPreferences() override;

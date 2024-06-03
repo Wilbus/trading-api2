@@ -359,8 +359,8 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
 }
 
 PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPeriodType periodType, unsigned periodAmount,
-        PriceHistoryTimeFreq timeFreq, unsigned freqAmount, uint64_t startDate, uint64_t endDate,
-        bool extendedHours, bool needPreviousClose)
+    PriceHistoryTimeFreq timeFreq, unsigned freqAmount, uint64_t startDate, uint64_t endDate, bool extendedHours,
+    bool needPreviousClose)
 {
     try
     {
@@ -393,7 +393,8 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
             return {};
         }
         PriceHistory priceHistory = parsePriceHistory(resp);
-        infologprint(logfile, "%s: received %lu candles", __func__, priceHistory.candles.size());
+        infologprint(logfile, "%s: received %lu candles, latest timestamp: %lu", __func__, priceHistory.candles.size(),
+            priceHistory.candles.back().datetime);
         return priceHistory;
     }
     catch (std::exception& e)
