@@ -223,3 +223,49 @@ TEST_F(SchwabDatabankTest, initializeDataTest)
     EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::MINUTE).getMultiCandles().size(), 2);
     EXPECT_EQ(databankTester->getChart("QQQ").at(Timeframe::MINUTE).getMultiCandles().size(), 2);
 }
+
+TEST_F(SchwabDatabankTest, initializeFromDbTest)
+{
+    std::string fromTime = "2023-06-01 00:00:00";
+    std::string toTime = "2024-06-01 00:00:00";
+
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("QQQ_minute", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("SPY_minute", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("QQQ_five", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("SPY_five", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("QQQ_fifteen", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("SPY_fifteen", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("QQQ_thirty", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("SPY_thirty", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("QQQ_hourly", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("SPY_hourly", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("QQQ_daily", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    EXPECT_CALL(*dbHandlerMock.get(), getCandles("SPY_daily", fromTime, toTime))
+        .WillOnce(testing::Return(std::vector<CandleStick>{CandleStick()}));
+    
+    EXPECT_NO_THROW(databankTester->initializeDataFromDb(std::set<std::string>{"SPY", "QQQ"}, fromTime, toTime));
+
+    EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::MINUTE).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("QQQ").at(Timeframe::MINUTE).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::FIVE).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("QQQ").at(Timeframe::FIVE).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::FIFTEEN).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("QQQ").at(Timeframe::FIFTEEN).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::THIRTY).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("QQQ").at(Timeframe::THIRTY).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::HOURLY).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("QQQ").at(Timeframe::HOURLY).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::DAILY).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("QQQ").at(Timeframe::DAILY).getMultiCandles().size(), 1);
+}

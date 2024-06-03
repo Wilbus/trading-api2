@@ -15,7 +15,24 @@ TradingService::TradingService(std::string configFolder, bool isBacktest, std::s
     , manager(std::make_shared<SchwabConnectionManager>(configs, sClient, repliesQueue, logFile))
 {
     infologprint(logFile, "%s: init", __func__);
+}
 
+TradingService::TradingService(std::string configFolder, bool isBacktest, std::string initializeFromTime, std::string intializeToTime, std::string logFile)
+    : logFile(logFile)
+    , configFolder(configFolder)
+    , isBacktest(isBacktest)
+    , initializeFromTime(initializeFromTime)
+    , initializeToTime(intializeToTime)
+    , repliesQueue(std::make_shared<DataQueue<std::string>>())
+    , configs(std::make_shared<SchwabConfigs>(configFolder))
+    , sClient(std::make_shared<SchwabClient>(configs, std::make_shared<RestClientCurl>(), logFile))
+    , manager(std::make_shared<SchwabConnectionManager>(configs, sClient, repliesQueue, logFile))
+{
+    infologprint(logFile, "%s: init", __func__);
+}
+
+void TradingService::setup()
+{
     auto influxConf = configs->getInfluxConnectionConfig();
     influxConnectionInfo = InfluxConnectionInfo{
         influxConf.user, influxConf.pass, influxConf.host, influxConf.dbname, influxConf.authToken};
@@ -29,7 +46,14 @@ TradingService::TradingService(std::string configFolder, bool isBacktest, std::s
         chartSymbols.insert(symbol);
     }
 
-    databank->initializeData(chartSymbols);
+    if(!isBacktest)
+    {
+        databank->initializeData(chartSymbols);
+    }
+    else
+    {
+        databank->initializeDataFromDb(chartSymbols, initializeFromTime, initializeToTime);
+    }
 
     agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, "simpleAgent", logFile));
     agents.push_back(std::make_shared<TestAgent>(sClient, databank, chartSymbols, "testAgent", logFile));

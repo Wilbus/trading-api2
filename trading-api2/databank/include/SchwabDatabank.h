@@ -23,6 +23,7 @@ public:
         std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile = "");
 
     virtual void initializeData(std::set<std::string> symbols) override;
+    virtual void initializeDataFromDb(std::set<std::string> symbols, std::string fromTime, std::string toTime) override;
     virtual void startParsing() override;
     virtual ChartTimeframesMap getChart(std::string symbol) override;
     virtual std::vector<CandleStick> getCandlesFromDb(

@@ -78,6 +78,24 @@ void SchwabDatabank::initializeData(std::set<std::string> symbols)
     }
 }
 
+void SchwabDatabank::initializeDataFromDb(std::set<std::string> symbols, std::string fromTime, std::string toTime)
+{
+    for(const auto& symbol : symbols)
+    {
+        for(const auto& [timeframe, timeframeStr] : timeFrameStrings)
+        {
+            std::string symbolAndTimeframe = symbol + "_" + timeframeStr;
+            auto candleSticks = dbHandler->getCandles(symbolAndTimeframe, fromTime, toTime);
+            ChartData3 chart;
+            for(const auto& candle : candleSticks)
+            {
+                chart.addMultiCandle(candle);
+            }
+            chartsAggregator->addChart(symbol, chart, timeframe);
+        }
+    }
+}
+
 void SchwabDatabank::startParsing()
 {
     infologprint(logfile, "%s: start parsing thread", __func__);
