@@ -165,7 +165,7 @@ void TestAgent::checkExitTrade(const std::string& symbol, const ChartTimeframesM
         auto lastMinClose = timeframeCharts.at(Timeframe::MINUTE).getBack(0).price_close;
         infologprint(logFile, "%s: %s sell signal achieved. Last minute close: %.02f",
             __func__, symbol.c_str(), lastMinClose);
-        inPosition = false;
+        positionsMap[symbol] = false;
 
         // reset sell signals
         sellSignalsQueueMap.at(symbol).push(closeCrossedUnderSma9SignalName);
