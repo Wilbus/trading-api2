@@ -7,10 +7,10 @@ using namespace databank;
 
 void pushDataToDb(std::shared_ptr<SchwabDatabank>& databank, std::string symbol)
 {
-    auto candlesticksDaily = databank->getCandlesFromClient(symbol, Timeframe::DAILY, "2023-06-01", "2024-06-01");
-    auto candlesticksThirty = databank->getCandlesFromClient(symbol, Timeframe::THIRTY, "2023-06-01", "2024-06-01");
-    auto candlesticksFive = databank->getCandlesFromClient(symbol, Timeframe::FIVE, "2023-06-01", "2024-06-01");
-    auto candlesticksMinute = databank->getCandlesFromClient(symbol, Timeframe::MINUTE, "2023-06-01", "2024-06-01");
+    auto candlesticksDaily = databank->getCandlesFromClient(symbol, Timeframe::DAILY, "2023-06-01", "2024-06-04");
+    auto candlesticksThirty = databank->getCandlesFromClient(symbol, Timeframe::THIRTY, "2023-06-01", "2024-06-04");
+    auto candlesticksFive = databank->getCandlesFromClient(symbol, Timeframe::FIVE, "2023-06-01", "2024-06-04");
+    auto candlesticksMinute = databank->getCandlesFromClient(symbol, Timeframe::MINUTE, "2023-06-01", "2024-06-04");
 
     for (const auto& candlestick : candlesticksDaily)
     {

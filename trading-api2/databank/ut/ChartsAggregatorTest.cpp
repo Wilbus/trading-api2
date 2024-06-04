@@ -21,6 +21,33 @@ protected:
     ChartData3 minuteChartForFive;
 };
 
+TEST_F(ChartsAggregatorTest, addMinuteCandleReplaceSameTimestamp)
+{
+    ChartData3 minuteChart;
+    CandleStick candle0(0, 5, 10, 0, 100, 0);
+    CandleStick candle1(60, 6, 11, 1, 101, 1);
+    CandleStick candle2(120, 7, 12, 2, 102, 2);
+    CandleStick candle3(180, 8, 13, 3, 103, 3);
+    CandleStick candle4(240, 9, 14, 4, 104, 4);
+    CandleStick candle5(300, 10, 15, 5, 105, 5);
+    CandleStick candle6(300, 11, 16, 6, 106, 6);
+
+    minuteChart.addMultiCandle(MultiCandle{candle0});
+    minuteChart.addMultiCandle(MultiCandle{candle1});
+    minuteChart.addMultiCandle(MultiCandle{candle2});
+    minuteChart.addMultiCandle(MultiCandle{candle3});
+
+    chartsAggregator->addChart("TGT", minuteChart, Timeframe::MINUTE);
+
+    chartsAggregator->addMinuteCandle("TGT", candle4);
+    chartsAggregator->addMinuteCandle("TGT", candle5);
+    chartsAggregator->addMinuteCandle("TGT", candle6);
+
+    EXPECT_EQ(chartsAggregator->getChartData("TGT", Timeframe::MINUTE).getBack(0).timestamp, 300);
+    EXPECT_EQ(chartsAggregator->getChartData("TGT", Timeframe::MINUTE).getBack(0).price_close, 106);
+    EXPECT_EQ(chartsAggregator->getChartData("TGT", Timeframe::MINUTE).getSize(), 6);
+}
+
 TEST_F(ChartsAggregatorTest, addAndAggregateChartsTest)
 {
     ChartData3 minuteChartForFive;

@@ -62,6 +62,7 @@ protected:
     time_t mockCurrTimeMsWeekAgo{1716611492000};  // Fri, 25 May 2024 04:31:32 GMT
 };
 
+
 TEST_F(SchwabDatabankTest, testStartParsing)
 {
     EXPECT_CALL(*dbHandlerMock.get(), pushJsonData(testing::_)).WillRepeatedly(testing::Return());
@@ -83,9 +84,10 @@ TEST_F(SchwabDatabankTest, testStartParsing)
 
     pushThread.join();
 
-    EXPECT_EQ(databankTester->getChart("DELL").at(Timeframe::MINUTE).getMultiCandles().size(), 10);
-    EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::MINUTE).getMultiCandles().size(), 10);
-    EXPECT_EQ(databankTester->getChart("TGT").at(Timeframe::MINUTE).getMultiCandles().size(), 10);
+    //one because data is the same timestamps and databank chartaggregator replaces candles with the same timestamp
+    EXPECT_EQ(databankTester->getChart("DELL").at(Timeframe::MINUTE).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::MINUTE).getMultiCandles().size(), 1);
+    EXPECT_EQ(databankTester->getChart("TGT").at(Timeframe::MINUTE).getMultiCandles().size(), 1);
 }
 
 TEST_F(SchwabDatabankTest, getCandlesFromDbTest)

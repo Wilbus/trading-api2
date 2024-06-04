@@ -42,6 +42,15 @@ public:
         return mcandles.at(index);
     }
 
+    void removeFromBack(size_t index)
+    {
+        if (index >= mcandles.size())
+        {
+            throw std::runtime_error("ChartData3::removeFromBack: index out of range");
+        }
+        mcandles.erase(mcandles.end() - index - 1, mcandles.end());
+    }
+
     void dumpToCSV(std::string& csvString) const;
 
     void addIndicator(IndicatorType indicatortype);

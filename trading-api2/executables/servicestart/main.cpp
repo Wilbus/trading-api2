@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 
     std::unique_ptr<TradingService> service =
         std::make_unique<TradingService>("/home/wilbus/smbshare0/sambashare0/coding/configs/", false,
-            "/home/wilbus/smbshare0/sambashare0/coding/trading-api2-logs/trading-service3.log");
+            "/home/wilbus/smbshare0/sambashare0/coding/trading-api2-logs/trading-service.log");
     service->setup();
     service->start();
 }
