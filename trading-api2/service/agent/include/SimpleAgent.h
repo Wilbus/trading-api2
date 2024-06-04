@@ -23,6 +23,11 @@ public:
         return inPosition;
     }
 
+    virtual bool inSpecificPosition(const std::string& symbol) const override
+    {
+        return inPosition;
+    }
+
 protected:
     virtual void checkEnterTrade(const std::string& symbol, const ChartTimeframesMap& timeframeCharts);
     virtual void checkExitTrade(const std::string& symbol, const ChartTimeframesMap& timeframeCharts);

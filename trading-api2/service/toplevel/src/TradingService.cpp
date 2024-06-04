@@ -4,6 +4,7 @@
 #include "TestAgent.h"
 #include "SchwabDatabank.h"
 #include "SchwabJsonDataRecorder.h"
+#include "Logger.h"
 
 namespace tradingservice {
 
@@ -76,6 +77,7 @@ void TradingService::start()
 
 void TradingService::startTrading()
 {
+    infologprint(logFile, "%s: starting trading", __func__);
     manager->startThreadFuncThread();
 
     databank->startParsing();
@@ -101,6 +103,7 @@ void TradingService::startBacktest()
 
 void TradingService::setupForLive()
 {
+    infologprint(logFile, "%s: setting up for live trading", __func__);
     databank = std::make_shared<SchwabDatabank>(
         sClient, std::make_shared<SchwabDatabaseHandler>(influxConnectionInfo), repliesQueue, logFile);
 
@@ -112,7 +115,7 @@ void TradingService::setupForLive()
 
     databank->initializeData(chartSymbols);
 
-    agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, "simpleAgent", logFile));
+    //agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, "simpleAgent", logFile));
     agents.push_back(std::make_shared<TestAgent>(sClient, databank, chartSymbols, "testAgent", logFile));
 }
 
@@ -133,7 +136,7 @@ void TradingService::setupForBacktest()
     }
     databank->initializeDataFromDb(chartSymbols, initializeFromTime, initializeToTime);
 
-    agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, "simpleAgent", logFile));
+    //agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, "simpleAgent", logFile));
     agents.push_back(std::make_shared<TestAgent>(sClient, databank, chartSymbols, "testAgent", logFile));
 }
 
