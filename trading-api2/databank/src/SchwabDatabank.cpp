@@ -107,7 +107,7 @@ void SchwabDatabank::parseStreamQueue(unsigned count)
         if (!streamqueue->isEmpty())
         {
             auto jsondata = streamqueue->front();
-            //pushJsonDataToDb(jsondata);
+            pushJsonDataToDb(jsondata);
 
             SchwabServiceData data = parseServiceData(jsondata);
             streamqueue->pop();
