@@ -37,7 +37,7 @@ public:
         const std::string symbol, const Timeframe& timeframe, const CandleStick candle) override;
 
 protected:
-    void parseStreamQueue(unsigned count);
+    virtual void parseStreamQueue(unsigned count);
     void pushJsonDataToDb(const std::string jsondata);
     void updateMinuteCharts(const std::string symbol, const ChartEquity minuteCandle);
     void pushCandleToDb(const std::string symbol, const CandleStick candle);

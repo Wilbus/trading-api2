@@ -4,6 +4,7 @@ project(trading-api2-databank)
 add_library(${PROJECT_NAME} SHARED
     ${CMAKE_CURRENT_LIST_DIR}/src/ChartsAggregator.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/SchwabDatabank.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/SchwabJsonDataRecorder.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

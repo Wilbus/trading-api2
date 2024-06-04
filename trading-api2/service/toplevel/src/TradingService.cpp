@@ -2,13 +2,15 @@
 
 #include "SimpleAgent.h"
 #include "TestAgent.h"
+#include "SchwabDatabank.h"
+#include "SchwabJsonDataRecorder.h"
 
 namespace tradingservice {
 
-TradingService::TradingService(std::string configFolder, bool isBacktest, std::string logFile)
+TradingService::TradingService(std::string configFolder, TradingServiceMode tradingServiceMode, std::string logFile)
     : logFile(logFile)
     , configFolder(configFolder)
-    , isBacktest(isBacktest)
+    , tradingServiceMode(tradingServiceMode)
     , repliesQueue(std::make_shared<DataQueue<std::string>>())
     , configs(std::make_shared<SchwabConfigs>(configFolder))
     , sClient(std::make_shared<SchwabClient>(configs, std::make_shared<RestClientCurl>(), logFile))
@@ -17,11 +19,11 @@ TradingService::TradingService(std::string configFolder, bool isBacktest, std::s
     infologprint(logFile, "%s: init", __func__);
 }
 
-TradingService::TradingService(std::string configFolder, bool isBacktest, std::string initializeFromTime,
+TradingService::TradingService(std::string configFolder, TradingServiceMode tradingServiceMode, std::string initializeFromTime,
     std::string intializeToTime, std::string logFile)
     : logFile(logFile)
     , configFolder(configFolder)
-    , isBacktest(isBacktest)
+    , tradingServiceMode(tradingServiceMode)
     , initializeFromTime(initializeFromTime)
     , initializeToTime(intializeToTime)
     , repliesQueue(std::make_shared<DataQueue<std::string>>())
@@ -38,41 +40,37 @@ void TradingService::setup()
     influxConnectionInfo = InfluxConnectionInfo{
         influxConf.user, influxConf.pass, influxConf.host, influxConf.dbname, influxConf.authToken};
 
-    databank = std::make_shared<SchwabDatabank>(
-        sClient, std::make_shared<SchwabDatabaseHandler>(influxConnectionInfo), repliesQueue, logFile);
-
-    auto subConf = configs->getSubscribeConfig();
-    for (const auto& symbol : subConf.chartEquities.symbols)
+    switch(tradingServiceMode)
     {
-        chartSymbols.insert(symbol);
+        case TradingServiceMode::Backtest:
+            setupForBacktest();
+            break;
+        case TradingServiceMode::Live:
+            setupForLive();
+            break;
+        case TradingServiceMode::RecordData:
+            setupForRecordData();
+            break;
+        default:
+            throw std::runtime_error("Invalid TradingServiceMode");
+            break;
     }
-
-    if (!isBacktest)
-    {
-        databank->initializeData(chartSymbols);
-    }
-    else
-    {
-        if (initializeFromTime.empty() || initializeToTime.empty())
-        {
-            throw std::runtime_error("initializeFromTime and initializeToTime must be set for backtest");
-        }
-        databank->initializeDataFromDb(chartSymbols, initializeFromTime, initializeToTime);
-    }
-
-    agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, "simpleAgent", logFile));
-    agents.push_back(std::make_shared<TestAgent>(sClient, databank, chartSymbols, "testAgent", logFile));
 }
 
 void TradingService::start()
 {
-    if (!isBacktest)
+    switch(tradingServiceMode)
     {
-        startTrading();
-    }
-    else
-    {
-        startBacktest();
+        case TradingServiceMode::Backtest:
+            startBacktest();
+            break;
+        case TradingServiceMode::Live:
+        case TradingServiceMode::RecordData:
+            startTrading();
+            break;
+        default:
+            throw std::runtime_error("Invalid TradingServiceMode");
+            break;
     }
 }
 
@@ -101,4 +99,48 @@ void TradingService::startBacktest()
     }
 }
 
-} // namespace tradingservice
+void TradingService::setupForLive()
+{
+    databank = std::make_shared<SchwabDatabank>(
+        sClient, std::make_shared<SchwabDatabaseHandler>(influxConnectionInfo), repliesQueue, logFile);
+
+    auto subConf = configs->getSubscribeConfig();
+    for (const auto& symbol : subConf.chartEquities.symbols)
+    {
+        chartSymbols.insert(symbol);
+    }
+
+    databank->initializeData(chartSymbols);
+
+    agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, "simpleAgent", logFile));
+    agents.push_back(std::make_shared<TestAgent>(sClient, databank, chartSymbols, "testAgent", logFile));
+}
+
+void TradingService::setupForBacktest()
+{
+    databank = std::make_shared<SchwabDatabank>(
+        sClient, std::make_shared<SchwabDatabaseHandler>(influxConnectionInfo), repliesQueue, logFile);
+
+    auto subConf = configs->getSubscribeConfig();
+    for (const auto& symbol : subConf.chartEquities.symbols)
+    {
+        chartSymbols.insert(symbol);
+    }
+
+    if (initializeFromTime.empty() || initializeToTime.empty())
+    {
+        throw std::runtime_error("initializeFromTime and initializeToTime must be set for backtest");
+    }
+    databank->initializeDataFromDb(chartSymbols, initializeFromTime, initializeToTime);
+
+    agents.push_back(std::make_shared<SimpleAgent>(sClient, databank, chartSymbols, "simpleAgent", logFile));
+    agents.push_back(std::make_shared<TestAgent>(sClient, databank, chartSymbols, "testAgent", logFile));
+}
+
+void TradingService::setupForRecordData()
+{
+    databank = std::make_shared<SchwabJsonDataRecorder>(
+        sClient, std::make_shared<SchwabDatabaseHandler>(influxConnectionInfo), repliesQueue, logFile);
+} 
+
+}// namespace tradingservice
