@@ -7,6 +7,7 @@
 #include "SchwabErrorDataTypes.h"
 #include "SchwabMarketDataTypes.h"
 
+#include <mutex>
 #include <memory>
 
 using namespace restclient;
@@ -133,6 +134,7 @@ private:
     std::shared_ptr<ISchwabConfigs> config;
     std::shared_ptr<IRestClientCurl> restClient;
     std::string logfile;
+    std::mutex mtx;
 };
 
 } // namespace restclient

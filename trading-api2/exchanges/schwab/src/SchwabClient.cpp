@@ -199,6 +199,7 @@ bool SchwabClient::updateAccessToken(std::string refreshToken)
 //'https://api.schwabapi.com/marketdata/v1/quotes?symbols=SPY%2C%20AAPL&fields=quote%2Creference&indicative=true'
 std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::set<std::string> symbols)
 {
+    std::lock_guard<std::mutex> lg(mtx);
     std::string logsymbols;
     for (const auto& symb : symbols)
     {
@@ -247,6 +248,7 @@ std::map<std::string, QuoteEquityResponse> SchwabClient::getEquityQuotes(std::se
 //'https://api.schwabapi.com/marketdata/v1/chains?symbol=AAPL&contractType=ALL&strikeCount=5&strategy=SINGLE'
 OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCount)
 {
+    std::lock_guard<std::mutex> lg(mtx);
     infologprint(logfile, "%s: request option chain for: %s, strikesCount: %u", __func__, symbol.c_str(), strikesCount);
 
     std::string path = "/chains?symbol=" + symbol + "&contractType=ALL&strikeCount=" + std::to_string(strikesCount) +
@@ -277,6 +279,7 @@ OptionChain SchwabClient::getOptionChain(std::string symbol, unsigned strikesCou
 //'https://api.schwabapi.com/marketdata/v1/expirationchain?symbol=AAPL'
 std::vector<OptionExpiration> SchwabClient::getOptionExpirations(std::string symbol)
 {
+    std::lock_guard<std::mutex> lg(mtx);
     infologprint(logfile, "%s: request option expirations for: %s", __func__, symbol.c_str());
     try
     {
@@ -307,6 +310,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
     PriceHistoryTimeFreq timeFreq, unsigned freqAmount, std::string startDate, std::string endDate, bool extendedHours,
     bool needPreviousClose)
 {
+    std::lock_guard<std::mutex> lg(mtx);
     try
     {
         infologprint(logfile,
@@ -362,6 +366,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
     PriceHistoryTimeFreq timeFreq, unsigned freqAmount, uint64_t startDate, uint64_t endDate, bool extendedHours,
     bool needPreviousClose)
 {
+    std::lock_guard<std::mutex> lg(mtx);
     try
     {
         infologprint(logfile,
@@ -407,6 +412,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
 // TODO: add UT for this
 std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
 {
+    std::lock_guard<std::mutex> lg(mtx);
     try
     {
         infologprint(logfile, "%s: requesting account numbers", __func__);
@@ -436,6 +442,7 @@ std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
 // TODO: add UT for this
 UserPreferences SchwabClient::getUserPreferences()
 {
+    std::lock_guard<std::mutex> lg(mtx);
     try
     {
         infologprint(logfile, "%s: requesting user preferences", __func__);
