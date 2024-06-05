@@ -4,6 +4,7 @@
 #include "IDatabank.h"
 #include "Logger.h"
 #include "SchwabClient.h"
+#include <queue>
 
 using namespace databank;
 
@@ -40,6 +41,9 @@ protected:
     std::thread agentThread;
     bool inPosition{false};
     std::string agentName;
+    std::map<std::string, bool> positionsMap;
+    std::map<std::string, std::queue<std::string>> buySignalsQueueMap;
+    std::map<std::string, std::queue<std::string>> sellSignalsQueueMap;
 
 private:
     bool threeConsecutiveDailyCloseAboveAllSmas{false};

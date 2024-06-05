@@ -15,6 +15,7 @@ namespace databank {
 using namespace utils;
 using namespace charting;
 using namespace databasehandlers;
+using SchwabOptionChain = schwabMarketData::OptionChain;
 
 class SchwabDatabank : public IDatabank
 {
@@ -35,6 +36,7 @@ public:
         const uint64_t& fromTime, const uint64_t& toTime) override;
     virtual void pushCandleToDb(
         const std::string symbol, const Timeframe& timeframe, const CandleStick candle) override;
+    virtual OptionChain getOptionChain(const std::string& symbol, unsigned strikes) override;
 
 protected:
     virtual void parseStreamQueue(unsigned count);

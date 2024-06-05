@@ -280,4 +280,85 @@ std::vector<CandleStick> SchwabDatabank::getCandlesFromClient(
 
     return candleSticks;
 }
+
+charting::OptionChain SchwabDatabank::getOptionChain(const std::string& symbol, unsigned strikes)
+{
+    SchwabOptionChain schwabOptionChain = sClient->getOptionChain(symbol, strikes);
+
+    OptionChain optionChain;
+
+    for(const auto& [OptionExpDate, StrikesChain] : schwabOptionChain.callExpDateMap)
+    {
+        //find ":" because returned date has some extra number after colon in the dates
+        auto colonIndex = OptionExpDate.find(":");
+        std::string date = OptionExpDate;
+        if(colonIndex != std::string::npos)
+        {
+            date = OptionExpDate.substr(0, colonIndex);
+        }
+        for(const auto& option : StrikesChain)
+        {
+            Option callOption;
+            callOption.strike = option.strikePrice;
+            callOption.bid = option.bidPrice;
+            callOption.ask = option.askPrice;
+            callOption.last = option.lastPrice;
+            callOption.bidSize = option.bidSize;
+            callOption.askSize = option.askSize;
+            callOption.volume = option.totalVolume;
+            callOption.open = option.openPrice;
+            callOption.close = option.closePrice;
+            callOption.option_type = "call";
+
+            callOption.symbol = option.symbol;
+            callOption.delta = option.delta;
+            callOption.gamma = option.gamma;
+            callOption.theta = option.theta;
+            callOption.vega = option.vega;
+            callOption.rho = option.rho;
+            callOption.volatility = option.volatility;
+
+            OptionPair optionpair = OptionPair(callOption);
+            optionChain[date][option.strikePrice] = optionpair;
+        }
+    }
+
+    for(const auto& [OptionExpDate, StrikesChain] : schwabOptionChain.putExpDateMap)
+    {
+        auto colonIndex = OptionExpDate.find(":");
+        std::string date = OptionExpDate;
+        if(colonIndex != std::string::npos)
+        {
+            date = OptionExpDate.substr(0, colonIndex);
+        }
+        for(const auto& option: StrikesChain)
+        {
+            Option putOption;
+            putOption.strike = option.strikePrice;
+            putOption.bid = option.bidPrice;
+            putOption.ask = option.askPrice;
+            putOption.last = option.lastPrice;
+            putOption.bidSize = option.bidSize;
+            putOption.askSize = option.askSize;
+            putOption.volume = option.totalVolume;
+            putOption.open = option.openPrice;
+            putOption.close = option.closePrice;
+            putOption.option_type = "put";
+
+            putOption.symbol = option.symbol;
+            putOption.delta = option.delta;
+            putOption.gamma = option.gamma;
+            putOption.theta = option.theta;
+            putOption.vega = option.vega;
+            putOption.rho = option.rho;
+            putOption.volatility = option.volatility;
+
+            optionChain[date][option.strikePrice].setPut(putOption);
+        }
+    }
+
+    return optionChain;
+}
+
+
 } // namespace databank

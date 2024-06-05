@@ -1,9 +1,12 @@
 #pragma once
 
 #include "ChartsAggregator.h"
+#include "Option.h"
 
 namespace databank {
 using namespace charting;
+
+using OptionChain = charting::OptionChain;
 
 class IDatabank
 {
@@ -21,5 +24,6 @@ public:
     virtual std::vector<CandleStick> getCandlesFromClient(
         const std::string& symbol, const Timeframe timeframe, const uint64_t& fromTime, const uint64_t& toTime) = 0;
     virtual void pushCandleToDb(const std::string symbol, const Timeframe& timeframe, const CandleStick candle) = 0;
+    virtual OptionChain getOptionChain(const std::string& symbol, unsigned strikes) = 0;
 };
 } // namespace databank

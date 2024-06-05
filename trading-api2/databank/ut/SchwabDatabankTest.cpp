@@ -278,3 +278,92 @@ TEST_F(SchwabDatabankTest, initializeFromDbTest)
     EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::DAILY).getMultiCandles().size(), 1);
     EXPECT_EQ(databankTester->getChart("QQQ").at(Timeframe::DAILY).getMultiCandles().size(), 1);
 }
+
+TEST_F(SchwabDatabankTest, getOptionChainTest)
+{
+    SchwabOptionChain mockedOptionChain;
+    
+    OptionContractMap callExpDateMap;
+    OptionContractMap putExpDateMap;
+
+    OptionContract callContract1;
+    callContract1.strikePrice = 1;
+    callContract1.symbol = "callcontract1";
+
+    OptionContract callContract2;
+    callContract2.strikePrice = 2;
+    callContract2.symbol = "callcontract2";
+
+    OptionContract callContract3;
+    callContract3.strikePrice = 3;
+    callContract3.symbol = "callcontract3";
+
+    OptionContract callContract4;
+    callContract4.strikePrice = 4;
+    callContract4.symbol = "callcontract4";
+
+    StrikesChain callStrikes = {callContract1, callContract2, callContract3, callContract4};
+
+    OptionContract putContract1;
+    putContract1.strikePrice = 1;
+    putContract1.symbol = "putcontract1";
+
+    OptionContract putContract2;
+    putContract2.strikePrice = 2;
+    putContract2.symbol = "putcontract2";
+
+    OptionContract putContract3;
+    putContract3.strikePrice = 3;
+    putContract3.symbol = "putcontract3";
+
+    OptionContract putContract4;
+    putContract4.strikePrice = 4;
+    putContract4.symbol = "putcontract4";
+
+    StrikesChain putStrikes = {putContract1, putContract2, putContract3, putContract4};
+
+    callExpDateMap["date0"] = callStrikes;
+    putExpDateMap["date0"] = putStrikes;
+
+    callExpDateMap["date1"] = callStrikes;
+    putExpDateMap["date1"] = putStrikes;
+
+    callExpDateMap["date2"] = callStrikes;
+    putExpDateMap["date2"] = putStrikes;
+
+    mockedOptionChain.callExpDateMap = callExpDateMap;
+    mockedOptionChain.putExpDateMap = putExpDateMap;
+
+    EXPECT_CALL(*sClientMock.get(), getOptionChain("SPY", 10)).WillOnce(testing::Return(mockedOptionChain));
+
+    charting::OptionChain optionChain = databankTester->getOptionChain("SPY", 10);
+
+    EXPECT_EQ(optionChain.size(), 3); //3 dates
+    EXPECT_EQ(optionChain.at("date0").at(1).callOption().symbol, "callcontract1");
+    EXPECT_EQ(optionChain.at("date0").at(2).callOption().symbol, "callcontract2");
+    EXPECT_EQ(optionChain.at("date0").at(3).callOption().symbol, "callcontract3");
+    EXPECT_EQ(optionChain.at("date0").at(4).callOption().symbol, "callcontract4");
+    EXPECT_EQ(optionChain.at("date0").at(1).putOption().symbol, "putcontract1");
+    EXPECT_EQ(optionChain.at("date0").at(2).putOption().symbol, "putcontract2");
+    EXPECT_EQ(optionChain.at("date0").at(3).putOption().symbol, "putcontract3");
+    EXPECT_EQ(optionChain.at("date0").at(4).putOption().symbol, "putcontract4");
+
+    EXPECT_EQ(optionChain.at("date1").at(1).callOption().symbol, "callcontract1");
+    EXPECT_EQ(optionChain.at("date1").at(2).callOption().symbol, "callcontract2");
+    EXPECT_EQ(optionChain.at("date1").at(3).callOption().symbol, "callcontract3");
+    EXPECT_EQ(optionChain.at("date1").at(4).callOption().symbol, "callcontract4");
+    EXPECT_EQ(optionChain.at("date1").at(1).putOption().symbol, "putcontract1");
+    EXPECT_EQ(optionChain.at("date1").at(2).putOption().symbol, "putcontract2");
+    EXPECT_EQ(optionChain.at("date1").at(3).putOption().symbol, "putcontract3");
+    EXPECT_EQ(optionChain.at("date1").at(4).putOption().symbol, "putcontract4");
+
+    EXPECT_EQ(optionChain.at("date2").at(1).callOption().symbol, "callcontract1");
+    EXPECT_EQ(optionChain.at("date2").at(2).callOption().symbol, "callcontract2");
+    EXPECT_EQ(optionChain.at("date2").at(3).callOption().symbol, "callcontract3");
+    EXPECT_EQ(optionChain.at("date2").at(4).callOption().symbol, "callcontract4");
+    EXPECT_EQ(optionChain.at("date2").at(1).putOption().symbol, "putcontract1");
+    EXPECT_EQ(optionChain.at("date2").at(2).putOption().symbol, "putcontract2");
+    EXPECT_EQ(optionChain.at("date2").at(3).putOption().symbol, "putcontract3");
+    EXPECT_EQ(optionChain.at("date2").at(4).putOption().symbol, "putcontract4");
+    
+}

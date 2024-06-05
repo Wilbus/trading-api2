@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <map>
+#include <stdexcept>
 
 namespace charting {
 
@@ -20,7 +22,10 @@ public:
     double close;
     double bid;
     double ask;
+    double bidSize;
+    double askSize;
     double strike;
+    double volatility;
 
     // greeks
     double delta;
@@ -43,4 +48,69 @@ public:
 
     uint64_t expiration_date;
 };
+
+class OptionPair
+{
+public:
+    OptionPair() = default;
+    OptionPair(Option call, Option put)
+        : call(call), put(put)
+    {
+        if(call.strike != put.strike)
+        {
+            throw std::invalid_argument("Call and put strikes must be equal");
+        }
+    }
+
+    OptionPair(Option putOrCall)
+    {
+        if(putOrCall.option_type == "put")
+        {
+            put = putOrCall;
+        }
+        else if(putOrCall.option_type == "call")
+        {
+            call = putOrCall;
+        }
+        else
+        {
+            throw std::invalid_argument("Option type must be put or call");
+        }
+    }
+
+    Option putOption() const
+    {
+        return put;
+    }
+
+    Option callOption() const
+    {
+        return call;
+    }
+
+    void setPut(const Option& put)
+    {
+        if(put.strike != this->call.strike)
+        {
+            throw std::invalid_argument("Put strike must be equal to call strike");
+        }
+        this->put = put;
+    }
+    
+    void setCall(const Option& call)
+    {
+        if(call.strike != this->put.strike)
+        {
+            throw std::invalid_argument("Call strike must be equal to put strike");
+        }
+        this->call = call;
+    }
+
+private:
+    Option call;
+    Option put;
+};
+
+typedef std::map<std::string, std::map<double, OptionPair>> OptionChain;
+
 } // namespace charting

@@ -147,3 +147,20 @@ TEST_F(SchwabDatabankRealDataTest, getCandlesFromClientTestAndApplyIndicators)
         applyIndicators(chart);
     }
 }
+
+TEST_F(SchwabDatabankRealDataTest, getOptionsTest)
+{
+    std::string symbol = "AAPL";
+    unsigned strikes = 5;
+
+    auto options = databank->getOptionChain(symbol, strikes);
+
+    for(const auto& [expirationDate, strikesMap] : options)
+    {
+        for(const auto& [strike, optionPair] : strikesMap)
+        {
+            std::printf("expiration date: %s, strike: %.02f, call: %.02f, put: %.02f\n",
+                expirationDate.c_str(), strike, optionPair.callOption().last, optionPair.putOption().last);
+        }
+    }
+}

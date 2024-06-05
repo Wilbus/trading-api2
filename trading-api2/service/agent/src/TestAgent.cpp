@@ -139,6 +139,7 @@ void TestAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframes
         infologprint(logFile, "%s: %s: buy signal achieved. Last minute close: %.02f",
             __func__, symbol.c_str(), lastMinClose);
         positionsMap[symbol] = true;
+        balance -= lastMinClose;
 
         // reset buy signals
         buySignalsQueueMap[symbol].push(lowWentUnder_bbmid50SignalName);
@@ -166,6 +167,7 @@ void TestAgent::checkExitTrade(const std::string& symbol, const ChartTimeframesM
         infologprint(logFile, "%s: %s sell signal achieved. Last minute close: %.02f",
             __func__, symbol.c_str(), lastMinClose);
         positionsMap[symbol] = false;
+        balance += lastMinClose;
 
         // reset sell signals
         sellSignalsQueueMap.at(symbol).push(closeCrossedUnderSma9SignalName);

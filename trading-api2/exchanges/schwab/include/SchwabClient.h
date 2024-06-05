@@ -57,6 +57,8 @@ const std::map<bool, std::string> booleanString =
 };
 // clang-format on
 
+using OptionChain = schwabMarketData::OptionChain;
+
 class ISchwabClient
 {
 public:
