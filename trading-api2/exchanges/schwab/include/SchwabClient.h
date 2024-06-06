@@ -7,8 +7,8 @@
 #include "SchwabErrorDataTypes.h"
 #include "SchwabMarketDataTypes.h"
 
-#include <mutex>
 #include <memory>
+#include <mutex>
 
 using namespace restclient;
 using namespace schwabMarketData;
@@ -81,7 +81,8 @@ public:
 
     // virtual std::vector<MarketHours> getMarketHours(std::set<MarketType> marketType, std::string date) = 0;
 
-    virtual std::vector<AccountNumbers> getAccountNumbers() = 0;
+    virtual AccountNumbers getAccountNumbers() = 0;
+    virtual AccountPositionBalances getAccountPositionBalances(AccountNumberHashPair accountHashPair) = 0;
     virtual UserPreferences getUserPreferences() = 0;
 
     virtual bool checkAccessToken() = 0;
@@ -119,7 +120,8 @@ public:
     // date format yyyy-MM-dd
     // virtual std::vector<MarketHours> getMarketHours(std::set<MarketType> marketType, std::string date) override;
 
-    virtual std::vector<AccountNumbers> getAccountNumbers() override;
+    virtual AccountNumbers getAccountNumbers() override;
+    virtual AccountPositionBalances getAccountPositionBalances(AccountNumberHashPair accountHashPair) override;
     virtual UserPreferences getUserPreferences() override;
 
     virtual bool checkAccessToken() override;

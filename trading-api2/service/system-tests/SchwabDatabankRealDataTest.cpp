@@ -155,12 +155,12 @@ TEST_F(SchwabDatabankRealDataTest, getOptionsTest)
 
     auto options = databank->getOptionChain(symbol, strikes);
 
-    for(const auto& [expirationDate, strikesMap] : options)
+    for (const auto& [expirationDate, strikesMap] : options)
     {
-        for(const auto& [strike, optionPair] : strikesMap)
+        for (const auto& [strike, optionPair] : strikesMap)
         {
-            std::printf("expiration date: %s, strike: %.02f, call: %.02f, put: %.02f\n",
-                expirationDate.c_str(), strike, optionPair.callOption().last, optionPair.putOption().last);
+            std::printf("expiration date: %s, strike: %.02f, call: %.02f, put: %.02f\n", expirationDate.c_str(), strike,
+                optionPair.callOption().last, optionPair.putOption().last);
         }
     }
 }

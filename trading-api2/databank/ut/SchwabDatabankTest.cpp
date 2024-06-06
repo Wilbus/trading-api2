@@ -62,7 +62,6 @@ protected:
     time_t mockCurrTimeMsWeekAgo{1716611492000};  // Fri, 25 May 2024 04:31:32 GMT
 };
 
-
 TEST_F(SchwabDatabankTest, testStartParsing)
 {
     EXPECT_CALL(*dbHandlerMock.get(), pushJsonData(testing::_)).WillRepeatedly(testing::Return());
@@ -84,7 +83,7 @@ TEST_F(SchwabDatabankTest, testStartParsing)
 
     pushThread.join();
 
-    //one because data is the same timestamps and databank chartaggregator replaces candles with the same timestamp
+    // one because data is the same timestamps and databank chartaggregator replaces candles with the same timestamp
     EXPECT_EQ(databankTester->getChart("DELL").at(Timeframe::MINUTE).getMultiCandles().size(), 1);
     EXPECT_EQ(databankTester->getChart("SPY").at(Timeframe::MINUTE).getMultiCandles().size(), 1);
     EXPECT_EQ(databankTester->getChart("TGT").at(Timeframe::MINUTE).getMultiCandles().size(), 1);
@@ -282,7 +281,7 @@ TEST_F(SchwabDatabankTest, initializeFromDbTest)
 TEST_F(SchwabDatabankTest, getOptionChainTest)
 {
     SchwabOptionChain mockedOptionChain;
-    
+
     OptionContractMap callExpDateMap;
     OptionContractMap putExpDateMap;
 
@@ -338,7 +337,7 @@ TEST_F(SchwabDatabankTest, getOptionChainTest)
 
     charting::OptionChain optionChain = databankTester->getOptionChain("SPY", 10);
 
-    EXPECT_EQ(optionChain.size(), 3); //3 dates
+    EXPECT_EQ(optionChain.size(), 3); // 3 dates
     EXPECT_EQ(optionChain.at("date0").at(1).callOption().symbol, "callcontract1");
     EXPECT_EQ(optionChain.at("date0").at(2).callOption().symbol, "callcontract2");
     EXPECT_EQ(optionChain.at("date0").at(3).callOption().symbol, "callcontract3");
@@ -365,5 +364,4 @@ TEST_F(SchwabDatabankTest, getOptionChainTest)
     EXPECT_EQ(optionChain.at("date2").at(2).putOption().symbol, "putcontract2");
     EXPECT_EQ(optionChain.at("date2").at(3).putOption().symbol, "putcontract3");
     EXPECT_EQ(optionChain.at("date2").at(4).putOption().symbol, "putcontract4");
-    
 }

@@ -8,6 +8,7 @@ add_executable(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/SchwabStreamParserTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/SchwabStreamDataParserTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/SchwabStreamReqGeneratorTest.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/SchwabAccountReqParserTest.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC

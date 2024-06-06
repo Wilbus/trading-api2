@@ -287,16 +287,16 @@ charting::OptionChain SchwabDatabank::getOptionChain(const std::string& symbol, 
 
     OptionChain optionChain;
 
-    for(const auto& [OptionExpDate, StrikesChain] : schwabOptionChain.callExpDateMap)
+    for (const auto& [OptionExpDate, StrikesChain] : schwabOptionChain.callExpDateMap)
     {
-        //find ":" because returned date has some extra number after colon in the dates
+        // find ":" because returned date has some extra number after colon in the dates
         auto colonIndex = OptionExpDate.find(":");
         std::string date = OptionExpDate;
-        if(colonIndex != std::string::npos)
+        if (colonIndex != std::string::npos)
         {
             date = OptionExpDate.substr(0, colonIndex);
         }
-        for(const auto& option : StrikesChain)
+        for (const auto& option : StrikesChain)
         {
             Option callOption;
             callOption.strike = option.strikePrice;
@@ -323,15 +323,15 @@ charting::OptionChain SchwabDatabank::getOptionChain(const std::string& symbol, 
         }
     }
 
-    for(const auto& [OptionExpDate, StrikesChain] : schwabOptionChain.putExpDateMap)
+    for (const auto& [OptionExpDate, StrikesChain] : schwabOptionChain.putExpDateMap)
     {
         auto colonIndex = OptionExpDate.find(":");
         std::string date = OptionExpDate;
-        if(colonIndex != std::string::npos)
+        if (colonIndex != std::string::npos)
         {
             date = OptionExpDate.substr(0, colonIndex);
         }
-        for(const auto& option: StrikesChain)
+        for (const auto& option : StrikesChain)
         {
             Option putOption;
             putOption.strike = option.strikePrice;
@@ -359,6 +359,5 @@ charting::OptionChain SchwabDatabank::getOptionChain(const std::string& symbol, 
 
     return optionChain;
 }
-
 
 } // namespace databank

@@ -1,7 +1,7 @@
 #pragma once
-#include <string>
 #include <map>
 #include <stdexcept>
+#include <string>
 
 namespace charting {
 
@@ -54,9 +54,10 @@ class OptionPair
 public:
     OptionPair() = default;
     OptionPair(Option call, Option put)
-        : call(call), put(put)
+        : call(call)
+        , put(put)
     {
-        if(call.strike != put.strike)
+        if (call.strike != put.strike)
         {
             throw std::invalid_argument("Call and put strikes must be equal");
         }
@@ -64,11 +65,11 @@ public:
 
     OptionPair(Option putOrCall)
     {
-        if(putOrCall.option_type == "put")
+        if (putOrCall.option_type == "put")
         {
             put = putOrCall;
         }
-        else if(putOrCall.option_type == "call")
+        else if (putOrCall.option_type == "call")
         {
             call = putOrCall;
         }
@@ -90,16 +91,16 @@ public:
 
     void setPut(const Option& put)
     {
-        if(put.strike != this->call.strike)
+        if (put.strike != this->call.strike)
         {
             throw std::invalid_argument("Put strike must be equal to call strike");
         }
         this->put = put;
     }
-    
+
     void setCall(const Option& call)
     {
-        if(call.strike != this->put.strike)
+        if (call.strike != this->put.strike)
         {
             throw std::invalid_argument("Call strike must be equal to put strike");
         }

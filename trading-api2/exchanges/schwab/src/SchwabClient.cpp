@@ -410,7 +410,7 @@ PriceHistory SchwabClient::getPriceHistory(std::string symbol, PriceHistoryPerio
 }
 
 // TODO: add UT for this
-std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
+AccountNumbers SchwabClient::getAccountNumbers()
 {
     std::lock_guard<std::mutex> lg(mtx);
     try
@@ -430,7 +430,7 @@ std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
             logErrorResponse(errorResp);
             return {};
         }
-        return {};
+        return parseAccountNumbers(resp);
     }
     catch (const std::exception& e)
     {
@@ -439,7 +439,35 @@ std::vector<AccountNumbers> SchwabClient::getAccountNumbers()
     }
 }
 
-// TODO: add UT for this
+AccountPositionBalances SchwabClient::getAccountPositionBalances(AccountNumberHashPair accountHashPair)
+{
+    std::lock_guard<std::mutex> lg(mtx);
+    try
+    {
+        infologprint(logfile, "%s: requesting account numbers", __func__);
+
+        std::string path = "/accounts/" + accountHashPair.second + "?fields=positions";
+        if (!checkAccessToken())
+        {
+            updateAccessToken(config->getRefreshToken().token);
+        }
+        setAccountsEndpoint();
+        auto resp = restClient->getResponse(path, headers());
+        auto errorResp = checkErrors(resp);
+        if (errorResp.errors.size() > 0)
+        {
+            logErrorResponse(errorResp);
+            return {};
+        }
+        return parseAccountPositionBalances(resp);
+    }
+    catch (const std::exception& e)
+    {
+        infologprint(logfile, "%s: caught exception: %s", __func__, e.what());
+        return {};
+    }
+}
+
 UserPreferences SchwabClient::getUserPreferences()
 {
     std::lock_guard<std::mutex> lg(mtx);

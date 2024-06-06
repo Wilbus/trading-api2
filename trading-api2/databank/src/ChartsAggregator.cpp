@@ -14,24 +14,24 @@ ChartsAggregator::ChartsAggregator(std::map<std::string, ChartTimeframesMap> cha
 
 void ChartsAggregator::addMinuteCandle(std::string symbol, CandleStick candle)
 {
-    //symbol can be uninitialized at first
-    if(charts.find(symbol) == charts.end())
+    // symbol can be uninitialized at first
+    if (charts.find(symbol) == charts.end())
     {
         charts[symbol][Timeframe::MINUTE].addMultiCandle(MultiCandle{candle});
         return;
     }
-    //minute chart can be uninitialized at first
-    if(charts.at(symbol).find(Timeframe::MINUTE) == charts.at(symbol).end())
+    // minute chart can be uninitialized at first
+    if (charts.at(symbol).find(Timeframe::MINUTE) == charts.at(symbol).end())
     {
-        //ChartData3 chart;
-        //chart.addMultiCandle(MultiCandle{candle});
+        // ChartData3 chart;
+        // chart.addMultiCandle(MultiCandle{candle});
         charts[symbol][Timeframe::MINUTE].addMultiCandle(MultiCandle{candle});
         return;
     }
     // replace the last minute candle with the new one if timestamps match
     // this can happen if the stream sends the same minute candle multiple times
     // for example if stream disconnects and reconnects in the same minute we can get the same minute candle again
-    if(charts.at(symbol).at(Timeframe::MINUTE).getBack(0).timestamp == candle.timestamp)
+    if (charts.at(symbol).at(Timeframe::MINUTE).getBack(0).timestamp == candle.timestamp)
     {
         charts[symbol][Timeframe::MINUTE].removeFromBack(0);
     }

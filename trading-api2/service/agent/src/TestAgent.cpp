@@ -11,7 +11,7 @@ void TestAgent::startAgent()
 {
     infologprint(logFile, "%s: starting %s", __func__, agentName.c_str());
 
-    for(const auto& symbol : symbols)
+    for (const auto& symbol : symbols)
     {
         positionsMap[symbol] = false;
 
@@ -136,8 +136,8 @@ void TestAgent::checkEnterTrade(const std::string& symbol, const ChartTimeframes
     if (buySignalsQueueMap.at(symbol).empty())
     {
         auto lastMinClose = timeframeCharts.at(Timeframe::MINUTE).getBack(0).price_close;
-        infologprint(logFile, "%s: %s: buy signal achieved. Last minute close: %.02f",
-            __func__, symbol.c_str(), lastMinClose);
+        infologprint(
+            logFile, "%s: %s: buy signal achieved. Last minute close: %.02f", __func__, symbol.c_str(), lastMinClose);
         positionsMap[symbol] = true;
         balance -= lastMinClose;
 
@@ -169,8 +169,8 @@ void TestAgent::checkExitTrade(const std::string& symbol, const ChartTimeframesM
         positionsMap[symbol] = false;
         balance += lastMinClose;
 
-        infologprint(logFile, "%s: %s sell signal achieved. Last minute close: %.02f",
-            __func__, symbol.c_str(), lastMinClose);
+        infologprint(
+            logFile, "%s: %s sell signal achieved. Last minute close: %.02f", __func__, symbol.c_str(), lastMinClose);
         infologprint(logFile, "%s: %s: Current balance: %.02f", __func__, symbol.c_str(), balance);
 
         // reset sell signals

@@ -17,6 +17,7 @@ public:
     MOCK_METHOD9(getPriceHistory, PriceHistory(std::string, PriceHistoryPeriodType, unsigned, PriceHistoryTimeFreq,
                                       unsigned, uint64_t, uint64_t, bool, bool));
     MOCK_METHOD0(checkAccessToken, bool());
-    MOCK_METHOD0(getAccountNumbers, std::vector<AccountNumbers>());
+    MOCK_METHOD0(getAccountNumbers, AccountNumbers());
     MOCK_METHOD0(getUserPreferences, UserPreferences());
+    MOCK_METHOD1(getAccountPositionBalances, AccountPositionBalances(AccountNumberHashPair));
 };

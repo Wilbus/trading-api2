@@ -4,6 +4,7 @@
 #include "SystemTimerMock.h"
 #include "UriEncodeDecode.h"
 #include "base64.hpp"
+#include "schwabAccountTestValues.h"
 #include "schwabErrorTestValues.h"
 #include "schwabOptionsTestValues.h"
 #include "schwabtestauthvalues.h"
@@ -610,4 +611,111 @@ TEST_F(SchwabClientTest, getUserPreferenceWithUpdateAccessToken)
     auto prefs = client->getUserPreferences();
     EXPECT_GT(prefs.accounts.size(), 0);
     EXPECT_GT(prefs.streamerInfo.size(), 0);
+}
+
+TEST_F(SchwabClientTest, getAccountNumbers)
+{
+    std::string expectedPath = "/accounts/accountNumbers";
+
+    expectValidAccessToken();
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(accountsEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(accountNumbersResponse));
+    }
+    auto accountNumbers = client->getAccountNumbers();
+    EXPECT_EQ(accountNumbers.size(), 2);
+}
+
+TEST_F(SchwabClientTest, getAccountNumbersWithErroResponse)
+{
+    std::string expectedPath = "/accounts/accountNumbers";
+
+    expectValidAccessToken();
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(accountsEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(genericError400));
+    }
+    auto accountNumbers = client->getAccountNumbers();
+    EXPECT_EQ(accountNumbers.size(), 0);
+}
+
+TEST_F(SchwabClientTest, getAccountNumbersWithUpdateAccessToken)
+{
+    std::string expectedPath = "/accounts/accountNumbers";
+
+    expectExpiredAccessToken();
+    expectUpdateAccessTokenWhenInvalid();
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(accountsEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(accountNumbersResponse));
+    }
+    auto accountNumbers = client->getAccountNumbers();
+    EXPECT_EQ(accountNumbers.size(), 2);
+}
+
+TEST_F(SchwabClientTest, getAccountPositionBalances)
+{
+    std::string expectedPath = "/accounts/ABCDE1234?fields=positions";
+    AccountNumberHashPair accountHash = std::make_pair("12345689", "ABCDE1234");
+
+    expectValidAccessToken();
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(accountsEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(accountInfoCashPositionsResponse));
+    }
+    auto accountPositionBalances = client->getAccountPositionBalances(accountHash);
+    EXPECT_GT(accountPositionBalances.positions.size(), 0);
+}
+
+TEST_F(SchwabClientTest, getAccountPositionBalancesWithErroResponse)
+{
+    std::string expectedPath = "/accounts/ABCDE1234?fields=positions";
+    AccountNumberHashPair accountHash = std::make_pair("12345689", "ABCDE1234");
+
+    expectValidAccessToken();
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(accountsEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(genericError400));
+    }
+    auto accountPositionBalances = client->getAccountPositionBalances(accountHash);
+    EXPECT_EQ(accountPositionBalances.positions.size(), 0);
+}
+
+TEST_F(SchwabClientTest, getAccountPositionBalancesWithUpdateAccessToken)
+{
+    std::string expectedPath = "/accounts/ABCDE1234?fields=positions";
+    AccountNumberHashPair accountHash = std::make_pair("12345689", "ABCDE1234");
+
+    expectExpiredAccessToken();
+    expectUpdateAccessTokenWhenInvalid();
+
+    {
+        InSequence s;
+        EXPECT_CALL(*restClientCurlMock.get(), setBaseEndpoint(accountsEndpoint));
+        EXPECT_CALL(*configMock.get(), getAccessToken()).Times(1).WillOnce(Return(stubAuthConfig.access_token));
+        EXPECT_CALL(*restClientCurlMock.get(), getResponse(expectedPath, expectedHeaders()))
+            .WillOnce(Return(accountInfoCashPositionsResponse));
+    }
+    auto accountPositionBalances = client->getAccountPositionBalances(accountHash);
+    EXPECT_GT(accountPositionBalances.positions.size(), 0);
 }

@@ -10,7 +10,7 @@ SimpleAgent::SimpleAgent(std::shared_ptr<ISchwabClient> sClient, std::shared_ptr
     , logFile(logFile)
     , agentName(agentName)
 {
-    infologprint(logFile, "%s: init", __func__);
+    infologprint(logFile, "%s: init %s", __func__, agentName.c_str());
 }
 
 void SimpleAgent::startAgent()

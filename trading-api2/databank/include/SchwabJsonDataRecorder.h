@@ -2,8 +2,7 @@
 
 #include "SchwabDatabank.h"
 
-namespace databank
-{
+namespace databank {
 
 class SchwabJsonDataRecorder : public SchwabDatabank
 {
@@ -12,6 +11,7 @@ public:
         std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile = "");
 
     virtual void startParsing() override;
+
 protected:
     virtual void parseStreamQueue(unsigned count) override;
 };

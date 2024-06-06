@@ -3,7 +3,8 @@
 using namespace databank;
 
 SchwabJsonDataRecorder::SchwabJsonDataRecorder(std::shared_ptr<ISchwabClient> sclient,
-    std::shared_ptr<IDatabaseHandler> dbHandler, std::shared_ptr<DataQueue<std::string>> streamqueue, std::string logfile)
+    std::shared_ptr<IDatabaseHandler> dbHandler, std::shared_ptr<DataQueue<std::string>> streamqueue,
+    std::string logfile)
     : SchwabDatabank(sclient, dbHandler, streamqueue, logfile)
 {
     infologprint(logfile, "%s init", __func__);

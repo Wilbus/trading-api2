@@ -1,7 +1,8 @@
 #pragma once
 
+#include "NumericLimits.h"
+
 #include <cmath>
-#include <limits>
 #include <map>
 #include <set>
 #include <string>
@@ -10,10 +11,6 @@
 namespace schwabMarketData {
 
 // TODO: initialize all variables to MAX of value type
-
-static const double MAXDOUBLE = std::numeric_limits<double>::max();
-static const unsigned MAXUNSIGNED = std::numeric_limits<unsigned>::max();
-static const unsigned long MAXULONG = std::numeric_limits<unsigned long>::max();
 
 enum AssetMainType : uint8_t
 {
