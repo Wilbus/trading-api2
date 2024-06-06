@@ -146,8 +146,8 @@ void SchwabDatabank::updateMinuteCharts(const std::string symbol, const ChartEqu
         return;
     }
 
-    infologprint(
-        logfile, "%s:ADD symbol: %s, minuteCandle: %s", __func__, symbol.c_str(), minuteCandle.toString().c_str());
+    /*infologprint(
+        logfile, "%s:ADD symbol: %s, minuteCandle: %s", __func__, symbol.c_str(), minuteCandle.toString().c_str());*/
 
     uint64_t timestamp =
         static_cast<uint64_t>(minuteCandle.time); // fractional part is lost but that is ok for timestmap

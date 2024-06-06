@@ -88,8 +88,8 @@ void SchwabStreamHandler::onMessageCallback(
     if (heartbeat.timestamp > 0)
     {
         time_t inSeconds = heartbeat.timestamp / 1000;
-        infologprint(logfile, "%s: heartbeat timestamp recved: %s", __func__,
-            timefuncs::unixTimeToString(inSeconds, "%Y-%m-%dT%H:%M:%S").c_str());
+        /*infologprint(logfile, "%s: heartbeat timestamp recved: %s", __func__,
+            timefuncs::unixTimeToString(inSeconds, "%Y-%m-%dT%H:%M:%S").c_str());*/
         lastReceivedHeartbeat = heartbeat.timestamp;
     }
     std::vector<Response> responses = schwabStreamParser::parseResponse(text);

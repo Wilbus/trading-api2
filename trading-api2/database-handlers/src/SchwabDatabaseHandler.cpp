@@ -29,7 +29,7 @@ void SchwabDatabaseHandler::pushCandle(const std::string& symbol, const CandleSt
         valueMap["timestamp"] =
             static_cast<double>(candle.timestamp); // InfluxDB does not support pushing uint64_t for some reason
         influxDbPusher->pushRaw(static_cast<int64_t>(candle.timestamp), symbol, valueMap);
-        infologprint(logfile, "%s: pushed candle for symbol: %s", __func__, symbol.c_str());
+        //infologprint(logfile, "%s: pushed candle for symbol: %s", __func__, symbol.c_str());
     }
     catch (const std::exception& e)
     {

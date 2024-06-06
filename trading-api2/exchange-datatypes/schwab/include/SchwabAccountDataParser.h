@@ -190,7 +190,6 @@ AccountPositionBalances parseAccountPositionBalances(std::string jsonstring)
 
     if (!d.IsObject())
     {
-        std::cout << "test\n";
         return {};
     }
 
