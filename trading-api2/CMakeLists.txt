@@ -6,6 +6,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -fPIC")
 
 set(GOOGLETEST_VERSION "1.14.0")
 
+add_subdirectory(accounting)
 add_subdirectory(utils)
 add_subdirectory(exchanges)
 add_subdirectory(configs)
